@@ -1,0 +1,18 @@
+   TITEL  = PAW_PBE Ba_sv 06Sep2000
+   LPAW   = T
+   RPACOR =    2.40
+   RWIGS  =    3.74  nn distance   
+                                      
+   RCLOC  =    2.50                  
+   EMIN   =   -3                      
+   NE     =   100                     
+   LCOR   =   .TRUE.                  
+   QCUT   =   -1                      
+                                      
+   Description                        
+ l     E      TYP  RCUT    TYP  RCUT  
+ 0     0.0     23   2.8
+ 1     0.0     23   2.7
+ 1     2.0     23   2.7
+ 2     0.0     23   2.7
+ 2     0.0     23   2.7
