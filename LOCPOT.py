@@ -102,7 +102,6 @@ elif "WFin" in cwd and "LOCPOT" not in cwd:
     try: os.mkdir("WFout")
     except FileExistsError: pass
     inFiles = os.listdir("./WFin")
-    inFiles.remove("INCAR")
     fileNames = [f for f in inFiles if os.path.isfile("./WFin/"+f)]
     inFiles = ["./WFin/" + f for f in inFiles if os.path.isfile("./WFin/"+f)]
 
