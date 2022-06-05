@@ -1,0 +1,18 @@
+   TITEL  = PAW_PBE Sn 08Apr2002
+   LPAW   =    T    use ultrasoft PP ?
+   RPACOR =    2.00                  
+   RWIGS  =    2.96  nn distance   
+                                      
+   ICORE  =       3                    
+   NE     =   100                     
+   LCOR   =   .TRUE.                  
+   QCUT   =   -1                      
+                                      
+   Description                        
+ l     E      TYP  RCUT    TYP  RCUT  
+ 0   0         23   3.00  
+ 0   2.0       23   3.00  
+ 1   0         23   3.00  
+ 1   0         23   3.00  
+ 2   0.0       23   3.00  
+ 3  -0.2       23   3.00  
