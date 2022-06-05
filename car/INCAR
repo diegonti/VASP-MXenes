@@ -1,0 +1,23 @@
+IBRION =  2         ! Algoritme de optimització atòmica  
+POTIM  =  0.5       ! Lenght of atomic movement 
+EDIFFG =  -0.01     ! Criteri d'optmització atòmica (negatiu: forces, positiu: energia)
+NSW    =  101       ! Nombre maxim de pasos atòmics
+    
+EDIFF  =  0.1E-05   ! Criteri d'optimització electrònica 
+ISPIN  =  2         ! Spin-polarized? (1=no, 2=si)
+ISMEAR =  0         ! Smearing **
+SIGMA  =  0.2       ! Amplitud del Smearing **
+
+LREAL  =  AUTO      ! False = espai real, True = espai recíproc
+
+NWRITE =  2         ! Qué s'escriu
+NELMIN =  2         ! Nombre mìnim de pasos electrònics
+NELM   =  101       ! Nombre maxim de pasos electrònics
+ENCUT  =  415       ! Límit de energia per ones planes **
+IALGO  =  38        ! Algoritme d'optimització electrònica
+ISIF   =  2         ! Qué se optimiza; 2 = posiciones atómicas 
+
+ISTART =  0         ! Com es comença (0=de base, 1=Funció d'ona WAVECAR)
+INIWAV =  1         ! Orbitals inicials (1 = suma orbitales atómicos)
+
+GGA = PE            ! Type of functional: PE = PBE
