@@ -143,10 +143,9 @@ def DOSCAR(dos, *args, spin=False, invertE = False, show = False):
 
 
     ##Loop that draws each specified line (contribution) in *args
-    #plt.rcParams["figure.figsize"] = [5,2]           #In case to give a fized image size (in inches)
+    #plt.rcParams["figure.figsize"] = (4.8,2)         #In case to give a fized image size (in inches)
     #plt.rcParams["figure.autolayout"] = True         #To autoajust plot if figsize is changed
     plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
-    plt.rcParams["figure.figsize"] = (4.8,2)
 
     fig,plot = plt.subplots()
 
@@ -174,7 +173,7 @@ def DOSCAR(dos, *args, spin=False, invertE = False, show = False):
     #Plot configuration (title, axis, x inversion, ...)
     plot.axhline(0,color = "black", lw = 1) 
     plot.axvline(0,color = "black", lw = 1, linestyle = "--")
-    #plot.set_title(f"DOS {mx.mxName}")
+    # plot.set_title(f"DOS {mx.mxName}")
     plot.set_xlabel("Energy (eV)")
     plot.set_ylabel("DOS")
     plot.set_xlim([-10,10])
