@@ -7,22 +7,24 @@ def getBandGap(E,T,Ef):
     """Takes Energy and Total DOS arrays and returns BandGap, VBM and CBM"""
     
     E = E+Ef
-    Ef = round(round(Ef,3)-0.01,3)
+    Ef = round(Ef,3)
     
-    searchVBM,searchCBM,data = False, False,[]
+    searchVBM,searchCBM = False, False
     for i,e in enumerate(E):
-        if e == Ef:
+        if e == round(Ef-0.01,3):
             searchVBM = True
         if searchVBM:
             if T[i] == 0:
                 VBM = round(E[i-1],3)
                 searchCBM, searchVBM = True, False
+            if T[i] != 0 and e > Ef+0.002: searchVBM = False
         if searchCBM:
             if T[i] != 0:
                 CBM = round(E[i],3)
                 searchCBM = False
                 break
         else: VBM,CBM = Ef,Ef
+            
 
     bandgap = round(CBM-VBM,3) 
  
@@ -143,7 +145,7 @@ def DOSCAR(dos, *args, spin=False, invertE = False, show = False):
 
 
     ##Loop that draws each specified line (contribution) in *args
-    #plt.rcParams["figure.figsize"] = (4.8,2)         #In case to give a fized image size (in inches)
+    plt.rcParams["figure.figsize"] = (4.8,2)         #In case to give a fized image size (in inches)
     #plt.rcParams["figure.autolayout"] = True         #To autoajust plot if figsize is changed
     plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
 
