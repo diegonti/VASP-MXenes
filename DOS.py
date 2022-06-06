@@ -25,7 +25,6 @@ def getBandGap(E,T,Ef):
                 break
         else: VBM,CBM = Ef,Ef
             
-
     bandgap = round(CBM-VBM,3) 
  
     return bandgap, VBM, CBM
