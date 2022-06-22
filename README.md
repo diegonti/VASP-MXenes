@@ -9,6 +9,6 @@ The file `LOCPOT.py` reads all the LOCPOT files in the input folder `/WFin` or a
 
 The file `structure.py` has different functions that allow the modification and analysis of POSCAR/CONTCAR files, for example to shift the atoms to the origin after an optimization, to add a certain amount of vacuum and rescale the atom fractional coordinates, or to add the Oxygen termination to the different hollow sites in the pristine MXene optimized CONTCAR. It also reads POSCAR/CONTCAR files and return the cell parameter _a_ and width _d_. Reads the input files in `/CONTCARin` and returns the modified files in `/CONTCARout`.
 
-The file `VASP.py` is mainly for [VASP](https://www.vasp.at/). input file management, it generates the indicated specific folders containing the necessary input files for the different VASP calculations. It also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...)
+The file `VASP.py` is mainly for [VASP](https://www.vasp.at/) input file management, it generates the indicated specific folders containing the necessary input files for the different VASP calculations. It also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...)
 
 The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom. The `/car` folder has different input files models. Both are used by the `VASP.py` script for creating the input files.
