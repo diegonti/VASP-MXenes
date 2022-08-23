@@ -3,6 +3,21 @@ import os
 import itertools
 import numpy as np
 
+def isJanus(means,t,low,high,e):
+    """Searches the vacucum region of the slab [low,high] and returns True in the case for Janus materials (with a e% of tolerance)."""
+    flag1, flag2 = True, True
+    for i,m in enumerate(means):
+        if t[i] > low+1 and flag1:
+            sf1, flag1 = m, False
+        elif t[i] > high-1 and flag2:
+            sf2, flag2 = m, False
+            break
+    #tolerance
+    diff = abs(sf1-sf2)
+    rdiff = diff/np.mean((sf1,sf2))*100
+    if rdiff > e: return True
+    else: return False
+    
 
 def WF(file,name,incwd=False):
     """Takes a LOCPOT file and returns a WorkFunction plot along the z axis, also returning the vacuum energy (Vvacuum).\n
@@ -57,31 +72,50 @@ def WF(file,name,incwd=False):
     means = np.array(means)
     
     ##If spin polarized, the mean is also done between α (1º half of points) and β (2º half) parts
-    if spin: means = sum([means[:int(z/2)],means[int(z/2):]])/2 #/2???
+    if spin: means = sum([means[:int(z/2)],means[int(z/2):]])/2 
 
     ##Vacuum Energy calculation
     t=np.linspace(0,latticeZ, len(means)) #z axis vector along the c lattice parameter
     low,high = d+3,latticeZ-3             #Limits to do the mean for calculating Vvaccum
-    Vcalc = []
-    for i,m in enumerate(means):          #Takes the energies in the vaccum region from low to high
-        if t[i]>low and t[i]<high:        #and averages them to estimate the Vvaccum
-            Vcalc.append(m)
-    Vv = np.mean(Vcalc)
-    print(f"{name} = {Vv}")
+    mid = np.mean((low,high))
+    Vcalc,Vcalc_sf1,Vcalc_sf2 = [],[],[]
+    janus = isJanus(means,t,low,high,5)
+
+    if janus:
+        for i,m in enumerate(means):
+            if t[i]>low and t[i]<mid-1: Vcalc_sf1.append(m)
+            elif t[i]>mid+1 and t[i]<high: Vcalc_sf2.append(m)
+        Vvsf1 = np.mean(Vcalc_sf1)
+        Vvsf2 = np.mean(Vcalc_sf2)
+        print(f"{name}: Vvsf1 = {Vvsf1}   Vvsf2 = {Vvsf2}")
+    
+    else:
+        for i,m in enumerate(means):          #Takes the energies in the vaccum region from low to high
+            if t[i]>low and t[i]<high:        #and averages them to estimate the Vvaccum
+                Vcalc.append(m)
+        Vv = np.mean(Vcalc)
+        print(f"{name} = {Vv}")
 
     ##Plot settings 
     plt.rcParams.update({'font.size': 12})
     plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
 
     plt.plot(t,means,color = "black", label = "WF")
-    plt.axhline(y = Vv, color = "r", linestyle = "--", label = "$V_{vacuum}$")
+    if janus:
+        plt.axhline(y = Vvsf1, color = "r", linestyle = "--", label = "$V_{v,surf1}$")
+        plt.axhline(y = Vvsf2, color = "b", linestyle = "--", label = "$V_{v,surf2}$")
+        plt.text(5,0,s= "$V_{v,surf1}$ = " + f"{Vvsf1:.2f} eV", color = "r",fontsize = 12)
+        plt.text(20,0,s= "$V_{v,surf2}$ = " + f"{Vvsf2:.2f} eV", color = "b", fontsize = 12)
+
+    else:
+        plt.axhline(y = Vv, color = "r", linestyle = "--", label = "$V_{vacuum}$")
+        plt.text(14,0,s= "$V_{vacuum}$ = " + f"{Vv:.2f} eV" ,fontsize = 12)
+
     plt.xlabel("z axis (Å)")
     plt.ylabel("Energy (eV)")
     plt.xlim(xmin=0,xmax=latticeZ)
     plt.ylim(ymax=5)
     plt.legend(frameon=False)
-    Vv = format(Vv,".2f")
-    plt.text(14,0,s= "$V_{vacuum}$ = " + f"{Vv} eV" ,fontsize = 12)
 
     if incwd: plt.savefig(f"{name}.png",format="png",dpi=1200)
     else: plt.savefig(f"./WFout/{name}.png",format="png",dpi=1200)
