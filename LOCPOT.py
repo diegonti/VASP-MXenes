@@ -4,7 +4,7 @@ import itertools
 import numpy as np
 
 def isJanus(means,t,low,high,e):
-    """Searches the vacucum region of the slab [low,high] and returns True in the case for Janus materials (with a e% of tolerance)."""
+    """Searches the vacuum region of the slab [low,high] and returns True in the case for Janus materials (with a e% of tolerance)."""
     flag1, flag2 = True, True
     for i,m in enumerate(means):
         if t[i] > low+1 and flag1:
