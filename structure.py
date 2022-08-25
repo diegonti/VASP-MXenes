@@ -124,12 +124,13 @@ def addT(data,T="O",stack = None, hollows="HM"):
 
 
 def getGeom(data):
-    """Returns MXene lattice parameter a and width d in Armstrongs."""
+    """Returns MXene lattice parameter a and width d in Armstrongs. \n
+    For terminated n=1 MXenes, returns also d(M-T) for each surface."""
     data = toZero(data)
-    len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
+    nAtoms = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
 
     posz = []
-    for i in range(len):
+    for i in range(nAtoms):
         posz.append(float(data[9+i][2])) #lista con posiciones de z
 
     a = float(data[2][0])
@@ -138,9 +139,14 @@ def getGeom(data):
     c = float(data[4][2])
     d = max(posz)*c
 
-    return a,d
+    if len(posz) == 5:
+        dMO1 = (posz[4]-posz[1])*c #Top surface (HMX)
+        dMO2 = (posz[0]-posz[3])*c #Bottom surface (HM)
+        return a, d, dMO1, dMO2
+    else: return a,d
 
 def writeCON(data,name):
+    """Rewrites the CONTCAR file."""
 
     path = "./CONTCARout/{}".format(name)
 
@@ -223,6 +229,7 @@ def posAIMS(data):
         for i in positions: outfile.write(i + "\n")
 
 
+### Main Program - Chose which modifications are applied to the input CONTCAR/POSCAR
 
 contcars = os.listdir("CONTCARin")
 paths = [f"./CONTCARin/{c}" for c in contcars]
@@ -246,14 +253,14 @@ for contcar in paths:
     mx = MX(mxName)
 
     ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
-    data = addVacuum(contIN,v=10)
-    writeCON(data,name)
+    # data = addVacuum(contIN,v=10)
+    # writeCON(data,name)
 
     ## Adds Termination to optimized M2X CONTCAR.
     # data = addT(contIN, hollows="HMX")
     # writeCON(data,name)
 
-    ## Shifts to zero the 
+    ## Shifts to zero/origin all the atoms 
     # data = toZero(contIN)
     # writeCON(data,name)
 
