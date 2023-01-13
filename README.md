@@ -1,5 +1,5 @@
 # MXenes
-Python scripts used for my chemistry final degree thesis "Bandgap Engineering on MXene Compounds by Structure, Composition, and Surface Termination."
+Python scripts used for my chemistry final degree thesis [_Bandgap Engineering on MXene Compounds by Structure, Composition, and Surface Termination_](http://hdl.handle.net/2445/189371).
 Created to ease and automate the project by making it more efficient. Scripts include DOSCAR and LOCPOT files visualization, VASP input file management and POSCAR/CONTCAR modification and analysis.
 
 ## Details:
