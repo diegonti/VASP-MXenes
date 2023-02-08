@@ -3,6 +3,7 @@ import os
 
 
 def toZero(data):
+    
     """Shifts positions of atoms to start at zero."""
     
     len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
@@ -64,7 +65,8 @@ def addVacuum(data,v = 10):
     return data
 
 def shift(data,shift = 1):
-    """Shifts z positions by the specified amount"""
+    """Shifts MXene a given distance"""
+
 
     len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
     co = float(data[4][2])
@@ -268,7 +270,8 @@ for contcar in paths:
     #posAIMS(contIN)
 
     ##Prints cell parameters for input CONTCARs
-    print(f"{mx.mxName}: {getGeom(contIN)}")
+    print(contcar)
+    print(f"{mx.mxName}: {getGeom(contIN)[2:]}")
 
     n += 1 
 

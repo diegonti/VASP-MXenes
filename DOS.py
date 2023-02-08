@@ -378,13 +378,13 @@ if __name__ == "__main__":
 
         dos = DOSCAR(file)
 
-        
+        # Plots PDOS (non-spin polarized)        
         dos.plot(
             ["M","red"],["X","blue"],["Term","green"],
             spc = False
         )
 
-        #Plots spin contributions (if spin polarized)
+        # Plots spin contributions (if spin polarized)
         if dos.spin=="sp":
             dos.plot(
                 ["Ma","orange"], ["Mb","cyan"],["Xa","pink"],["Xb","violet"], 

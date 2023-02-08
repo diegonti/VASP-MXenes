@@ -19,7 +19,7 @@ def isJanus(means,t,low,high,e):
     else: return False
     
 
-def WF(file,name,incwd=False):
+def WF(file,name,incwd=False,tol_janus=5):
     """Takes a LOCPOT file and returns a WorkFunction plot along the z axis, also returning the vacuum energy (Vvacuum).\n
     The program can take a LOCPOT file from the same directory and return the plot in the same path or\n
     do a loop over all the LOCPOT files in /WFin and return the plots in /WFout."""
@@ -79,7 +79,7 @@ def WF(file,name,incwd=False):
     low,high = d+3,latticeZ-3             #Limits to do the mean for calculating Vvaccum
     mid = np.mean((low,high))
     Vcalc,Vcalc_sf1,Vcalc_sf2 = [],[],[]
-    janus = isJanus(means,t,low,high,5)
+    janus = isJanus(means,t,low,high,tol_janus)
 
     if janus:
         for i,m in enumerate(means):
@@ -100,7 +100,7 @@ def WF(file,name,incwd=False):
     plt.rcParams.update({'font.size': 12})
     plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
 
-    plt.plot(t,means,color = "black", label = "WF")
+    plt.plot(t,means,color = "black", label = "Local Potential")
     if janus:
         plt.axhline(y = Vvsf1, color = "r", linestyle = "--", label = "$V_{v,surf1}$")
         plt.axhline(y = Vvsf2, color = "b", linestyle = "--", label = "$V_{v,surf2}$")
@@ -108,8 +108,8 @@ def WF(file,name,incwd=False):
         plt.text(20,0,s= "$V_{v,surf2}$ = " + f"{Vvsf2:.2f} eV", color = "b", fontsize = 12)
 
     else:
-        plt.axhline(y = Vv, color = "r", linestyle = "--", label = "$V_{vacuum}$")
-        plt.text(14,0,s= "$V_{vacuum}$ = " + f"{Vv:.2f} eV" ,fontsize = 12)
+        plt.axhline(y = Vv, color = "r", linestyle = "--", label = "$V_{v}$")
+        plt.text(14,0,s= "$V_{v}$ = " + f"{Vv:.2f} eV" ,fontsize = 12)
 
     plt.xlabel("z axis (Å)")
     plt.ylabel("Energy (eV)")
@@ -117,8 +117,8 @@ def WF(file,name,incwd=False):
     plt.ylim(ymax=5)
     plt.legend(frameon=False)
 
-    if incwd: plt.savefig(f"{name}.png",format="png",dpi=1200)
-    else: plt.savefig(f"./WFout/{name}.png",format="png",dpi=1200)
+    if incwd: plt.savefig(f"{name}.png",format="png",dpi=600)
+    else: plt.savefig(f"./WFout/{name}.png",format="png",dpi=600)
 
     plt.close()
     #plt.show()
@@ -140,5 +140,5 @@ elif "WFin" in cwd and "LOCPOT" not in cwd:
     inFiles = ["./WFin/" + f for f in inFiles if os.path.isfile("./WFin/"+f)]
 
     for file,name in zip(inFiles,fileNames):
-        WF(file,name)
+        WF(file,name,tol_janus=10)
 
