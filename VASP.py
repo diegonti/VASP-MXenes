@@ -4,6 +4,7 @@ import math as m
 
 
 def mkdir(*dirs):
+    """Creates especified directories. Cleaner way."""
     for dir in dirs:
         try: os.mkdir(dir)
         except FileExistsError: pass
@@ -14,28 +15,27 @@ def splitNums(string):
     in the order as they appear. Ti2C1O2 --> [Ti,2,C,1,O,2]"""
 
     previous_character = string[0]
-    groups = [] #donde iran las partes
+    groups = []                         
     newword = string[0] 
-    for x, i in enumerate(string[1:]): #crea iterable con cada caracter enumerado ((0,s0),(1,s2),...) (empezando a partir de s1)
-        if i.isalpha() and previous_character.isalpha():
-            newword += i #si son del mismo tipo(str) se añade a la palabra
-        elif i.isnumeric() and previous_character.isnumeric():
-            newword += i #si son del mismo tipo(numero) se añade al numero
+    for x, i in enumerate(string[1:]):   # Creates iterable with each index, string pair ((1,s1),(2,s2),...)
+        
+        # If the current and previous character are the same, it is added to the new word
+        if i.isalpha() and previous_character.isalpha(): newword += i
+        elif i.isnumeric() and previous_character.isnumeric(): newword += i
+        # Else, the newword is added to groups and a new one is started
         else:
-            if newword.isdigit():
-                groups.append(int(newword)) #añadimos palabra o numero a la lista
-            else:
-                groups.append(newword)
-            newword = i #pasamos al siguiente carcater
+            if newword.isdigit(): groups.append(int(newword))
+            else: groups.append(newword)
+            newword = i
 
         previous_character = i
 
+        # For the last characters
         if x == len(string) - 2:
-            if newword.isdigit():
-                groups.append(int(newword)) #añadimos palabra o numero a la lista
-            else:
-                groups.append(newword)
+            if newword.isdigit(): groups.append(int(newword))
+            else: groups.append(newword)
             newword = ''
+
     return groups
 
 
@@ -46,21 +46,15 @@ class MX():
 
     def __init__(self, name,stacking="ABC",hollows="HM"):
 
-        self.name = name                        # Nombre del MXene "M2X1T2"
-        self.mxName = self.name.replace("1","") # Nombre del MXene "bonito" (sin 1)
+        self.name = name                        # MXene name "M2X1T2"
+        self.mxName = self.name.replace("1","") # "Formal" MXene name (without 1)
         
-        #lista con sublista del MXene separado por atomo,indice
-        self.cparts = splitNums(self.name)
-
-        #lista con atomos del MXene  [M,X,T]
-        self.atoms = [a for a in self.cparts if type(a) == str]
-
-        #lista con indices de los atomos del MXene  [n+1,n,2]
-        self.index = [j for j in self.cparts if type(j) == int]
-
+        self.cparts = splitNums(self.name)                          # [M,n+1,X,n,T,x] 
+        self.atoms = [a for a in self.cparts if type(a) == str]     # [M,X,T]        
+        self.index = [j for j in self.cparts if type(j) == int]     # [n+1,n,x]
         
 
-        #Determina si el MXene tiene terminaciones
+        # Establishes if the MXene has termination
         if len(self.atoms) >= 3 and len(self.index) >= 3:
             self.terminal = True
             self.pristine = "".join([str(p) for p in self.cparts[:-2]])
@@ -68,20 +62,21 @@ class MX():
             self.terminal = False
             self.pristine = self.mxName
         
+        # Establishes if the MXene is OH terminated (special treatment)
         if self.atoms[-2]+self.atoms[-1] == "OH":
             self.OH = True
         else: self.OH = False
 
-        
-        self.n = self.index[0] - 1  # n del MXeno (1,2,3)
-        self.do = 2.5               # distancia inicial de cada capa de MXene (no la total)
-        self.v = 30                 # distancia de vacio
-        self.ab = 3                 # parámetro de celda a b
+        # MXene structure
+        self.stacking = stacking    # Stacking
+        self.hollows = hollows      # T hollow position
+        self.n = self.index[0] - 1  # Width, n (1,2,3)
+        self.do = 2.5               # Initial distance of each MXene sheet (not total)
+        self.v = 30                 # Vacuum distabce
+        self.ab = 3                 # Lattice parameter multiplyer
         self.lp = 1
 
-        self.stacking = stacking
-        self.hollows = hollows
-
+        # INPUT FILES DIRECTORIES
         if self.terminal: 
             self.shift = 1
             self.pdir = f"./MXenes/{self.pristine}/{self.mxName}/{self.stacking}/{self.hollows}/" 
@@ -90,76 +85,74 @@ class MX():
             self.pdir = f"./MXenes/{self.pristine}/{self.stacking}/"     
 
         if self.terminal:
-            dirsM2XT2 = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
+            dirs_terminated = ["opt","opt/isif7","opt/isif7/isif2","DOS","DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
                         "WF", "bader"]
-            self.dirs = [self.pdir + i +"/" for i in dirsM2XT2]
+            self.dirs = [self.pdir + i +"/" for i in dirs_terminated]
         else:
-            dirsM2X = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS"]
-            self.dirs = [self.pdir + i +"/" for i in dirsM2X]
+            dirs_pristine = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS"]
+            self.dirs = [self.pdir + i +"/" for i in dirs_pristine]
 
 
 
     def positions(self): #n=1, do=2.5, v=10, shift=0
-        """Devuelve las coordenadas directas de un MXene para la n indicada."""
+        """Returns the direct coordinates of a MXene for a given n and structure."""
         
-        #Parámetros de ancho de capa (do) y vacío entre capas (v)
+        # Structure parameters
         n = self.n
         do,v = self.do, self.v
         shift = self.shift
         stacking = self.stacking
         hollows = self.hollows
         
-        f = ".15f" #numero decimales
+        f = ".15f" # Number of decimals
         
-        #Listas de los valores que toman las coordenadas x y y en los atomos
+        # Values that each atom x (a) and y (b) coordinates take
         if stacking == "ABC":
-            a = [1,3,2] #coordenada x (a)
-            b = [2,0,1] #coordenada y (b)
+            a = [1,3,2]
+            b = [2,0,1]
         elif stacking == "ABA":
-            a = [1,0] #coordenada x (a)
-            b = [2,0] #coordenada y (b)
+            a = [1,0]
+            b = [2,0]
         den = n*do+v+2*shift
 
-        j = 0 #iterable de valores a, b
-        M, X, T = [], [], [] #listas donde iran las posiciones de los átomos de M y de X y T.
-        zero = [0,0,0+shift/(n*do+v+2*shift)]
-        zero = [format(i,f) for i in zero]
-        M.append(zero) #El primer átomo de M se coloca en el centro (0,0,0)
+        j = 0                                 # Iterates over the a and b values
+        M, X, T = [], [], []                  # Where positions will go for each atom type
+        zero = [0,0,0+shift/(n*do+v+2*shift)] # Stablishing the reference point
+        zero = [format(i,f) for i in zero]    # Formatting
+        M.append(zero)                        # The first metal atom
 
-        for i in range(n): #por cada capa 
+        for i in range(n): # For each layer
 
-            if stacking == "ABA": j=0
+            if stacking == "ABA": j = 0
 
-            #Coordenadas del Metal (M)
+            # Metal coordinates (M) 
             aM = format(round(a[j-1]/3,15),f)
             bM = format(round(b[j-1]/3,15),f)
             cM = format(round((do*(i+1) + shift)/(n*do + v + 2*shift), 15),f)
             posM = [aM,bM,cM]
             M.append(posM)
 
-            #Coordenadas del C o N (X)
+            # C or N coordinates (X)
             aX = format(round(a[j]/3,15),f)
             bX = format(round(b[j]/3,15),f)
             cX = format(round((do/2*(2*(i+1)-1) + shift)/(n*do + v + 2*shift), 15),f)
             posX = [aX,bX,cX]
             X.append(posX)         
 
-            j += 1 #Para que se repita la lista a y b.
+            j += 1
             if j == 3: j = 0
 
-        if self.terminal:
-            if hollows == "HM": #en HM (modelo 2)
-                a=[2,3]; b=[1,0]
-            if hollows == "HX": #en HM (modelo 4)
-                a=[1,1]; b=[2,2]
-            if hollows == "HMX": #en HM (modelo 3)
-                a=[2,1]; b=[1,2]
+        if self.terminal:                               ##########################! Set Terminations correctly
+            if hollows == "HM": a=[2,3]; b=[1,0]
+            if hollows == "HX": a=[1,1]; b=[2,2]
+            if hollows == "HMX": a=[2,1]; b=[1,2]
 
-            #Coordenadas de Terminales (T) 
+            if n == 1: a=[2,3]; b=[1,0] #en HM (modelo 2)
+            if n == 2: a=[1,3]; b=[2,0] #modelo 4
+            if n >= 3: pass
+
+            # Termination coordinates (T) 
             for i in range(2):
-                if n == 1: a=[2,3]; b=[1,0] #en HM (modelo 2)
-                if n == 2: a=[1,3]; b=[2,0] #modelo 4
-                if n >= 3: pass
 
                 aT = format(round(a[i]/3,15),f)
                 bT = format(round(b[i]/3,15),f)
@@ -169,11 +162,11 @@ class MX():
             
         return M, X, T        
 
-    def POSCAR(self): #ab=3, do=2.5, v=10, lp=1
-        """Crea el fichero POSCAR inicial para un MXene. A partir de sus átomos y su n.\n
-        Contiene nombre, parámetros celda y posiciones átomos.\n
-        Se puede especificar parámetros celda (a=b, ab), distancia capa (do), vacio(v) y lattice parameter (lp).\n
-        Por defecto ab=3 do=2.5 v=10 lp=1."""
+    def POSCAR(self):
+        """Creates initial POSCAR file for MXene. From its atoms and n.\n
+        Contains name, cell parameters and atom positions. By default ab=3 do=2.5 v=30 lp=1.\n
+        The values can be changed with the MX() object arguments. (or as args in this function --> implement)\n
+        """
 
         n = self.n
         do,v = self.do,self.v
@@ -183,28 +176,25 @@ class MX():
 
         f1 = ".10f"
         
-        #Cálculos de parámetros de celda
+        # Cell parameter calculation
         lp = format(lp,".14f")
-        a = [format(ab,f1), format(0,f1), format(0,f1)]                                                     #(ab,0,0)
-        b = [format(round(-ab*m.sin(m.pi/6),10),f1), format(round(ab*m.cos(m.pi/6),10)), format(0,f1)]      #(-ab*sin(30),ab*cos(30),0)
-        c = [format(0,f1), format(0,f1), format(n*do+v+2*shift,f1)]                                                 #(0,0,n*do+v)
+        a = [format(ab,f1), format(0,f1), format(0,f1)]                                                     # (ab,0,0)
+        b = [format(round(-ab*m.sin(m.pi/6),10),f1), format(round(ab*m.cos(m.pi/6),10)), format(0,f1)]      # (-ab*sin(30),ab*cos(30),0)
+        c = [format(0,f1), format(0,f1), format(n*do+2*shift+v,f1)]                                         # (0,0,n*do+v)
 
-        #Lineas de atomos y índices
-        strAtoms = "".join([a + " " for a in self.atoms])
-        strIndex = "".join([str(i) + " " for i in self.index])
+        # Atom labels and indices lines
+        strAtoms = " ".join([a for a in self.atoms])
+        strIndex = " ".join([str(i) for i in self.index])
         
-        #Lineas de posiciones de átomos
-        posM, posX, posT = self.positions() #positions(self.n,do,v)
+        # Atom positions lines
         p = ""
-        for pos in posM:
-            p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n" #podria ponerse el primer M como FFF?
-        for pos in posX:
-            p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n"
+        posM, posX, posT = self.positions()
+        for pos in posM: p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n"
+        for pos in posX: p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n"
         if self.terminal:
-            for pos in posT:
-                p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n"
+            for pos in posT: p += f"  {pos[0]}  {pos[1]}  {pos[2]}  T T T\n"
 
-        #Escribe todo en el POSCAR, con el formato de always
+        # Writes POSCAR with the usual format in the specified directories
         for dir in self.dirs:
             if not dir.endswith("opt/"): continue
             with open(dir + "POSCAR", 'w') as outfile:
@@ -222,11 +212,11 @@ class MX():
                 )
   
     def POTCAR(self):
-        """Crea el fichero POSCAR con los PP de los átomos del MXene concatenados."""
+        """Creates POTCAR file with the concatenated PP of the MXene atoms."""
 
         with open(self.pdir + "POTCAR", 'w') as outfile:
                     first = True
-                    for at in self.atoms: #por cada atomo de la lista
+                    for at in self.atoms:
                         
                         for p in self.pp: #para cojer el pp adecuado
                             if self.atoms[0] in p and first: #Si es la primera vez y el atomo esta en la lista pp
@@ -236,37 +226,35 @@ class MX():
                             else: file = at #sino coje el normal
 
                         with open("./PP/{}/POTCAR".format(file), "r") as infile:
-                            for line in infile:
-                                outfile.write(line)
+                            for line in infile: outfile.write(line)
 
-        #Envia el fichero a las carpetas siguientes de cellOpt y DOS.
+        # Copies file to all input directories
         source = self.pdir + "POTCAR"
-        for dir in self.dirs:
-            shutil.copy(source,dir)
+        for dir in self.dirs: shutil.copy(source,dir)
         
     def KPOINTS(self,p1=7,p2=7,p3=1):
-        """Crea el fichero KPOINTS con los puntos-k indicados.\n
-        Por defecto, los puntos son  7  7  1."""
+        """Creates KPOINT file with the specified k-points (mesh).\n
+        By default:  7  7  1."""
 
         with open(self.pdir + "KPOINTS", 'w') as outfile:
             with open("./car/KPOINTS", 'r') as infile:
                 n = 1
                 for line in infile:
-                    if n == 4:
-                        line = f" {p1}  {p2}  {p3}\n"
+                    if n == 4: line = f" {p1}  {p2}  {p3}\n"
                     outfile.write(line)
                     n += 1
         
-        #Envia el fichero a las carpetas siguientes de cellOpt y DOS.
+        # Copies file to all input directories
         source = self.pdir + "KPOINTS"
         source2 = "./car/KPOINTS3"
         for dir in self.dirs:
-            if dir.endswith("BS2/"): shutil.copy(source2,dir+"KPOINTS")
-            else: shutil.copy(source,dir)
+            if dir.endswith("BS2/"): shutil.copy(source2,dir+"KPOINTS") # For band structure calculations
+            else: shutil.copy(source,dir)                               # For other calculations
 
-    def INCAR(self,style=1,**kwargs):
-        """Crea el fichero INCAR para un MXene.\n
-        Acepta parametros con valores del estilo: param = value."""
+    def INCAR(self,**kwargs):
+        """ Creates INCAR file for a calculation.\n
+        Adapts itself to the path of the directory its in.\n
+        Accepts keyword parameters with style: param = value."""
 
         # params = [key for key in kwargs.keys()] #Parámetro
         # values = [val for val in kwargs.values()] #Valor de parámetro
@@ -305,8 +293,6 @@ class MX():
                 params.append("NGZF"); values.append("700")
                 
 
-
-
             with open(dir + "INCAR",'w') as outfile:
                 with open("./car/INCAR", 'r') as infile:
                     for line in infile:
@@ -323,6 +309,8 @@ class MX():
                     outfile.write(f"SYSTEM = {self.name}")
     
     def script(self):
+        """Creates a copy of the script file in each directory."""
+
         source = "./car/script"
         destination1 = self.pdir
         shutil.copy(source, destination1)
@@ -347,17 +335,19 @@ lenMX = len(mx)
 
 MXenes = [MX(mx[i],stacking,hollows) for i in range(lenMX)]
 
+
 if __name__ == "__main__":
-    #Crea carpeta de MXenes
+
+    # Creates /MXene folder
     cwd = os.getcwd()
     try: os.mkdir("MXenes") 
     except FileExistsError: pass
 
-    #Genera los 4 archivos input + script
-    for mx in MXenes: #para cada compuesto MXene de la lista
+    # Generates input files for each MXene in list
+    for mx in MXenes:
 
-        #Crea directorios-subdirectorios
-        try: os.mkdir(f"MXenes/{mx.pristine}/") #Carpeta con nombre del Mxene
+        # Creates dirs-subdirs
+        try: os.mkdir(f"MXenes/{mx.pristine}/")
         except FileExistsError: pass
 
         if not mx.terminal: mkdir(f"MXenes/{mx.pristine}/{mx.stacking}/")
@@ -365,15 +355,13 @@ if __name__ == "__main__":
             f"MXenes/{mx.pristine}/{mx.mxName}/",
             f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/",
             f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/{mx.hollows}/")
-
-
         mkdir(*mx.dirs)
 
 
         #Cambios de los parámetros de mx han de ser aqui!
 
-        mx.POSCAR()  #Escribe archivo POSCAR
-        mx.POTCAR()   #Coje los archivos POTCAR de la base PP y los concatena para cada compuetso    
-        mx.KPOINTS()  #Escribe archivo KPOINTS
-        mx.INCAR()    #Escribe archivo INCAR
-        mx.script()   #Copia el script en la carpeta
+        mx.POSCAR()     # Writes POSCAR (positions)
+        mx.POTCAR()     # Writes POTCAR (concatenated PP)    
+        mx.KPOINTS()    # Writes KPOINTS (k-mesh or k-path)
+        mx.INCAR()      # Writes INCAR (for each calculations)
+        mx.script()     # Writes script (to send calculation)
