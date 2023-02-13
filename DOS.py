@@ -18,16 +18,17 @@ def getBandGap(E,T,Ef):
     
     E = E+Ef
     Ef = round(Ef,3)
+    dE = E[1] - E[0]
     
     searchVBM,searchCBM = False, False
     for i,e in enumerate(E):
-        if e == round(Ef-0.01,3):
+        if e == round(Ef-5*dE,3):
             searchVBM = True
         if searchVBM:
             if T[i] == 0:
                 VBM = round(E[i-1],3)
                 searchCBM, searchVBM = True, False
-            if T[i] != 0 and e > Ef+0.002: searchVBM = False
+            if T[i] != 0 and e > Ef+dE: searchVBM = False
         if searchCBM:
             if T[i] != 0:
                 CBM = round(E[i],3)

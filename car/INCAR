@@ -6,7 +6,7 @@ NSW    =  101       ! Nombre maxim de pasos atòmics
 EDIFF  =  0.1E-05   ! Criteri d'optimització electrònica 
 ISPIN  =  2         ! Spin-polarized? (1=no, 2=si)
 ISMEAR =  0         ! Smearing **
-SIGMA  =  0.2       ! Amplitud del Smearing **
+SIGMA  =  0.04      ! Amplitud del Smearing **
 
 LREAL  =  AUTO      ! False = espai real, True = espai recíproc
 
@@ -19,5 +19,6 @@ ISIF   =  2         ! Qué se optimiza; 2 = posiciones atómicas
 
 ISTART =  0         ! Com es comença (0=de base, 1=Funció d'ona WAVECAR)
 INIWAV =  1         ! Orbitals inicials (1 = suma orbitales atómicos)
+LWAVE  =  .FALSE.   ! No escriu WAVECAR
 
 GGA = PE            ! Type of functional: PE = PBE

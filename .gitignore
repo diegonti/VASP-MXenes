@@ -1,4 +1,8 @@
 # Folders with large VASP data files
+MXenes/
+WFin/
+CONTCARin/
+DOSin/
 WFout/
 DOSout/
 CONTCARout/

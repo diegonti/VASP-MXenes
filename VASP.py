@@ -2,9 +2,16 @@ import os
 import shutil
 import math as m
 
+
+def mkdir(*dirs):
+    for dir in dirs:
+        try: os.mkdir(dir)
+        except FileExistsError: pass
+
+
 def splitNums(string):
-    """Para un string con letras y numeros, devuelve una lista con palabras y numeros separados,
-    en orden de como aparecen."""
+    """For a string with letters and numbers, returns a list with characters and numbers separated, 
+    in the order as they appear. Ti2C1O2 --> [Ti,2,C,1,O,2]"""
 
     previous_character = string[0]
     groups = [] #donde iran las partes
@@ -37,52 +44,57 @@ class MX():
     #Que pseudopotenciales utilizar para cada metal (nombre carpeta) (si no, cojera el normal)
     pp = ['Sc_sv', 'Ti_pv', 'V_pv', 'Cr_pv', 'Y_sv', 'Zr_sv', 'Nb_pv', 'Mo_pv', 'Hf_pv', 'Ta_pv', 'W_pv']
 
-    def __init__(self, name):
+    def __init__(self, name,stacking="ABC",hollows="HM"):
 
-        self.name = name #Nombre del MXene 
-        self.mxName = self.name.replace("1","") #Nombre del MXene "bonito" (sin 1)
+        self.name = name                        # Nombre del MXene "M2X1T2"
+        self.mxName = self.name.replace("1","") # Nombre del MXene "bonito" (sin 1)
         
         #lista con sublista del MXene separado por atomo,indice
         self.cparts = splitNums(self.name)
 
-        #lista con atomos del MXene
+        #lista con atomos del MXene  [M,X,T]
         self.atoms = [a for a in self.cparts if type(a) == str]
 
-        #lista con indices de los atomos del MXene
+        #lista con indices de los atomos del MXene  [n+1,n,2]
         self.index = [j for j in self.cparts if type(j) == int]
+
+        
 
         #Determina si el MXene tiene terminaciones
         if len(self.atoms) >= 3 and len(self.index) >= 3:
             self.terminal = True
-        else: self.terminal = False
+            self.pristine = "".join([str(p) for p in self.cparts[:-2]])
+        else: 
+            self.terminal = False
+            self.pristine = self.mxName
         
         if self.atoms[-2]+self.atoms[-1] == "OH":
             self.OH = True
         else: self.OH = False
 
         
-        self.n = self.index[0] - 1 #n del MXeno (1,2,3)
-        self.do = 2.5 #distancia inicial de cada capa de MXene (no la total)
-        self.v = 10 #distancia de vacio
-        self.ab = 3 #parámetro de celda a b
+        self.n = self.index[0] - 1  # n del MXeno (1,2,3)
+        self.do = 2.5               # distancia inicial de cada capa de MXene (no la total)
+        self.v = 30                 # distancia de vacio
+        self.ab = 3                 # parámetro de celda a b
         self.lp = 1
 
-        if self.terminal: self.shift = 1
-        else: self.shift = 0
+        self.stacking = stacking
+        self.hollows = hollows
 
-        self.stacking = "ABA"
-        self.hollows = "HM"
-
-
-        self.pdir = f"./MXenes/{self.mxName}/"     
+        if self.terminal: 
+            self.shift = 1
+            self.pdir = f"./MXenes/{self.pristine}/{self.mxName}/{self.stacking}/{self.hollows}/" 
+        else: 
+            self.shift = 0
+            self.pdir = f"./MXenes/{self.pristine}/{self.stacking}/"     
 
         if self.terminal:
-            dirsM2XT2 = ["opt","opt/PBE","opt/PBE0","opt/PBE/isif3","opt/PBE/isif4","opt/PBE/isif27",
-                    "opt/PBE0/isif3","opt/PBE0/isif4","opt/PBE0/isif27",
-                    "DOS", "DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2"]
+            dirsM2XT2 = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
+                        "WF", "bader"]
             self.dirs = [self.pdir + i +"/" for i in dirsM2XT2]
         else:
-            dirsM2X = ["opt","opt/isif3","opt/isif4","opt/isif27","DOS", "BS1","BS1/BS2"]
+            dirsM2X = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS"]
             self.dirs = [self.pdir + i +"/" for i in dirsM2X]
 
 
@@ -194,6 +206,7 @@ class MX():
 
         #Escribe todo en el POSCAR, con el formato de always
         for dir in self.dirs:
+            if not dir.endswith("opt/"): continue
             with open(dir + "POSCAR", 'w') as outfile:
                 outfile.write(
                     f"{self.mxName} (n={n})\n"
@@ -260,16 +273,17 @@ class MX():
         
         for dir in self.dirs: #que parametros pone en el incar segun el cálculo
             params,values = [],[]
-            if "isif3" in dir:
-                params.append("ISIF"); values.append("3")
-            if "isif4" in dir:
+            if "opt" in dir:
                 params.append("ISIF"); values.append("4")
-            if "isif27" in dir:
+            if "isif7" in dir and not "isif2" in dir:
+                params.append("ISIF"); values.append("7")
+            if "isif2" in dir:
                 params.append("ISIF"); values.append("2")
-            if "DOS" in dir or "BS" in dir:
+            
+            if "DOS" in dir or "BS" in dir or "WF" in dir:
                 params.append("IBRION"); values.append("-1")
                 params.append("NSW"); values.append("0")
-            if "DOS" in dir: 
+            if "DOS" in dir or "WF" in dir: 
                 params.append("ISMEAR"); values.append("-5")
                 params.append("LORBIT"); values.append("11")
                 params.append("EMIN"); values.append("-10")
@@ -279,9 +293,18 @@ class MX():
             if "BS2" in dir: 
                 params.append("ICHARG"); values.append("11")
                 params.append("LORBIT"); values.append("11")
-            if "PBE0" in dir: 
+            if "PBE0" in dir or "WF" in dir: 
                 params.append("IALGO"); values.append("58")
                 params.append("LHFCALC"); values.append(".TRUE.")
+            if "WF" in dir:
+                params.append("LVTOT"); values.append(".TRUE.")
+                params.append("LDIPOL"); values.append(".TRUE.")
+                params.append("IDIPOL"); values.append("3")
+                params.append("NGXF"); values.append("100")
+                params.append("NGYF"); values.append("100")
+                params.append("NGZF"); values.append("700")
+                
+
 
 
             with open(dir + "INCAR",'w') as outfile:
@@ -310,18 +333,19 @@ class MX():
 ### ----------------------------------------- INICIO PROGRAMA ---------------------------------------------------- ###
 ###--------------------------------------------------------------------------------------------------------------- ###
 
-#Lista con maxenos a estudiar. Deben incluir subindice TODOS los átomos! (Ti2C2O2H2 == Ti2C2(OH)2)
-# mx = ["Ti2C1O2","Sc2C1O2","Y2C1O2","Zr2C1O2","Hf2C1O2","V2C1O2","Nb2C1O2","Ta2C1O2","Cr2C1O2","Mo2C1O2","W2C1O2",
-#    "Ti2N1O2","Sc2N1O2","Y2N1O2","Zr2N1O2","Hf2N1O2","V2N1O2","Nb2N1O2","Ta2N1O2","Cr2N1O2","Mo2N1O2","W2N1O2"]
+# INPUTS
+n = 2                               # MXene n number (thickness)
+T = "O2"                            # Termination
+stacking, hollows = "ABC", "HM"     # Structure
+M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
 
-mx = ["Ti2C1","Sc2C1","Y2C1","Zr2C1","Hf2C1","V2C1","Nb2C1","Ta2C1","Cr2C1","Mo2C1","W2C1",
-    "Ti2N1","Sc2N1","Y2N1","Zr2N1","Hf2N1","V2N1","Nb2N1","Ta2N1","Cr2N1","Mo2N1","W2N1"]
-T = "O2"
-
-mx = [i + T for i in mx]
+mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
+mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
+mx = mc + mn                                    # All studied MXenes (pristine)
+mx = [i + T for i in mx if i != ""]             # All studied MXenes (temrinated)
 lenMX = len(mx)
 
-MXenes = [MX(mx[i]) for i in range(lenMX)]
+MXenes = [MX(mx[i],stacking,hollows) for i in range(lenMX)]
 
 if __name__ == "__main__":
     #Crea carpeta de MXenes
@@ -333,16 +357,22 @@ if __name__ == "__main__":
     for mx in MXenes: #para cada compuesto MXene de la lista
 
         #Crea directorios-subdirectorios
-        try: os.mkdir(mx.pdir) #Carpeta con nombre del Mxene
+        try: os.mkdir(f"MXenes/{mx.pristine}/") #Carpeta con nombre del Mxene
         except FileExistsError: pass
-        for dir in mx.dirs:
-            try: os.mkdir(dir)
-            except FileExistsError: pass
+
+        if not mx.terminal: mkdir(f"MXenes/{mx.pristine}/{mx.stacking}/")
+        elif mx.terminal: mkdir(
+            f"MXenes/{mx.pristine}/{mx.mxName}/",
+            f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/",
+            f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/{mx.hollows}/")
+
+
+        mkdir(*mx.dirs)
 
 
         #Cambios de los parámetros de mx han de ser aqui!
 
-        #mx.POSCAR()  #Escribe archivo POSCAR
+        mx.POSCAR()  #Escribe archivo POSCAR
         mx.POTCAR()   #Coje los archivos POTCAR de la base PP y los concatena para cada compuetso    
         mx.KPOINTS()  #Escribe archivo KPOINTS
         mx.INCAR()    #Escribe archivo INCAR
