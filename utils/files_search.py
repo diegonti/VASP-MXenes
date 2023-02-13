@@ -3,6 +3,7 @@ import shutil
 # import numpy as np
 
 def pathify(*args):
+    """Transforms secuence to relative path."""
     path = "./"
     for s in args:
         path += s + "/"
@@ -10,6 +11,7 @@ def pathify(*args):
     return path
 
 def loadtxt(path,skiprows,maxiter=None):
+    """Sort of np.loadtxt"""
 
     data = []
     with open(path,"r") as inFile:
@@ -152,6 +154,5 @@ def search_M2X():
     print("Inorrect founds :",n_incorrect)
 
 search_M2XO2()
-
 
 
