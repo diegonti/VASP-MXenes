@@ -144,19 +144,22 @@ class MX():
             if j == 3: j = 0
 
         if self.terminal:                               ##########################! Set Terminations correctly
-            if hollows == "HM": a=[2,3]; b=[1,0]
-            if hollows == "HX": a=[1,1]; b=[2,2]
-            if hollows == "HMX": a=[2,1]; b=[1,2]
+            if hollows == "HM":
+                a = [M[1][0], M[-2][0]] 
+                b = [M[1][1], M[-2][1]]
+            if hollows == "HX": 
+                a = [M[1][0], M[-1][0]] 
+                b = [M[1][1], M[-1][1]]
+            if hollows == "HMX": 
+                a = [M[0][0], M[-1][0]] 
+                b = [M[0][1], M[-1][1]]
 
-            if n == 1: a=[2,3]; b=[1,0] #en HM (modelo 2)
-            if n == 2: a=[1,3]; b=[2,0] #modelo 4
-            if n >= 3: pass
 
             # Termination coordinates (T) 
             for i in range(2):
 
-                aT = format(round(a[i]/3,15),f)
-                bT = format(round(b[i]/3,15),f)
+                aT = a[i] #format(round(a[i],15),f)
+                bT = b[i] #format(round(b[i],15),f)
                 cT = format(round(i*(n*do+2*shift)/(n*do+v+2*shift),15),f)
                 posT = [aT,bT,cT]
                 T.append(posT)
@@ -330,7 +333,7 @@ class MX():
 
 # INPUTS
 n = 2                               # MXene n number (thickness)
-T = "O2"                            # Termination
+T = ""                            # Termination
 stacking, hollows = "ABC", "HM"     # Structure
 M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
 
