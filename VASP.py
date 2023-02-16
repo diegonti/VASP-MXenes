@@ -86,8 +86,9 @@ class MX():
 
         if self.terminal:
             dirs_terminated = ["opt","opt/isif7","opt/isif7/isif2","DOS","DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
-                        "WF", "bader"]
+                        "WF"]
             self.dirs = [self.pdir + i +"/" for i in dirs_terminated]
+            self.extra_dirs = ["bader"]
         else:
             dirs_pristine = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS"]
             self.dirs = [self.pdir + i +"/" for i in dirs_pristine]
@@ -290,8 +291,7 @@ class MX():
                 params.append("IDIPOL"); values.append("3")
                 params.append("NGXF"); values.append("100")
                 params.append("NGYF"); values.append("100")
-                params.append("NGZF"); values.append("700")
-                
+                params.append("NGZF"); values.append("700")                
 
             with open(dir + "INCAR",'w') as outfile:
                 with open("./car/INCAR", 'r') as infile:
@@ -316,6 +316,13 @@ class MX():
         shutil.copy(source, destination1)
         for dir in self.dirs:
             shutil.copy(source,dir)
+
+    def bader(self):
+        """Copies the bader script to the bader/ directory"""
+
+        source = "./car/bader"
+        destination = None
+        shutil.copy(source,destination)
 
 
 ### ----------------------------------------- INICIO PROGRAMA ---------------------------------------------------- ###
