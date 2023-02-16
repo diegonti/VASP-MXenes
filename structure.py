@@ -1,3 +1,10 @@
+"""
+Module for modifying CONTCARS and extracting the information in an automatic way.
+This program works for VASP CONTCAR output files.
+
+Diego Ontiveros -- 20/10/2023
+"""
+
 from VASP import MX
 import os
 
@@ -211,51 +218,63 @@ def writeCON(data,name):
                 "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
             )
 
-def posAIMS(data):
-    path = "./CONTCARout/{}".format(name)
-    lattice = data[2:5]
-    atNames,indeces = data[5],[int(data[6][i]) for i in range(len(data[6]))]
-    nAtoms = (sum([int(indeces[i]) for i in range(len(indeces))]))
-    atoms = []
-    for i in range(len(atNames)):
-        for j in range(indeces[i]):
-            atoms.append(atNames[i])
-    positions = data[9:9+nAtoms+1]
-    positions = [list(filter(lambda x: x!="T",positions[i])) for i in range(nAtoms)]
-    lattice = ["lattice_vector   " + "   ".join(lattice[i]) for i in range(3)]
-
-    positions = ["atom_frac   " + "   ".join(positions[i]) + "   " +atoms[i] for i in range(nAtoms)]
-
-    with open(path,"w") as outfile:
-        for i in lattice: outfile.write(i + "\n")
-        for i in positions: outfile.write(i + "\n")
 
 
 class CONTCAR():
-    def __init__(self,filename) -> None:
+    def __init__(self,path:str) -> None:
         """Creates a contcar object with the information of the given CONTCAR file.
         Allows to modify its geometry with different functions and get parameters.
         Optimized for MXene compounds.
 
-        `filename` : path for the CONTCAR file
+        `path` : path for the CONTCAR file
         """
 
-        self.filename = filename
+        self.path = path
+        self.filename = path.split("/")[-1]
 
-        self.data,self.atoms,self.index,self.name = self.get_data(self.filename)
+        self.data,self.atoms,self.index,self.name = self.get_data(self.path)
+        self.nAtoms = sum(self.index)
         self.mx = MX(self.name)
-        pass
 
-    def get_data(self,filename):
+    def get_data(self,path):
 
-        with open(filename,"r") as inFile:
+        with open(path,"r") as inFile:
             data = inFile.readlines()
             data = [line.strip().split() for line in data]
 
         atoms,index = data[5],data[6]
         name = "".join([a+i for a,i in zip(atoms,index)])
+        index = [int(i) for i in index]
 
         return data, atoms,index,name
+    
+    def toAIMS(self):
+
+        data = self.data
+        path = out_path + f"geometry.in.{self.filename}"
+        nAtoms = self.nAtoms
+        lattice = data[2:5]
+        positions = data[9:9+nAtoms+1]
+        atoms, indeces = self.atoms, self.index
+        atNames = []
+        for i,atom in enumerate(atoms):
+            for _ in range(indeces[i]):
+                atNames.append(atom)
+        positions = [list(filter(lambda x: x!="T",positions[i])) for i in range(nAtoms)]
+        lattice = ["lattice_vector   " + "   ".join(lattice[i]) for i in range(3)]
+
+        positions = ["atom_frac   " + "   ".join(positions[i]) + "   " + atNames[i] for i in range(nAtoms)]
+
+        with open(path,"w") as outfile:
+            for line in lattice: outfile.write(line + "\n")
+            for line in positions: outfile.write(line + "\n")
+
+    def write(self):
+        data = self.data
+        # print but change stdin?
+        # fstrings with format in write
+
+
 
 
 
@@ -264,22 +283,16 @@ class CONTCAR():
 
 contcars = os.listdir("CONTCARin")
 paths = [f"./CONTCARin/{c}" for c in contcars]
+out_path = "./CONTCARout/"
 
 try: os.mkdir("CONTCARout")
 except FileExistsError: pass
 
-for n,contcar in enumerate(paths):
+for n,cont in enumerate(paths):
     name = contcars[n]
 
-    with open(contcar,"r") as infile:
-        contIN = infile.readlines()
-        contIN = [line.strip() for line in contIN]
-        contIN = [line.split() for line in contIN]
-
-    mxAtoms,mxIndex = contIN[5],contIN[6]
-    mxName = ""
-    for i in range(len(mxAtoms)): mxName += mxAtoms[i] + mxIndex[i]
-    mx = MX(mxName)
+    contcar = CONTCAR(cont)
+    mx = contcar.mx ##!
 
     ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
     # data = addVacuum(contIN,v=10)
@@ -294,10 +307,10 @@ for n,contcar in enumerate(paths):
     # writeCON(data,name)
 
     ##Transforms POSCAR to geometry.in for 
-    #posAIMS(contIN)
+    # contcar.toAIMS()
 
     ##Prints cell parameters for input CONTCARs
-    print(contcar)
-    print(f"{mx.mxName}: {getGeom(contIN)[2:]}")
+    print(cont)
+    print(f"{contcar.mx.mxName}: {getGeom(contcar.data)}")
 
 #for line in data: print(line)
