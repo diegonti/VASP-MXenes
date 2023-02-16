@@ -231,6 +231,35 @@ def posAIMS(data):
         for i in positions: outfile.write(i + "\n")
 
 
+class CONTCAR():
+    def __init__(self,filename) -> None:
+        """Creates a contcar object with the information of the given CONTCAR file.
+        Allows to modify its geometry with different functions and get parameters.
+        Optimized for MXene compounds.
+
+        `filename` : path for the CONTCAR file
+        """
+
+        self.filename = filename
+
+        self.data,self.atoms,self.index,self.name = self.get_data(self.filename)
+        self.mx = MX(self.name)
+        pass
+
+    def get_data(self,filename):
+
+        with open(filename,"r") as inFile:
+            data = inFile.readlines()
+            data = [line.strip().split() for line in data]
+
+        atoms,index = data[5],data[6]
+        name = "".join([a+i for a,i in zip(atoms,index)])
+
+        return data, atoms,index,name
+
+
+
+
 ### Main Program - Chose which modifications are applied to the input CONTCAR/POSCAR
 
 contcars = os.listdir("CONTCARin")
@@ -239,12 +268,10 @@ paths = [f"./CONTCARin/{c}" for c in contcars]
 try: os.mkdir("CONTCARout")
 except FileExistsError: pass
 
-n = 0
-for contcar in paths:
+for n,contcar in enumerate(paths):
     name = contcars[n]
-    file = contcar
 
-    with open(file,"r") as infile:
+    with open(contcar,"r") as infile:
         contIN = infile.readlines()
         contIN = [line.strip() for line in contIN]
         contIN = [line.split() for line in contIN]
@@ -272,7 +299,5 @@ for contcar in paths:
     ##Prints cell parameters for input CONTCARs
     print(contcar)
     print(f"{mx.mxName}: {getGeom(contIN)[2:]}")
-
-    n += 1 
 
 #for line in data: print(line)
