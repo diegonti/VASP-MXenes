@@ -105,7 +105,7 @@ class MX():
         stacking = self.stacking
         hollows = self.hollows
         
-        f = ".15f" # Number of decimals
+        f = ".16f" # Number of decimals
         
         # Values that each atom x (a) and y (b) coordinates take
         if stacking == "ABC":
@@ -127,40 +127,49 @@ class MX():
             if stacking == "ABA": j = 0
 
             # Metal coordinates (M) 
-            aM = format(round(a[j-1]/3,15),f)
-            bM = format(round(b[j-1]/3,15),f)
-            cM = format(round((do*(i+1) + shift)/(n*do + v + 2*shift), 15),f)
+            aM = format(round(a[j-1]/3,16),f)
+            bM = format(round(b[j-1]/3,16),f)
+            cM = format(round((do*(i+1) + shift)/(n*do + v + 2*shift), 16),f)
             posM = [aM,bM,cM]
             M.append(posM)
 
             # C or N coordinates (X)
-            aX = format(round(a[j]/3,15),f)
-            bX = format(round(b[j]/3,15),f)
-            cX = format(round((do/2*(2*(i+1)-1) + shift)/(n*do + v + 2*shift), 15),f)
+            aX = format(round(a[j]/3,16),f)
+            bX = format(round(b[j]/3,16),f)
+            cX = format(round((do/2*(2*(i+1)-1) + shift)/(n*do + v + 2*shift), 16),f)
             posX = [aX,bX,cX]
             X.append(posX)         
 
             j += 1
             if j == 3: j = 0
 
-        if self.terminal:                               ##########################! Set Terminations correctly
+        if self.terminal:
+            aH = format(round(2/3,16),f)
+            bH = format(round(1/3,16),f)
+
             if hollows == "HM":
                 a = [M[1][0], M[-2][0]] 
                 b = [M[1][1], M[-2][1]]
+            if hollows == "H":
+                a = [aH, aH] 
+                b = [bH, bH]
             if hollows == "HX": 
-                a = [M[1][0], M[-1][0]] 
-                b = [M[1][1], M[-1][1]]
-            if hollows == "HMX": 
-                a = [M[0][0], M[-1][0]] 
-                b = [M[0][1], M[-1][1]]
+                a = [X[0][0], X[-1][0]] 
+                b = [X[0][1], X[-1][1]]
+            if hollows == "HMX" and stacking == "ABC": 
+                a = [X[0][0], M[-2][0]] 
+                b = [X[0][1], M[-2][1]]
+            if hollows == "HMX" and stacking == "ABA": 
+                a = [X[0][0], aH]
+                b = [X[0][1], bH]
 
 
             # Termination coordinates (T) 
             for i in range(2):
 
-                aT = a[i] #format(round(a[i],15),f)
-                bT = b[i] #format(round(b[i],15),f)
-                cT = format(round(i*(n*do+2*shift)/(n*do+v+2*shift),15),f)
+                aT = a[i] #format(round(a[i],16),f)
+                bT = b[i] #format(round(b[i],16),f)
+                cT = format(round(i*(n*do+2*shift)/(n*do+v+2*shift),16),f)
                 posT = [aT,bT,cT]
                 T.append(posT)
             
@@ -333,8 +342,8 @@ class MX():
 
 # INPUTS
 n = 2                               # MXene n number (thickness)
-T = ""                            # Termination
-stacking, hollows = "ABC", "HM"     # Structure
+T = "O2"                            # Termination
+stacking, hollows = "ABA", "H"     # Structure
 M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
 
 mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
@@ -350,7 +359,7 @@ if __name__ == "__main__":
 
     # Creates /MXene folder
     cwd = os.getcwd()
-    try: os.mkdir("MXenes") 
+    try: os.mkdir("MXenes") ###! Change to variable
     except FileExistsError: pass
 
     # Generates input files for each MXene in list
