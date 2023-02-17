@@ -8,218 +8,6 @@ Diego Ontiveros -- 20/10/2023
 from VASP import MX
 import os
 
-
-def toZero(data):
-    
-    """Shifts positions of atoms to start at zero."""
-    
-    len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
-
-    posz = []
-    for i in range(len):
-        posz.append(float(data[9+i][2])) #lista con posiciones de z
-
-    if len == 3: #para M2X
-        zoindex,zo = 0,posz[0]
-    if len == 5:  #para M2XT2
-        zoindex,zo = 3,posz[3]
-
-    if zo == max(posz) or zo>0.5: #si la posición minima esta por encima de todas
-        for i in range(len):
-            if i == zoindex: pass
-            else: 
-                posz[i] = posz[i]+(1-zo)
-                if posz[i]>1: posz[i] = posz[i] -1
-
-    if zo == min(posz) or zo<0.5: #si la posición minima esta por debajo de todas
-        for i in range(len):
-            if i == zoindex: pass
-            else: posz[i] = posz[i]-zo
-
-    if len == 3: posz[0] = zo-zo
-    if len == 5: posz[3] = zo-zo
-    
-    posz = [str(format(posz[i],".16f")) for i in range(len)]
-
-    for i in range(len):
-        data[9+i][2] = posz[i]
-
-    
-    return data
-
-def addVacuum(data,v = 10):
-    """Rescales the z positions to add the indicated vacuum."""
-    data = toZero(data)
-    len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
-
-    co = float(data[4][2])
-    posz = []
-    for i in range(len):
-        posz.append(float(data[9+i][2])) #lista con posiciones de z
-
-    do = abs(max(posz)-min(posz))*co #distancia capa
-    cf = do + v #nueva altura
-    
-    posz = [posz[i]*co/cf for i in range(len)] #reescalado
-
-    cf = str(format(cf,".16f"))
-    posz = [str(format(posz[i],".16f")) for i in range(len)]
-
-    data[4][2] = cf
-    for i in range(len):
-        data[9+i][2] = posz[i]
-
-    return data
-
-def shift(data,shift = 1):
-    """Shifts MXene a given distance"""
-
-
-    len = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
-    co = float(data[4][2])
-
-    posz=[]
-    for i in range(len):
-        posz.append(float(data[9+i][2])) #lista con posiciones de z
-
-    posz = [posz[i]+shift/co for i in range(len)]
-    posz = [str(format(posz[i],".16f")) for i in range(len)]
-
-    for i in range(len):
-        data[9+i][2] = posz[i]
-
-    return data
-
-def addT(data,T="O",stack = None, hollows="HM"):
-    """Adds single-atom termination (T) to the pristine MXene in the indicated hole position (hollows=HM/H,HMX,HX).\n
-    Stacking can be indicated as stack=ABC/ABA, if not the program will guess it."""
-
-    data = addVacuum(data, v=10) #pone a zero, añade vacio de 10 y reescala
-    data = shift(data, shift=1) #levanta la capa 1A
-
-    data[5].append(T)
-    data[6].append("2")
-
-    co = float(data[4][2])
-    z1,z2,z3 = float(data[9][2]),float(data[10][2]),float(data[11][2])
-    do = abs(z2-z1)*co
-
-    if stack is not None: stacking = stack
-    else:
-        M1,M2 = data[9][0:2],data[10][0:2]
-        if M1 == M2: stacking = "ABA"
-        elif M1 != M2: stacking = "ABC"
-
-    if stacking == "ABC": a,b = [2,0,2,1,1,1],[1,3,1,2,2,2]
-    elif stacking == "ABA": a,b = [2,2,2,1,1,1],[1,1,1,2,2,2]
-
-    if hollows == "HM" or hollows == "H": #Coloca T en Huecos Metálicos (HM) o en Huecos (H) (model 2)
-        t1 = [str(format(a[0]/3,".16f")),str(format(b[0]/3,".16f")), str(format(0,".16f"))]
-        t2 = [str(format(a[1]/3,".16f")),str(format(b[1]/3,".16f")), str(format((do+2)/co,".16f"))]
-    elif hollows == "HMX": #Coloca T en Huecos Metálicos o Huecos y Huecos de X (model 3)
-        t1 = [str(format(a[2]/3,".16f")),str(format(b[2]/3,".16f")), str(format(0,".16f"))]
-        t2 = [str(format(a[3]/3,".16f")),str(format(b[3]/3,".16f")), str(format((do+2)/co,".16f"))]
-    elif hollows == "HX": #Coloca T en Huecos de X (model 4)
-        t1 = [str(format(a[4]/3,".16f")),str(format(b[4]/3,".16f")), str(format(0,".16f"))]
-        t2 = [str(format(a[5]/3,".16f")),str(format(b[5]/3,".16f")), str(format((do+2)/co,".16f"))]
-
-
-    data.insert(12,t1)
-    data.insert(13,t2)
-
-    data = addVacuum(data, v=10) #añade vacio de 10A y reescala
-    
-    return data
-
-
-def getGeom(data):
-    """Returns MXene lattice parameter a and width d in Armstrongs. \n
-    For terminated n=1 MXenes, returns also d(M-T) for each surface."""
-    data = toZero(data)
-    nAtoms = sum([int(i) for i in data[6]]) #Capas MXene a partir de indices átomos.
-
-    posz = []
-    for i in range(nAtoms):
-        posz.append(float(data[9+i][2])) #lista con posiciones de z
-
-    a = float(data[2][0])
-    bx,by = float(data[3][0]),float(data[3][1])
-    b = float((bx**2+by**2)**0.5)
-    c = float(data[4][2])
-    d = max(posz)*c
-
-    if len(posz) == 5:
-        dMO1 = (posz[4]-posz[1])*c #Top surface (HMX)
-        dMO2 = (posz[0]-posz[3])*c #Bottom surface (HM)
-        return a, d, dMO1, dMO2
-    else: return a,d
-
-def writeCON(data,name):
-    """Rewrites the CONTCAR file."""
-
-    path = "./CONTCARout/{}".format(name)
-
-    if len(data[5]) >= 3: #Si es un M2XT2
-        lp = data[1][0]
-        a,b,c = data[2],data[3],data[4]
-        strAtoms = "".join([a + " " for a in data[5]])
-        strIndex = "".join([str(i) + " " for i in data[6]])
-        pos1,pos2,pos3,pos4,pos5 = data[9],data[10],data[11],data[12],data[13]
-
-        with open(path,"w") as outfile:
-            outfile.write(
-                f"{mx.mxName}\n"
-                f"   {lp}\n"
-                f"     {a[0]}    {a[1]}    {a[2]}\n"
-                f"    {b[0]}    {b[1]}    {b[2]}\n"
-                f"     {c[0]}    {c[1]}   {c[2]}\n"
-                f"  {strAtoms}\n"
-                f"  {strIndex}\n"
-                "Selective Dynamics\n"
-                "Direct\n"
-                f"  {pos1[0]}  {pos1[1]}  {pos1[2]}   T   T   T\n"
-                f"  {pos2[0]}  {pos2[1]}  {pos2[2]}   T   T   T\n"
-                f"  {pos3[0]}  {pos3[1]}  {pos3[2]}   T   T   T\n"
-                f"  {pos4[0]}  {pos4[1]}  {pos4[2]}   T   T   T\n"
-                f"  {pos5[0]}  {pos5[1]}  {pos5[2]}   T   T   T\n"
-                "\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-            )
-   
-    else: #Si es un M2X
-
-        lp = data[1][0]
-        a,b,c = data[2],data[3],data[4]
-        strAtoms = "".join([a + " " for a in data[5]])
-        strIndex = "".join([str(i) + " " for i in data[6]])
-        pos1,pos2,pos3 = data[9],data[10],data[11]
-
-        with open(path,"w") as outfile:
-            outfile.write(
-                f"{mx.mxName}\n"
-                f"   {lp}\n"
-                f"     {a[0]}    {a[1]}    {a[2]}\n"
-                f"    {b[0]}    {b[1]}    {b[2]}\n"
-                f"     {c[0]}    {c[1]}   {c[2]}\n"
-                f"  {strAtoms}\n"
-                f"  {strIndex}\n"
-                "Selective Dynamics\n"
-                "Direct\n"
-                f"  {pos1[0]}  {pos1[1]}  {pos1[2]}   T   T   T\n"
-                f"  {pos2[0]}  {pos2[1]}  {pos2[2]}   T   T   T\n"
-                f"  {pos3[0]}  {pos3[1]}  {pos3[2]}   T   T   T\n"
-                "\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-                "  0.00000000E+00  0.00000000E+00  0.00000000E+00\n"
-            )
-
-
-
 class CONTCAR():
     def __init__(self,path:str) -> None:
         """Creates a contcar object with the information of the given CONTCAR file.
@@ -232,11 +20,13 @@ class CONTCAR():
         self.path = path
         self.filename = path.split("/")[-1]
 
-        self.data,self.atoms,self.index,self.name = self.get_data(self.path)
+        self.data,self.atoms,self.index,self.name = self.getData(self.path)
         self.nAtoms = sum(self.index)
         self.mx = MX(self.name)
 
-    def get_data(self,path):
+        
+
+    def getData(self,path):
 
         with open(path,"r") as inFile:
             data = inFile.readlines()
@@ -270,18 +60,177 @@ class CONTCAR():
             for line in positions: outfile.write(line + "\n")
 
     def write(self):
+        """Rewrites the modified CONTCAR file."""
+
         data = self.data
+        path = f"./CONTCARout/{self.filename}"
         # print but change stdin?
         # fstrings with format in write
 
+        # gets lattice and positions part of the CONTCAR #!(ponerlo en funcion aparte?)
+        lattice = data[:5]
+        positions = data[5:]
+        
+        with open(path,"w") as outFile:
+            # for line in data:
+            #     str_line = "  ".join([l for l in line]) + "\n"
+            #     outFile.write(str_line)
+            #     pass
+
+            for line in lattice:
+                str_line = "  ".join([l for l in line]) + "\n"
+                outFile.write(str_line)
+                pass
+            for line in positions:
+                str_line = "  ".join([l for l in line]) + "\n"
+                outFile.write(str_line)
+                pass
+
+    def getGeom(self):
+        """Returns MXene lattice parameter a and width d in Armstrongs. \n
+        For terminated n=1 MXenes, returns also d(M-T) for each surface."""
+        data = self.toZero()
+        nAtoms = self.nAtoms
+        lattice = data[:5]
+        positions = data[5:]
+
+        posz = []   # List with the z fractional positions
+        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+
+        # Getting the length of each lattice parameters
+        lattice_params = []
+        for i in range(3):
+            l = sum([float(li)**2 for li in data[2+i]])**0.5
+            lattice_params.append(l)
+        a,b,c = lattice_params
+
+        d = max(posz)*c     # Width of the slab
+
+        # if len(posz) == 5:
+        #     # GENERALIZAR PARA N>2 --> self.posM ?
+        #     dMO1 = (posz[4]-posz[1])*c  # Top surface (HMX)
+        #     dMO2 = (posz[0]-posz[3])*c  # Bottom surface (HM)
+        #     return a, d, dMO1, dMO2
+        # else: return a,d
+
+        return a,d
+
+    def toZero(self):
+        """Shifts positions of atoms to start at zero."""
+        data = self.data
+        lattice = data[:5]
+        positions = data[5:]
+        
+        nAtoms = self.nAtoms
+
+        posz = []   # List with the z fractional positions
+        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+
+        for i,pos in enumerate(posz):
+            if pos > 0.75: posz[i] = pos - 1
+        zo = min(posz)
+
+        for i,pos in enumerate(posz): posz[i] -= zo
+
+        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+
+        for i in range(nAtoms): data[9+i][2] = posz[i]
+            
+        self.data = data
+
+        return data
+
+    def addVacuum(self,v=30):
+        """Rescales the z positions to add the indicated vacuum."""
+
+        data = self.toZero()
+        nAtoms = self.nAtoms
+
+        posz = []   # List with the z fractional positions
+        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+
+        co = float(data[4][2])              # initial lattice c
+        do = abs(max(posz)-min(posz))*co    # initial width
+        cf = do + v                         # new lattice c
+        
+        posz = [posz[i]*co/cf for i in range(nAtoms)] # reescale positions
+
+        cf = str(format(cf,".16f"))
+        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+
+        data[4][2] = cf
+        for i in range(nAtoms): data[9+i][2] = posz[i]
+        
+        self.data = data
+
+        return data
+    
+    def shift(self,shift=1):
+        """Shifts MXene a given distance"""
+
+        data = self.data
+        nAtoms = self.nAtoms
+        co = float(data[4][2])
+
+        posz = []   # List with the z fractional positions
+        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+
+        posz = [posz[i]+shift/co for i in range(nAtoms)]
+        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+
+        for i in range(nAtoms): data[9+i][2] = posz[i]
+
+        return data
+
+    def addT(self,T:str,stack:str,hollows:str):
+
+        """Adds single-atom termination (T) to the pristine MXene in the indicated hole position (hollows=HM/H,HMX,HX).\n
+        Stacking can be indicated as stack=ABC/ABA, if not the program will guess it."""
+
+        data = self.addVacuum(data, v=30) #pone a zero, añade vacio de 30 y reescala
+        data = self.shift(data, shift=1) #levanta la capa 1A
+
+        data[5].append(T)
+        data[6].append("2")
+
+        co = float(data[4][2])
+        z1,z2,z3 = float(data[9][2]),float(data[10][2]),float(data[11][2])
+        do = abs(z2-z1)*co
+
+        if stack is not None: stacking = stack
+        else:
+            M1,M2 = data[9][0:2],data[10][0:2]
+            if M1 == M2: stacking = "ABA"
+            elif M1 != M2: stacking = "ABC"
+
+        if stacking == "ABC": a,b = [2,0,2,1,1,1],[1,3,1,2,2,2]
+        elif stacking == "ABA": a,b = [2,2,2,1,1,1],[1,1,1,2,2,2]
+
+        if hollows == "HM" or hollows == "H": #Coloca T en Huecos Metálicos (HM) o en Huecos (H) (model 2)
+            t1 = [str(format(a[0]/3,".16f")),str(format(b[0]/3,".16f")), str(format(0,".16f"))]
+            t2 = [str(format(a[1]/3,".16f")),str(format(b[1]/3,".16f")), str(format((do+2)/co,".16f"))]
+        elif hollows == "HMX": #Coloca T en Huecos Metálicos o Huecos y Huecos de X (model 3)
+            t1 = [str(format(a[2]/3,".16f")),str(format(b[2]/3,".16f")), str(format(0,".16f"))]
+            t2 = [str(format(a[3]/3,".16f")),str(format(b[3]/3,".16f")), str(format((do+2)/co,".16f"))]
+        elif hollows == "HX": #Coloca T en Huecos de X (model 4)
+            t1 = [str(format(a[4]/3,".16f")),str(format(b[4]/3,".16f")), str(format(0,".16f"))]
+            t2 = [str(format(a[5]/3,".16f")),str(format(b[5]/3,".16f")), str(format((do+2)/co,".16f"))]
 
 
+        data.insert(12,t1)
+        data.insert(13,t2)
+
+        data = self.addVacuum(data, v=30) #añade vacio de 10A y reescala
+        
+        return data
 
 
-
-### Main Program - Chose which modifications are applied to the input CONTCAR/POSCAR
+##########################  MAIN PROGRAM  ########################
+# Chose which modifications are applied to the input CONTCAR/POSCAR
 
 contcars = os.listdir("CONTCARin")
+for i,contcar in enumerate(contcars):
+    if contcar.startswith("_"): contcars.pop(i)
 paths = [f"./CONTCARin/{c}" for c in contcars]
 out_path = "./CONTCARout/"
 
@@ -295,22 +244,25 @@ for n,cont in enumerate(paths):
     mx = contcar.mx ##!
 
     ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
-    # data = addVacuum(contIN,v=10)
-    # writeCON(data,name)
+    # contcar.addVacuum(v=30)
+    # contcar.write()
 
     ## Adds Termination to optimized M2X CONTCAR.
     # data = addT(contIN, hollows="HMX")
     # writeCON(data,name)
 
+    # Shifts the slab a certain amount
+    # contcar.shift(3)
+    # contcar.write()
+
     ## Shifts to zero/origin all the atoms 
-    # data = toZero(contIN)
-    # writeCON(data,name)
+    # contcar.toZero()
+    # contcar.write()
 
     ##Transforms POSCAR to geometry.in for 
     # contcar.toAIMS()
 
     ##Prints cell parameters for input CONTCARs
     print(cont)
-    print(f"{contcar.mx.mxName}: {getGeom(contcar.data)}")
+    print(f"{contcar.mx.mxName}: {contcar.getGeom()}")
 
-#for line in data: print(line)
