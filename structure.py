@@ -6,7 +6,13 @@ Diego Ontiveros -- 20/10/2023
 """
 
 from VASP import MX
+import warnings
 import os
+
+def test_data(data):
+    print()
+    for line in data:
+        print(line)
 
 class CONTCAR():
     def __init__(self,path:str) -> None:
@@ -27,6 +33,7 @@ class CONTCAR():
         
 
     def getData(self,path):
+        """Reads the data from a CONTCAR file and sets the initial attributes."""
 
         with open(path,"r") as inFile:
             data = inFile.readlines()
@@ -36,9 +43,23 @@ class CONTCAR():
         name = "".join([a+i for a,i in zip(atoms,index)])
         index = [int(i) for i in index]
 
+        self.data,self.atoms,self.index,self.name = data, atoms,index,name
+
         return data, atoms,index,name
     
+    def updateData(self,data=None):
+        """Updates the class atributes when the data is changed."""
+        if data == None: data = self.data
+        
+        atoms,index = data[5],data[6]
+        name = "".join([a+i for a,i in zip(atoms,index)])
+        index = [int(i) for i in index]
+
+        self.data,self.atoms,self.index,self.name = data, atoms,index,name
+        self.nAtoms = sum(self.index)
+
     def toAIMS(self):
+        """Transforms a CONTCAR from VASP to a geometry.in readable for FHI-AIMS."""
 
         data = self.data
         path = out_path + f"geometry.in.{self.filename}"
@@ -64,8 +85,6 @@ class CONTCAR():
 
         data = self.data
         path = f"./CONTCARout/{self.filename}"
-        # print but change stdin?
-        # fstrings with format in write
 
         # gets lattice and positions part of the CONTCAR #!(ponerlo en funcion aparte?)
         lattice = data[:5]
@@ -75,7 +94,6 @@ class CONTCAR():
             # for line in data:
             #     str_line = "  ".join([l for l in line]) + "\n"
             #     outFile.write(str_line)
-            #     pass
 
             for line in lattice:
                 str_line = "  ".join([l for l in line]) + "\n"
@@ -89,6 +107,7 @@ class CONTCAR():
     def getGeom(self):
         """Returns MXene lattice parameter a and width d in Armstrongs. \n
         For terminated n=1 MXenes, returns also d(M-T) for each surface."""
+        
         data = self.toZero()
         nAtoms = self.nAtoms
         lattice = data[:5]
@@ -117,6 +136,7 @@ class CONTCAR():
 
     def toZero(self):
         """Shifts positions of atoms to start at zero."""
+        
         data = self.data
         lattice = data[:5]
         positions = data[5:]
@@ -142,7 +162,6 @@ class CONTCAR():
 
     def addVacuum(self,v=30):
         """Rescales the z positions to add the indicated vacuum."""
-
         data = self.toZero()
         nAtoms = self.nAtoms
 
@@ -180,47 +199,77 @@ class CONTCAR():
 
         for i in range(nAtoms): data[9+i][2] = posz[i]
 
+        self.data = data
         return data
 
-    def addT(self,T:str,stack:str,hollows:str):
-
+    def addT(self,T:str,stack:str=None,hollows:str=None):
         """Adds single-atom termination (T) to the pristine MXene in the indicated hole position (hollows=HM/H,HMX,HX).\n
         Stacking can be indicated as stack=ABC/ABA, if not the program will guess it."""
 
-        data = self.addVacuum(data, v=30) #pone a zero, añade vacio de 30 y reescala
-        data = self.shift(data, shift=1) #levanta la capa 1A
+        init = 8
+        f = ".16f"
+        n = self.mx.n
+        data = self.addVacuum(v=30)   # shifts to zero and reescales to get vacuum == 30
+        data = self.shift(shift=1)    # shifts the layer by 1 Ang
 
         data[5].append(T)
         data[6].append("2")
 
+        M = data[9:9+n+1]
+        X = data[9+n+1:9+2*n+1]
+
+        nAtoms = self.nAtoms
         co = float(data[4][2])
-        z1,z2,z3 = float(data[9][2]),float(data[10][2]),float(data[11][2])
-        do = abs(z2-z1)*co
+
+        posz = []   # List with the z fractional positions
+        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+
+        zmax,zmin = max(posz), min(posz)
+        do = abs(zmin-zmax)*co
 
         if stack is not None: stacking = stack
-        else:
+        else:   #!better stacking detection?
             M1,M2 = data[9][0:2],data[10][0:2]
             if M1 == M2: stacking = "ABA"
             elif M1 != M2: stacking = "ABC"
 
-        if stacking == "ABC": a,b = [2,0,2,1,1,1],[1,3,1,2,2,2]
-        elif stacking == "ABA": a,b = [2,2,2,1,1,1],[1,1,1,2,2,2]
+        aH = format(round(2/3,16),f)
+        bH = format(round(1/3,16),f)
+        if hollows == "HM" and stacking == "ABA":
+            warnings.warn("Warning: Using HM for ABA stacking, changing to H ...")
+            hollows = "H" 
+        if hollows == "HM":
+            a = [M[1][0], M[-2][0]] 
+            b = [M[1][1], M[-2][1]]
+        if hollows == "H":
+            a = [aH, aH] 
+            b = [bH, bH]
+        if hollows == "HX": 
+            a = [X[0][0], X[-1][0]] 
+            b = [X[0][1], X[-1][1]]
+        if hollows == "HMX" and stacking == "ABC": 
+            a = [X[0][0], M[-2][0]] 
+            b = [X[0][1], M[-2][1]]
+        if hollows == "HMX" and stacking == "ABA": 
+            a = [X[0][0], aH]
+            b = [X[0][1], bH]
 
-        if hollows == "HM" or hollows == "H": #Coloca T en Huecos Metálicos (HM) o en Huecos (H) (model 2)
-            t1 = [str(format(a[0]/3,".16f")),str(format(b[0]/3,".16f")), str(format(0,".16f"))]
-            t2 = [str(format(a[1]/3,".16f")),str(format(b[1]/3,".16f")), str(format((do+2)/co,".16f"))]
-        elif hollows == "HMX": #Coloca T en Huecos Metálicos o Huecos y Huecos de X (model 3)
-            t1 = [str(format(a[2]/3,".16f")),str(format(b[2]/3,".16f")), str(format(0,".16f"))]
-            t2 = [str(format(a[3]/3,".16f")),str(format(b[3]/3,".16f")), str(format((do+2)/co,".16f"))]
-        elif hollows == "HX": #Coloca T en Huecos de X (model 4)
-            t1 = [str(format(a[4]/3,".16f")),str(format(b[4]/3,".16f")), str(format(0,".16f"))]
-            t2 = [str(format(a[5]/3,".16f")),str(format(b[5]/3,".16f")), str(format((do+2)/co,".16f"))]
+        posT = []
+        for i in range(2):
+            aT = a[i] #format(round(a[i],16),f)
+            bT = b[i] #format(round(b[i],16),f)
+            cT = str(format(i*(do+2)/co,".16f"))
+            posTi = [aT,bT,cT,"T","T","T"]
+            posT.append(posTi)
+        t1,t2 = posT
 
 
-        data.insert(12,t1)
-        data.insert(13,t2)
+        data.insert(9+2*n+1,t1)
+        data.insert(9+2*n+2,t2)
+        self.updateData(data)
+        self.data = data
 
-        data = self.addVacuum(data, v=30) #añade vacio de 10A y reescala
+        data = self.addVacuum(v=30) #añade vacio de 10A y reescala
         
         return data
 
@@ -229,16 +278,15 @@ class CONTCAR():
 # Chose which modifications are applied to the input CONTCAR/POSCAR
 
 contcars = os.listdir("CONTCARin")
-for i,contcar in enumerate(contcars):
-    if contcar.startswith("_"): contcars.pop(i)
 paths = [f"./CONTCARin/{c}" for c in contcars]
 out_path = "./CONTCARout/"
 
 try: os.mkdir("CONTCARout")
 except FileExistsError: pass
 
-for n,cont in enumerate(paths):
-    name = contcars[n]
+for i,cont in enumerate(paths):
+    name = contcars[i]
+    if name.startswith("_"): continue
 
     contcar = CONTCAR(cont)
     mx = contcar.mx ##!
@@ -248,10 +296,10 @@ for n,cont in enumerate(paths):
     # contcar.write()
 
     ## Adds Termination to optimized M2X CONTCAR.
-    # data = addT(contIN, hollows="HMX")
-    # writeCON(data,name)
+    # contcar.addT("O",hollows="HMX")
+    # contcar.write()
 
-    # Shifts the slab a certain amount
+    ## Shifts the slab a certain amount
     # contcar.shift(3)
     # contcar.write()
 
