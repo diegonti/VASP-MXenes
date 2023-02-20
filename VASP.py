@@ -278,6 +278,7 @@ class MX():
                 params.append("ISIF"); values.append("4")
             if "isif7" in dir and not "isif2" in dir:
                 params.append("ISIF"); values.append("7")
+                params.append("NSW"); values.append("19")
             if "isif2" in dir:
                 params.append("ISIF"); values.append("2")
             
