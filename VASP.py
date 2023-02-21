@@ -274,7 +274,7 @@ class MX():
         
         for dir in self.dirs: #que parametros pone en el incar segun el cálculo
             params,values = [],[]
-            if "opt" in dir:
+            if "opt" in dir and dir.endswith("opt/"):
                 params.append("ISIF"); values.append("4")
             if "isif7" in dir and not "isif2" in dir:
                 params.append("ISIF"); values.append("7")
@@ -344,7 +344,7 @@ class MX():
 # INPUTS
 n = 2                               # MXene n number (thickness)
 T = "O2"                            # Termination
-stacking, hollows = "ABA", "H"     # Structure
+stacking, hollows = "ABC", "HM"     # Structure
 M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
 
 mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
