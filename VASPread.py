@@ -1,5 +1,9 @@
-import os
+"""
+General VASP parser. Quickly gets information from an OUTCAR file.
+Implemented now for OUTCAR files. (CONTCAR in structure.py)
 
+Diego Ontiveros
+"""
 class OUTCAR():
     def __init__(self,path) -> None:
 
@@ -109,26 +113,43 @@ class OUTCAR():
         print("Pressures (kB):\n", pressures)
         print("Forces (eV/Ang):\n", forces)
 
+        next_optimize = ""
         if abs(last_pressure) <= 1.00: print("\u2713 Pressure optimized.")
-        else: print("\u2717 Pressure NOT optimized. Try isif7.")
+        else: 
+            print("\u2717 Pressure NOT optimized. Try isif7.")
+            next_optimize = "isif7"
 
-        if len(forces_max) > 0: print("\u2717 Forces NOT optimized. Try isif2.")
-        else: print("\u2713 Forces optimized.")
+        if len(forces_max) > 0: 
+            print("\u2717 Forces NOT optimized. Try isif2.")
+            next_optimize = "isif2"
+        else: 
+            print("\u2713 Forces optimized.")
+
+        if next_optimize == "": next_optimize = "optimized"
+            
 
 
-        return pressures, forces, last_pressure
+        return pressures, forces, last_pressure, next_optimize
+
+    def getEnergy(self):
+        
+        energies, energies_raw = self.search("energy(sigma->0)")
+
+        energies = [float(e[0][-1]) for e in energies]
+        final_energy = energies[-1]
+
+        return final_energy,energies
+        
+
+############################## MAIN PROGRAM #######################
 
 if __name__ == "__main__":
     path = "./car/OUTCAR"
 
     outcar = OUTCAR(path)
-    outcar.getOpt()
+    final_energy,energies = outcar.getEnergy()
+    pressures, forces, last_pressure, next_optimize = outcar.getOpt()
 
-    # data, data_raw = outcar.search("TOTAL-FORCE",until="total drift")
-    # data, data_raw = outcar.search("external")
-    # for line in data:
-    #     print(line)
-    #     # for l in line:
-    #     #     print(l)
+
 
 

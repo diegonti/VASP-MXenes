@@ -1,3 +1,13 @@
+"""
+VASP file manager to generate input files for different calculations.
+This is centered in MXene compounds (Mn+1XnTx). The script creates a tree of folders
+for each MXene (MX (pristine) -> MX (terminated) -> stacking -> hollows -> calculations (opt, DOS, BS, WF)).
+The script contains the general MX() class, which by only givin the MXene formula, 
+different attributes are gathered.
+
+Diego Ontiveros 
+"""
+
 import os
 import shutil
 import math as m
