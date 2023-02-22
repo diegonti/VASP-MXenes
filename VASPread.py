@@ -129,7 +129,8 @@ class OUTCAR():
 
         # Optimization results depending on each case
         next_optimize = ""
-        if abs(last_pressure) <= 1.00: print("\u2713 Pressure optimized.")
+        if abs(last_pressure) <= 1.00: 
+            if print_info: print("\u2713 Pressure optimized.")
         elif abs(last_pressure) == abs(pressures[0]) and abs(pressures[-2]) <= 1.00 and abs(pressures[-1]) >= 1.00:
             next_optimize = "isif7a"
             if print_info: print("\u2717 Redoing isif7.")
