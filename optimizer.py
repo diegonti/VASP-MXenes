@@ -14,14 +14,25 @@ Diego Ontiveros
 """
 
 import os
+import sys
 import time
 import shutil
 
 from VASPread import OUTCAR
 from structure import CONTCAR
 
+def cpvasp(next_opt):
+    """Copies the input VASP files to the next folder"""
+    shutil.copy("KPOINTS",next_opt+"/")
+    shutil.copy("POTCAR",next_opt+"/")
+    shutil.copy("script",next_opt+"/")
+    shutil.copy("CONTCAR",next_opt+"/POSCAR")
+
+
 home = os.path.expanduser("~")
-path = f"{home}/test/Cr3C2/ABC/"
+# path = f"{home}/test/Cr3C2/ABC/"
+ 
+path = sys.argv[1]
 path1 = path + "opt/"
 original_cwd = os.getcwd()
 
@@ -29,40 +40,47 @@ extension = ""
 
 while True:
 
-    path_outcar = path1 + f"{extension}OUTCAR"
-
     os.chdir(path1 + extension)
     poscar = CONTCAR("POSCAR")
+
+    # See if OUTCAR is already there
+    path_outcar = path1 + f"{extension}OUTCAR"
     if os.path.exists(path_outcar): pass
     else: os.system(f"qsub -N {poscar.name} script")
 
+    # Waits until OUTCAR is formed
     while not os.path.exists(path_outcar): time.sleep(1)
 
+    # Reads OUTCAR and gets optimization information
     outcar = OUTCAR("OUTCAR")
     pressures, forces, last_pressure, next_opt = outcar.getOpt()
 
-
+    # If its optimized, finish the program
     if next_opt == "optimized": 
 
         shutil.copy("OUTCAR",path)
         shutil.copy("CONTCAR",path)
-        E,energies = outcar.getEnergy()
 
+        # Appends geometry in file
         contcar = CONTCAR("CONTCAR")
-        geom = f"{contcar.mx.mxName}: {contcar.getGeom()}\n"
+        a,d = contcar.getGeom()
+        geom = f"{contcar.mx.mxName}: {a} {d}\n"
         with open(path+"geom","a") as outFile: outFile.write(geom)
 
+        # Appends energy in file
+        E,energies = outcar.getEnergy()
+        energy = f"{contcar.mx.mxName}: {E} eV\n"
+        with open(home+"energy","a") as outFile: outFile.write(energy)
+        
         print(f"\u2713 {path}: Process optimized")
         break
 
     try: os.mkdir(next_opt)
     except FileExistsError: pass
-    # os.system(f"{home}/scripts/cpvasp.sh {next_opt}") #change by shutil
-    shutil.copy("KPOINTS",next_opt+"/")
-    shutil.copy("POTCAR",next_opt+"/")
-    shutil.copy("script",next_opt+"/")
-    shutil.copy("CONTCAR",next_opt+"/POSCAR")
 
+    cpvasp(next_opt)
+
+    # Each possible optimization next step
     if next_opt == "isif7": 
         extension += "isif7/"
         os.system(rf"sed '/ISIF/c\ISIF = 7' INCAR | sed '/NSW/c\NSW = 19' > {next_opt}/INCAR")
