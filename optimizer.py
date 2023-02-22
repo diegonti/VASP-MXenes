@@ -21,16 +21,16 @@ from VASPread import OUTCAR
 from structure import CONTCAR
 from VASP import MX
 
-path1 = "~/test/Cr3C2/ABC/opt/"     # change this to the folder 
+path = "~/test/Cr3C2/ABC/"
+path1 = path + "opt/"     # change this to the folder 
 original_cwd = os.getcwd()
 
-path = path1
 extension = ""
 
 while True:
     # cwd ?
 
-    os.chdir(path + extension)
+    os.chdir(path1 + extension)
     poscar = CONTCAR("POSCAR")
     os.system(f"qsub -N opt{poscar.name} script")
 
@@ -48,6 +48,10 @@ while True:
         shutil.copy("OUTCAR",path1)
         shutil.copy("CONTCAR",path1)
         E, = outcar.getEnergy()
+
+        contcar = CONTCAR("CONTCAR")
+        geom = f"{contcar.mx.mxName}: {contcar.getGeom()}\n"
+        with open(path+"geom","a") as outFile: outFile.write(geom)
 
         print("Process optimized")
         break
