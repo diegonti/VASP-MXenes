@@ -277,40 +277,41 @@ class CONTCAR():
 ##########################  MAIN PROGRAM  ########################
 # Chose which modifications are applied to the input CONTCAR/POSCAR
 
-contcars = os.listdir("CONTCARin")
-paths = [f"./CONTCARin/{c}" for c in contcars]
-out_path = "./CONTCARout/"
+if __name__ == "__main__":
+    contcars = os.listdir("CONTCARin")
+    paths = [f"./CONTCARin/{c}" for c in contcars]
+    out_path = "./CONTCARout/"
 
-try: os.mkdir("CONTCARout")
-except FileExistsError: pass
+    try: os.mkdir("CONTCARout")
+    except FileExistsError: pass
 
-for i,cont in enumerate(paths):
-    name = contcars[i]
-    if name.startswith("_"): continue
+    for i,cont in enumerate(paths):
+        name = contcars[i]
+        if name.startswith("_"): continue
 
-    contcar = CONTCAR(cont)
-    mx = contcar.mx ##!
+        contcar = CONTCAR(cont)
+        mx = contcar.mx ##!
 
-    ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
-    # contcar.addVacuum(v=30)
-    # contcar.write()
+        ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
+        # contcar.addVacuum(v=30)
+        # contcar.write()
 
-    ## Adds Termination to optimized M2X CONTCAR.
-    # contcar.addT("O",hollows="HMX")
-    # contcar.write()
+        ## Adds Termination to optimized M2X CONTCAR.
+        # contcar.addT("O",hollows="HMX")
+        # contcar.write()
 
-    ## Shifts the slab a certain amount
-    # contcar.shift(3)
-    # contcar.write()
+        ## Shifts the slab a certain amount
+        # contcar.shift(3)
+        # contcar.write()
 
-    ## Shifts to zero/origin all the atoms 
-    # contcar.toZero()
-    # contcar.write()
+        ## Shifts to zero/origin all the atoms 
+        # contcar.toZero()
+        # contcar.write()
 
-    ##Transforms POSCAR to geometry.in for 
-    # contcar.toAIMS()
+        ##Transforms POSCAR to geometry.in for 
+        # contcar.toAIMS()
 
-    ##Prints cell parameters for input CONTCARs
-    print(cont)
-    print(f"{contcar.mx.mxName}: {contcar.getGeom()}")
+        ##Prints cell parameters for input CONTCARs
+        print(cont)
+        print(f"{contcar.mx.mxName}: {contcar.getGeom()}")
 
