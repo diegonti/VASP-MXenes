@@ -6,9 +6,9 @@ the external pressure < 1kB and the forces are <0.01)
 It sends a calculations, waits for the OUTCAR, reads it and decides if its optimized 
 or a next step is needed.
 
-To get the maximum profist of this script, is better to use a bash script tu run 
-this file for each MXene or compund (adding the & at the end will run ath the backgorund)
-see optimized.sh
+To get the maximum profist of this script, is better to use a bash/python script tu run 
+this file for each MXene or compound (adding the & at the end will run at the backgorund)
+see opt.py
 
 Diego Ontiveros
 """
@@ -28,6 +28,20 @@ def cpvasp(next_opt):
     shutil.copy("script",next_opt+"/")
     shutil.copy("CONTCAR",next_opt+"/POSCAR")
 
+def getStructure(path):
+    """Gets structure (stacking and hollows) from the folder path."""
+    # Stacking
+    if "ABA" in path: stack = "ABA"
+    elif "ABC" in path: stack = "ABC"
+
+    # Hollows
+    hollows = ""
+    h = ["HM","HMX","HX","H"]
+    for hollow in h: 
+        if hollow in path: hollows = hollow
+
+    return stack, hollows
+
 
 home = os.path.expanduser("~")
 # path = f"{home}/test/Cr3C2/ABC/"
@@ -37,6 +51,7 @@ path1 = path + "opt/"
 original_cwd = os.getcwd()
 
 extension = ""
+stack,hollows = getStructure(path)
 
 while True:
 
@@ -64,13 +79,13 @@ while True:
         # Appends geometry in file
         contcar = CONTCAR("CONTCAR")
         a,d = contcar.getGeom()
-        geom = f"{contcar.mx.mxName}: {a} {d}\n"
-        with open(path+"geom","a") as outFile: outFile.write(geom)
+        geom = f"{contcar.mx.mxName} {stack} {hollows} : {a} {d}\n"
+        with open(home+"/geom.out","a") as outFile: outFile.write(geom)
 
         # Appends energy in file
         E,energies = outcar.getEnergy()
-        energy = f"{contcar.mx.mxName}: {E} eV\n"
-        with open(home+"energy","a") as outFile: outFile.write(energy)
+        energy = f"{contcar.mx.mxName} {stack} {hollows} : {E} eV\n"
+        with open(home+"/energy.out","a") as outFile: outFile.write(energy)
         
         print(f"\u2713 {path}: Process optimized")
         break

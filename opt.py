@@ -1,3 +1,10 @@
+"""
+Runs over all paths to optimize (using optimizer.py) each case.
+Uses shell commands and nohup to run the processes in the background.
+
+Diego Ontiveros
+"""
+
 import os
 import sys
 
@@ -15,7 +22,7 @@ def optimizeMXT(n:int,T:str):
             for hollow in hollows[j]:
                 path = f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
                 print(path)
-                # os.system(f"nohup python3 optimizer.py {path} &")
+                os.system(f"nohup python3 optimizer.py {path} &")
 
       
 def optimizeMX(n:int):
@@ -29,13 +36,24 @@ def optimizeMX(n:int):
                 path = f"{home}/M{n+1}X{n}/{mx}/{stack}/"
                 print(path)
 
-                # os.system(f"nohup python3 optimizer.py {path} &")
+                os.system(f"nohup python3 optimizer.py {path} &")
+
+def optimizeGeneral(paths):
+    """
+    Performs optimizations for a given list of paths.
+    """
+    for path in paths:
+        os.system(f"nohup python3 optimizer.py {path} &")
 
 
-# INPUTS
-n = int(sys.argv[1])        # MXene n number (thickness)
+######################### MAIN PROGRAM #########################
 
-try: T = sys.argv[2]             # Termination
+# MXene n index input (thickness)
+try: n = int(sys.argv[1])
+except IndexError: raise IndexError("Add the index (n) and termination (T) as arguments. (for pristine don't add T or T=None, for terminated, T=O2)")
+
+# MXene termination input
+try: T = sys.argv[2]
 except IndexError: T = ""
 if T == "None": T = ""
 
@@ -57,13 +75,12 @@ hollows = [hABA,hABC]
 
 home = os.path.expanduser("~")
 
-
 if T == "": 
-    accept = input(f"Are you sure you want to optimize pristine MXenes with n = {n}? (Y/n)")
+    accept = input(f"Are you sure you want to optimize pristine MXenes with n = {n}? (Y/n): ")
     if accept == "Y": optimizeMX(n)
     else: print("Closing...")
 else: 
-    accept = input(f"Are you sure you want to optimize terminated MXenes with n = {n} and T = {T}? (Y/n)")
+    accept = input(f"Are you sure you want to optimize terminated MXenes with n = {n} and T = {T}? (Y/n): ")
     if accept == "Y": optimizeMXT(n,T)
     else: print("Closing...")
 
