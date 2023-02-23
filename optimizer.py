@@ -2,7 +2,7 @@
 Automatic optimizer for slab models in VASP.
 The script starts at the initial optimization folder and optimizes the POSCAR
 in subsequent folders until fully optimized (combines isif2 and isif7 until 
-the external pressure < 1kB and the forces are <0.01)
+the external pressure < 1kB and the forces are <0.01 eV/Ang)
 It sends a calculations, waits for the OUTCAR, reads it and decides if its optimized 
 or a next step is needed.
 
