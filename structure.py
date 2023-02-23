@@ -2,7 +2,7 @@
 Module for modifying CONTCARS and extracting the information in an automatic way.
 This program works for VASP CONTCAR output files.
 
-Diego Ontiveros -- 20/10/2023
+Diego Ontiveros
 """
 
 from VASP import MX
