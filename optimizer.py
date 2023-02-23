@@ -31,14 +31,14 @@ def cpvasp(next_opt):
 def getStructure(path):
     """Gets structure (stacking and hollows) from the folder path."""
     # Stacking
-    if "ABA" in path: stack = "ABA"
-    elif "ABC" in path: stack = "ABC"
+    if "/ABA/" in path: stack = "ABA"
+    elif "/ABC/" in path: stack = "ABC"
 
     # Hollows
     hollows = ""
-    h = ["HM","HMX","HX","H"]
+    h = ["/HM/","/HMX/","/HX/","/H/"]
     for hollow in h: 
-        if hollow in path: hollows = hollow
+        if hollow in path: hollows = hollow.split("/")[1]
 
     return stack, hollows
 
