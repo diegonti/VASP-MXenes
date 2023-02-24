@@ -29,7 +29,8 @@ def calculateMXT(n:int,T:str):
                 dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
 
                 for dir in dirs: 
-                    shutil.copy("CONTCAR",dir+"POSCAR")
+                    try: shutil.copy("CONTCAR",dir+"POSCAR")
+                    except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -53,7 +54,8 @@ def calculateMX(n:int):
                 dirs = ["DOS/","DOS/PBE0/","BS/"]
 
                 for dir in dirs: 
-                    shutil.copy("CONTCAR",dir+"POSCAR")
+                    try: shutil.copy("CONTCAR",dir+"POSCAR")
+                    except FileNotFoundError: print(f"Passing {mx}_{stack}"); break
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -66,7 +68,7 @@ def calculateGeneral(paths):
     Performs optimizations for a given list of paths.
     """
     for i,path in enumerate(paths):
-        
+
         os.chdir(path)
         print(path)
 
@@ -75,7 +77,8 @@ def calculateGeneral(paths):
         else: dirs = ["DOS/","DOS/PBE0/","BS/"]
 
         for dir in dirs: 
-            shutil.copy("CONTCAR",dir+"POSCAR")
+            try: shutil.copy("CONTCAR",dir+"POSCAR")
+            except FileNotFoundError: print(f"Passing {i}"); break
             
             os.chdir(dir)
             start = dir.split("/")[0].lower()
