@@ -117,12 +117,10 @@ while True:
 
     next_opt = repeated(folders,next_opt)
 
-
     try: os.mkdir(next_opt)
     except FileExistsError: pass
 
     folders.append(next_opt)
-
 
     cpvasp(next_opt)
 
