@@ -34,6 +34,7 @@ def calculateMXT(n:int,T:str):
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
                     os.system(f"qsub -N {start}{mxt}_{j}{k} script")
+                    os.chdir(path)
 
       
 def calculateMX(n:int):
@@ -57,6 +58,7 @@ def calculateMX(n:int):
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
                     os.system(f"qsub -N {start}{mx}_{j} script")
+                    os.chdir(path)
 
 
 def calculateGeneral(paths):
@@ -64,7 +66,6 @@ def calculateGeneral(paths):
     Performs optimizations for a given list of paths.
     """
     for i,path in enumerate(paths):
-
         
         os.chdir(path)
         print(path)
@@ -79,8 +80,9 @@ def calculateGeneral(paths):
             os.chdir(dir)
             start = dir.split("/")[0].lower()
             os.system(f"qsub -N {start}_{i} script")
+            os.chdir(path)
 
-#! ADD flags? (startswith(-))
+############################ MAIN PROGRAM #####################
 
 home = os.path.expanduser("~")
 
