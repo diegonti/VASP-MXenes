@@ -63,33 +63,67 @@ def calculateGeneral(paths):
     """
     Performs optimizations for a given list of paths.
     """
-    for path in paths:
-        os.system(f"nohup python3 optimizer.py {path} &")
+    for i,path in enumerate(paths):
 
+        
+        os.chdir(path)
+        print(path)
 
-# MXene n index input (thickness)
-try: n = int(sys.argv[1])
-except IndexError: raise IndexError("Add the index (n) and termination (T) as arguments. (for pristine don't add T or T=None, for terminated, T=O2)")
+        if any(h in path for h in ["/H/", "/HM/","/HMX/","/HX/"]): 
+            dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
+        else: dirs = ["DOS/","DOS/PBE0/","BS/"]
 
-# MXene termination input
-try: T = sys.argv[2]
-except IndexError: T = ""
-if T == "None": T = ""
+        for dir in dirs: 
+            shutil.copy("CONTCAR",dir+"POSCAR")
+            
+            os.chdir(dir)
+            start = dir.split("/")[0].lower()
+            os.system(f"qsub -N {start}_{i} script")
 
-# n = 2                               # MXene n number (thickness)
-# T = "O2"                            # Termination
-
-# MXene cases
-M = ["Cr","Hf","Mo","Nb","Sc","Ta","Ti","V","W","Y","Zr"]
-mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
-mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
-MX = mc + mn                                    # All studied MXenes (pristine)
-MXT = [i + T for i in MX if i != ""]            # All studied MXenes (temrinated)
-
-# Structure cases
-stacking = ["ABA","ABC"]
-hABA = ["H","HMX","HX"]
-hABC = ["HM","HMX","HX"]
-hollows = [hABA,hABC]
+#! ADD flags? (startswith(-))
 
 home = os.path.expanduser("~")
+
+if sys.argv[1].startswith("-p"): 
+    paths = sys.argv[2:]
+    general_calculation = True
+else:
+    general_calculation = False
+    if sys.argv[1].startswith("-m"): pos = 1
+    else: pos = 0
+
+    # MXene n index input (thickness)
+    try: n = int(sys.argv[1+pos])
+    except IndexError: raise IndexError("Add the index (n) and termination (T) as arguments. (for pristine don't add T or T=None, for terminated, T=O2)")
+
+    # MXene termination input
+    try: T = sys.argv[2+pos]
+    except IndexError: T = ""
+    if T == "None": T = ""
+
+    # n = 2                               # MXene n number (thickness)
+    # T = "O2"                            # Termination
+
+    # MXene cases
+    M = ["Cr","Hf","Mo","Nb","Sc","Ta","Ti","V","W","Y","Zr"]
+    mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
+    mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
+    MX = mc + mn                                    # All studied MXenes (pristine)
+    MXT = [i + T for i in MX if i != ""]            # All studied MXenes (temrinated)
+
+    # Structure cases
+    stacking = ["ABA","ABC"]
+    hABA = ["H","HMX","HX"]
+    hABC = ["HM","HMX","HX"]
+    hollows = [hABA,hABC]
+
+if general_calculation: calculateGeneral(paths)
+else:
+    if T == "": 
+        accept = input(f"Are you sure you want to calculate pristine MXenes with n = {n}? (Y/n): ")
+        if accept == "Y": calculateMX(n)
+        else: print("Closing...")
+    else: 
+        accept = input(f"Are you sure you want to calculate terminated MXenes with n = {n} and T = {T}? (Y/n): ")
+        if accept == "Y": calculateMXT(n,T)
+        else: print("Closing...")
