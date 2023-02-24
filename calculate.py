@@ -122,7 +122,7 @@ else:
     MXT = [i + T for i in MX if i != ""]            # All studied MXenes (temrinated)
 
     # Structure cases
-    stacking = ["ABA","ABC"]
+    stacking = ["ABC","ABA"]
     hABA = ["H","HMX","HX"]
     hABC = ["HM","HMX","HX"]
     hollows = [hABA,hABC]
