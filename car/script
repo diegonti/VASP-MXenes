@@ -2,7 +2,7 @@
 # Basic parameters: job name, parallel environment and cores, queue, used shell, 
 # current working directory,output files (.err, .out), email.
 #$ -N name
-#$ -pe smp 1
+#$ -pe smp 12
 #$ -q iqtc04.q
 #$ -S /bin/bash
 #$ -cwd 
