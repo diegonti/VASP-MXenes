@@ -79,8 +79,8 @@ while True:
     if os.path.exists(path_outcar): 
         # go to next folder
         dirs = [d for d in os.listdir() if os.path.isdir(d)]
-        extension += dirs[0]+"/"
-        continue
+        try: extension += dirs[0]+"/"; continue
+        except IndexError: pass
     else: os.system(f"qsub -N {poscar.name}{stack} script")
 
     # Waits until OUTCAR is formed
