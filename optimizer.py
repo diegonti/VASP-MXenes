@@ -42,6 +42,19 @@ def getStructure(path):
 
     return stack, hollows
 
+def repeated(folders,next_opt):
+    """Filters if next_opt is repeated."""
+
+    cases = ["isif7","isif2"]
+    try: 
+        repeat = next_opt == folders[-1] and next_opt == folders[-2]
+    except IndexError: repeat = False
+
+    cases.remove(next_opt)
+    if repeat: next_opt = cases[0]
+
+    return next_opt
+
 
 home = os.path.expanduser("~")
 # path = f"{home}/test/Cr3C2/ABC/"
@@ -49,10 +62,13 @@ home = os.path.expanduser("~")
 path = sys.argv[1]
 path1 = path + "opt/"
 original_cwd = os.getcwd()
+max_iterations = 50
 
 extension = ""
 stack,hollows = getStructure(path)
 
+folders = []
+counter = 0
 while True:
 
     os.chdir(path1 + extension)
@@ -60,8 +76,12 @@ while True:
 
     # See if OUTCAR is already there
     path_outcar = path1 + f"{extension}OUTCAR"
-    if os.path.exists(path_outcar): pass
-    else: os.system(f"qsub -N {poscar.name} script")
+    if os.path.exists(path_outcar): 
+        # go to next folder
+        dirs = [d for d in os.listdir() if os.path.isdir(d)]
+        extension += dirs[0]+"/"
+        continue
+    else: os.system(f"qsub -N {poscar.name}{stack} script")
 
     # Waits until OUTCAR is formed
     while not os.path.exists(path_outcar): time.sleep(1)
@@ -90,8 +110,19 @@ while True:
         print(f"\u2713 {path}: Process optimized")
         break
 
+    if counter >= max_iterations:
+        print(f"Max iterations ({max_iterations}) surpassed. Case: {path}")
+        break
+
+
+    next_opt = repeated(folders,next_opt)
+
+
     try: os.mkdir(next_opt)
     except FileExistsError: pass
+
+    folders.append(next_opt)
+
 
     cpvasp(next_opt)
 
@@ -106,7 +137,13 @@ while True:
 
     elif next_opt == "isif7a":
         extension += next_opt + "/"
-        os.system(rf"sed '/NSW/c\NSW = 15' INCAR > {next_opt}/INCAR")
+        os.system(rf"sed '/NSW/c\NSW = {len(pressures)-2}' INCAR > {next_opt}/INCAR")
+
+    elif next_opt == "isif4":
+        extension += next_opt + "/"
+        os.system(rf"sed '/ISIF/c\ISIF = 4' INCAR | sed '/NSW/c\NSW = 201' > {next_opt}/INCAR")
+
+    counter += 1
 
     
 

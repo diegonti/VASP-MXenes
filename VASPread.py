@@ -4,6 +4,9 @@ Implemented now for OUTCAR files. (CONTCAR in structure.py)
 
 Diego Ontiveros
 """
+
+import random
+
 class OUTCAR():
     def __init__(self,path) -> None:
         """
@@ -127,22 +130,30 @@ class OUTCAR():
         forces_max = [f for f in forces_abs if f>0.01]
         last_pressure = pressures[-1]
 
+        # Optimization criteria
+        pressure_optimized = abs(last_pressure) <= 1.00
+        forces_optimized = len(forces_max) == 0
+        repeat_isif7 = abs(last_pressure)>abs(pressures[-2])<0.2
+
         # Optimization results depending on each case
         next_optimize = ""
-        if abs(last_pressure) <= 1.00: 
+        if pressure_optimized: 
             if print_info: print("\u2713 Pressure optimized.")
-        elif abs(last_pressure) == abs(pressures[0]) and abs(pressures[-2]) <= 1.00 and abs(pressures[-1]) >= 1.00:
+        elif repeat_isif7:
             next_optimize = "isif7a"
             if print_info: print("\u2717 Redoing isif7.")
         else: 
             next_optimize = "isif7"
             if print_info: print("\u2717 Pressure NOT optimized. Try isif7.")
 
-        if len(forces_max) > 0: 
+        if forces_optimized: 
+            if print_info: print("\u2713 Forces optimized.")
+        else: 
             next_optimize = "isif2"
             if print_info: print("\u2717 Forces NOT optimized. Try isif2.")
-        else: 
-            if print_info: print("\u2713 Forces optimized.")
+
+        if not pressure_optimized and not forces_optimized:
+            next_optimize = random.choice(["isif7","isif2","isif7a","isif4"])
 
         if next_optimize == "": next_optimize = "optimized"
 
