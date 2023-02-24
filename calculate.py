@@ -89,7 +89,12 @@ def calculateGeneral(paths):
 
 home = os.path.expanduser("~")
 
-if sys.argv[1].startswith("-p"): 
+if sys.argv[1].startswith("--help"):
+    print("-p  paths  --> performs the calculation to a secuence of paths.")
+    print("-m  n T  --> performs the calculation for MXenes for the given index (n) and termination (T). Also when no flag is given.")
+
+    exit()
+elif sys.argv[1].startswith("-p"): 
     paths = sys.argv[2:]
     general_calculation = True
 else:
