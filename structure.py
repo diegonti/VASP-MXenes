@@ -14,6 +14,10 @@ def test_data(data):
     for line in data:
         print(line)
 
+def setFormat(number,decimals):
+    return format(round(number,decimals),f".{decimals}f")
+    
+
 class CONTCAR():
     def __init__(self,path:str) -> None:
         """Creates a contcar object with the information of the given CONTCAR file.
@@ -91,9 +95,6 @@ class CONTCAR():
         positions = data[5:]
         
         with open(path,"w") as outFile:
-            # for line in data:
-            #     str_line = "  ".join([l for l in line]) + "\n"
-            #     outFile.write(str_line)
 
             for line in lattice:
                 str_line = "  ".join([l for l in line]) + "\n"
@@ -123,12 +124,12 @@ class CONTCAR():
             lattice_params.append(l)
         a,b,c = lattice_params
 
-        d = max(posz)*c     # Width of the slab
+        d = round(max(posz)*c,14)     # Width of the slab
 
         # if len(posz) == 5:
         #     # GENERALIZAR PARA N>2 --> self.posM ?
-        #     dMO1 = (posz[4]-posz[1])*c  # Top surface (HMX)
-        #     dMO2 = (posz[0]-posz[3])*c  # Bottom surface (HM)
+        #     dMO1 = (posz[4]-posz[nAtoms-1])*c  # Top surface (HMX)
+        #     dMO2 = (posz[0]-posz[nAtoms-2])*c  # Bottom surface (HM)
         #     return a, d, dMO1, dMO2
         # else: return a,d
 
@@ -152,7 +153,7 @@ class CONTCAR():
 
         for i,pos in enumerate(posz): posz[i] -= zo
 
-        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+        posz = [setFormat(posz[i],16) for i in range(nAtoms)]
 
         for i in range(nAtoms): data[9+i][2] = posz[i]
             
@@ -174,8 +175,8 @@ class CONTCAR():
         
         posz = [posz[i]*co/cf for i in range(nAtoms)] # reescale positions
 
-        cf = str(format(cf,".16f"))
-        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+        cf = setFormat(cf,16)
+        posz = [setFormat(posz[i],16) for i in range(nAtoms)]
 
         data[4][2] = cf
         for i in range(nAtoms): data[9+i][2] = posz[i]
@@ -195,7 +196,7 @@ class CONTCAR():
         for i in range(nAtoms): posz.append(float(data[9+i][2]))
 
         posz = [posz[i]+shift/co for i in range(nAtoms)]
-        posz = [str(format(posz[i],".16f")) for i in range(nAtoms)]
+        posz = [setFormat(posz[i],16) for i in range(nAtoms)]
 
         for i in range(nAtoms): data[9+i][2] = posz[i]
 
@@ -233,8 +234,8 @@ class CONTCAR():
             if M1 == M2: stacking = "ABA"
             elif M1 != M2: stacking = "ABC"
 
-        aH = format(round(2/3,16),f)
-        bH = format(round(1/3,16),f)
+        aH = setFormat(2/3,16)
+        bH = setFormat(1/3,16)
         if hollows == "HM" and stacking == "ABA":
             warnings.warn("Warning: Using HM for ABA stacking, changing to H ...")
             hollows = "H" 
@@ -258,7 +259,7 @@ class CONTCAR():
         for i in range(2):
             aT = a[i] #format(round(a[i],16),f)
             bT = b[i] #format(round(b[i],16),f)
-            cT = str(format(i*(do+2)/co,".16f"))
+            cT = setFormat(i*(do+2)/co,16)
             posTi = [aT,bT,cT,"T","T","T"]
             posT.append(posTi)
         t1,t2 = posT
@@ -293,7 +294,7 @@ if __name__ == "__main__":
         mx = contcar.mx ##!
 
         ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
-        # contcar.addVacuum(v=30)
+        # contcar.addVacuum(v=10)
         # contcar.write()
 
         ## Adds Termination to optimized M2X CONTCAR.
