@@ -31,6 +31,7 @@ def calculateMXT(n:int,T:str):
                 for dir in dirs: 
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
+                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -56,6 +57,7 @@ def calculateMX(n:int):
                 for dir in dirs: 
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mx}_{stack}"); break
+                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -79,6 +81,7 @@ def calculateGeneral(paths):
         for dir in dirs: 
             try: shutil.copy("CONTCAR",dir+"POSCAR")
             except FileNotFoundError: print(f"Passing {i}"); break
+            if os.path.exists(path+dir+"vasp.out"): continue # --force
             
             os.chdir(dir)
             start = dir.split("/")[0].lower()
