@@ -80,7 +80,7 @@ while True:
     if os.path.exists(path_outcar): 
         # go to next folder
         dirs = [d for d in os.listdir() if os.path.isdir(d)]
-        try: extension += dirs[0]+"/"; continue
+        try: extension += dirs[0]+"/"; counter +=1; continue
         except IndexError: pass
     else: os.system(f"qsub -N {poscar.name}{stack} script")
 
@@ -94,9 +94,6 @@ while True:
     # If its optimized, finish the program
     if next_opt == "optimized": 
 
-        shutil.copy("OUTCAR",path)
-        shutil.copy("CONTCAR",path)
-
         # Appends geometry in file
         contcar = CONTCAR("CONTCAR")
         a,d = contcar.getGeom()
@@ -108,6 +105,17 @@ while True:
         energy = f"{contcar.mx.mxName} {stack} {hollows} : {E} eV\n"
         with open(home+"/energy.out","a") as outFile: outFile.write(energy)
         
+        # if vaccuum_reduced case: CONTCARi CONTCAR(30)
+        if vaccuum_reduced:
+            shutil.copy("OUTCAR",path)
+            shutil.copy("CONTCAR",path+"CONTCARi")
+            contcar.addVacuum(30)
+            contcar.write(path+"CONTCAR")
+
+        else: 
+            shutil.copy("OUTCAR",path)
+            shutil.copy("CONTCAR",path)
+            
         print(f"\u2713 {path}: Process optimized")
         break
 
@@ -122,9 +130,10 @@ while True:
             contcar = CONTCAR("CONTCAR")
             contcar.addVacuum(v=10)
             os.rename("CONTCAR","CONTCARi")
-            contcar.write(file_name="CONTCAR")
+            contcar.write(path="CONTCAR")
             print(f"{path}: Vaccum to 10 at iteration {counter}")
             vaccuum_reduced = True
+            next_opt = random.choice(["isif7","isif2","isif4"])
         else:
             next_opt = random.choice(["isif7","isif2","isif4"])
 
