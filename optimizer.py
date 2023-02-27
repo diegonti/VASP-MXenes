@@ -8,7 +8,7 @@ or a next step is needed.
 
 To get the maximum profist of this script, is better to use a bash/python script tu run 
 this file for each MXene or compound (adding the & at the end will run at the backgorund)
-see opt.py
+see opt.py.
 
 Diego Ontiveros
 """
@@ -22,13 +22,7 @@ import random
 from VASPread import OUTCAR
 from structure import CONTCAR
 
-def cpvasp(next_opt):
-    """Copies the input VASP files to the next folder"""
-    shutil.copy("KPOINTS",next_opt+"/")
-    shutil.copy("POTCAR",next_opt+"/")
-    shutil.copy("script",next_opt+"/")
-    shutil.copy("CONTCAR",next_opt+"/POSCAR")
-
+######################## Functions general pourpuses ########################
 def getStructure(path):
     """Gets structure (stacking and hollows) from the folder path."""
     # Stacking
@@ -43,10 +37,11 @@ def getStructure(path):
 
     return stack, hollows
 
+######################## Functions for each optimization step ########################
 def repeated(folders,next_opt):
     """Filters if next_opt is repeated."""
 
-    cases = ["isif7","isif2"]
+    cases = ["isif7","isif2","isif4","isif7a"]
     try: 
         repeat = next_opt == folders[-1] and next_opt == folders[-2]
     except IndexError: repeat = False
@@ -56,13 +51,80 @@ def repeated(folders,next_opt):
 
     return next_opt
 
+def cpvasp(next_opt):
+    """Copies the input VASP files to the next folder"""
+    shutil.copy("KPOINTS",next_opt+"/")
+    shutil.copy("POTCAR",next_opt+"/")
+    shutil.copy("script",next_opt+"/")
+    shutil.copy("CONTCAR",next_opt+"/POSCAR")
+
+def optimizationRandomStep(counter,vacuum=None):
+    """Reduce vacuum if too many iterations have passed. Choose a random isif for the next step."""
+    if vacuum is None: vacuum = 10
+
+    if counter > 20:
+        contcar = CONTCAR("CONTCAR")
+        contcar.addVacuum(v=vacuum)
+        os.rename("CONTCAR","CONTCARi")
+        contcar.write(path="CONTCAR")
+        print(f"{path}: Vaccum to 10 at iteration {counter}")
+        vaccuum_reduced = True
+    else:
+        vaccuum_reduced = False
+
+    next_opt = random.choice(["isif7","isif2","isif4"])
+    return next_opt, vaccuum_reduced
+
+def optimizationNextStep(next_opt,extension):
+    """Creates the next optimization step depending on next_opt."""
+    extension += next_opt + "/"
+    
+    if next_opt == "isif7": 
+        os.system(rf"sed '/ISIF/c\ISIF = 7' INCAR | sed '/NSW/c\NSW = 19' > {next_opt}/INCAR")
+
+    elif next_opt == "isif2": 
+        os.system(rf"sed '/ISIF/c\ISIF = 2' INCAR | sed '/NSW/c\NSW = 101' > {next_opt}/INCAR")
+
+    elif next_opt == "isif7a":
+        os.system(rf"sed '/NSW/c\NSW = {len(pressures)-2}' INCAR > {next_opt}/INCAR")
+
+    elif next_opt == "isif4":
+        os.system(rf"sed '/ISIF/c\ISIF = 4' INCAR | sed '/NSW/c\NSW = 201' > {next_opt}/INCAR")
+    
+    return extension
+
+######################## Functions once the struture has been optimized ########################
+def updateOutFiles(stack, hollows):
+    """Appends Geometry and Energy to their designated out files from the optimization."""
+
+    # Appends geometry in file
+    a,d = contcar.getGeom()
+    geom = f"{contcar.mx.mxName} {stack} {hollows} : {a} {d}\n"
+    with open(home+"/geom.out","a") as outFile: outFile.write(geom)
+
+    # Appends energy in file
+    E,energies = outcar.getEnergy()
+    energy = f"{contcar.mx.mxName} {stack} {hollows} : {E} eV\n"
+    with open(home+"/energy.out","a") as outFile: outFile.write(energy)
+
+
+def copyToParent(vaccuum_reduced:bool,contcar:CONTCAR):
+    """Copies optimized OUTCAR and CONTCAR to the parent MXene folder."""
+    shutil.copy("OUTCAR",path)
+    if vaccuum_reduced:
+        shutil.copy("CONTCAR",path+"CONTCARi")
+        contcar.addVacuum(30)
+        contcar.write(path+"CONTCAR")
+    else: 
+        shutil.copy("CONTCAR",path)
+
+
+####################################################################################
+################################### MAIN PROGRAM ###################################
 
 home = os.path.expanduser("~")
-# path = f"{home}/test/Cr3C2/ABC/"
- 
 path = sys.argv[1]
 path1 = path + "opt/"
-original_cwd = os.getcwd()
 max_iterations = 50
 
 extension = ""
@@ -70,6 +132,7 @@ stack,hollows = getStructure(path)
 
 folders = []
 counter = 0
+vaccuum_reduced = False
 while True:
 
     os.chdir(path1 + extension)
@@ -80,7 +143,10 @@ while True:
     if os.path.exists(path_outcar): 
         # go to next folder
         dirs = [d for d in os.listdir() if os.path.isdir(d)]
-        try: extension += dirs[0]+"/"; counter +=1; continue
+        try: 
+            extension += dirs[0]+"/"
+            counter += 1
+            continue
         except IndexError: pass
     else: os.system(f"qsub -N {poscar.name}{stack} script")
 
@@ -93,77 +159,33 @@ while True:
 
     # If its optimized, finish the program
     if next_opt == "optimized": 
-
-        # Appends geometry in file
         contcar = CONTCAR("CONTCAR")
-        a,d = contcar.getGeom()
-        geom = f"{contcar.mx.mxName} {stack} {hollows} : {a} {d}\n"
-        with open(home+"/geom.out","a") as outFile: outFile.write(geom)
-
-        # Appends energy in file
-        E,energies = outcar.getEnergy()
-        energy = f"{contcar.mx.mxName} {stack} {hollows} : {E} eV\n"
-        with open(home+"/energy.out","a") as outFile: outFile.write(energy)
-        
-        # if vaccuum_reduced case: CONTCARi CONTCAR(30)
-        if vaccuum_reduced:
-            shutil.copy("OUTCAR",path)
-            shutil.copy("CONTCAR",path+"CONTCARi")
-            contcar.addVacuum(30)
-            contcar.write(path+"CONTCAR")
-
-        else: 
-            shutil.copy("OUTCAR",path)
-            shutil.copy("CONTCAR",path)
+        updateOutFiles(stack,hollows)
+        copyToParent(vaccuum_reduced,contcar)
             
         print(f"\u2713 {path}: Process optimized")
         break
 
+    # Finishig the program when too many iteration pass
     if counter >= max_iterations:
         print(f"Max iterations ({max_iterations}) surpassed. Case: {path}")
         break
     elif counter == 10:
         print(f"{path}: Surpassed 10 iterations!")
 
+    # Case where neither forces or pressure are optimized
     if next_opt == "Random":
-        if counter > 25:
-            contcar = CONTCAR("CONTCAR")
-            contcar.addVacuum(v=10)
-            os.rename("CONTCAR","CONTCARi")
-            contcar.write(path="CONTCAR")
-            print(f"{path}: Vaccum to 10 at iteration {counter}")
-            vaccuum_reduced = True
-            next_opt = random.choice(["isif7","isif2","isif4"])
-        else:
-            next_opt = random.choice(["isif7","isif2","isif4"])
+        next_opt,vaccuum_reduced = optimizationRandomStep(counter,vacuum=10)
 
-
+    # Generates next_opt folder and copies necessary files
     next_opt = repeated(folders,next_opt)
-
     try: os.mkdir(next_opt)
     except FileExistsError: pass
-
     folders.append(next_opt)
-
     cpvasp(next_opt)
 
-
     # Each possible optimization next step
-    if next_opt == "isif7": 
-        extension += "isif7/"
-        os.system(rf"sed '/ISIF/c\ISIF = 7' INCAR | sed '/NSW/c\NSW = 19' > {next_opt}/INCAR")
-
-    elif next_opt == "isif2": 
-        extension += "isif2/"
-        os.system(rf"sed '/ISIF/c\ISIF = 2' INCAR | sed '/NSW/c\NSW = 101' > {next_opt}/INCAR")
-
-    elif next_opt == "isif7a":
-        extension += next_opt + "/"
-        os.system(rf"sed '/NSW/c\NSW = {len(pressures)-2}' INCAR > {next_opt}/INCAR")
-
-    elif next_opt == "isif4":
-        extension += next_opt + "/"
-        os.system(rf"sed '/ISIF/c\ISIF = 4' INCAR | sed '/NSW/c\NSW = 201' > {next_opt}/INCAR")
+    optimizationNextStep(next_opt,extension)
 
     counter += 1
 
