@@ -153,7 +153,7 @@ class OUTCAR():
             if print_info: print("\u2717 Forces NOT optimized. Try isif2.")
 
         if not pressure_optimized and not forces_optimized:
-            next_optimize = random.choice(["isif7","isif2","isif7a","isif4"])
+            next_optimize = "Random"
 
         if next_optimize == "": next_optimize = "optimized"
 
