@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import shutil
+import random
 
 from VASPread import OUTCAR
 from structure import CONTCAR
@@ -113,6 +114,19 @@ while True:
     if counter >= max_iterations:
         print(f"Max iterations ({max_iterations}) surpassed. Case: {path}")
         break
+    elif counter == 10:
+        print(f"{path}: Surpassed 10 iterations!")
+
+    if next_opt == "Random":
+        if counter > 25:
+            contcar = CONTCAR("CONTCAR")
+            contcar.addVacuum(v=10)
+            os.rename("CONTCAR","CONTCARi")
+            contcar.write(file_name="CONTCAR")
+            print(f"{path}: Vaccum to 10 at iteration {counter}")
+            vaccuum_reduced = True
+        else:
+            next_opt = random.choice(["isif7","isif2","isif4"])
 
 
     next_opt = repeated(folders,next_opt)
@@ -123,6 +137,7 @@ while True:
     folders.append(next_opt)
 
     cpvasp(next_opt)
+
 
     # Each possible optimization next step
     if next_opt == "isif7": 
