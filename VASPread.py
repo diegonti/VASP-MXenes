@@ -92,7 +92,7 @@ class OUTCAR():
             out.append(dat)
             out_raw.append(raw_dat)
         
-        if out == []: print(f"Target '{target}' not found.")
+        if out == []: print(f"Target '{target}' not found. Path: {path}")
 
         return out, out_raw
     
