@@ -95,12 +95,12 @@ class MX():
             self.pdir = f"./MXenes/{self.pristine}/{self.stacking}/"     
 
         if self.terminal:
-            dirs_terminated = ["opt","opt/isif7","opt/isif7/isif2","DOS","DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
+            dirs_terminated = ["opt","DOS","DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
                         "WF"]
             self.dirs = [self.pdir + i +"/" for i in dirs_terminated]
             self.extra_dirs = ["bader"]
         else:
-            dirs_pristine = ["opt","opt/isif7","opt/isif7/isif2","DOS", "DOS/PBE0", "BS"]
+            dirs_pristine = ["opt","DOS", "DOS/PBE0", "BS"]
             self.dirs = [self.pdir + i +"/" for i in dirs_pristine]
 
 
@@ -353,7 +353,7 @@ class MX():
 
 # INPUTS
 n = 2                               # MXene n number (thickness)
-T = "O2"                            # Termination
+T = ""                            # Termination
 stacking, hollows = "ABC", "HM"     # Structure
 M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
 
