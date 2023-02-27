@@ -84,11 +84,11 @@ class CONTCAR():
             for line in lattice: outfile.write(line + "\n")
             for line in positions: outfile.write(line + "\n")
 
-    def write(self):
+    def write(self,path=None):
         """Rewrites the modified CONTCAR file."""
 
         data = self.data
-        path = f"./CONTCARout/{self.filename}"
+        if path is None: path = f"./CONTCARout/{self.filename}"
 
         # gets lattice and positions part of the CONTCAR #!(ponerlo en funcion aparte?)
         lattice = data[:5]

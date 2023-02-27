@@ -21,7 +21,7 @@ def optimizeMXT(n:int,T:str):
         for j,stack in enumerate(stacking):
             for hollow in hollows[j]:
                 path = f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
-                print(path)
+                # print(path)
                 os.system(f"nohup python3 optimizer.py {path} &")
 
       
@@ -34,8 +34,7 @@ def optimizeMX(n:int):
     for mx in MX:
         for stack in stacking:
                 path = f"{home}/M{n+1}X{n}/{mx}/{stack}/"
-                print(path)
-
+                # print(path)
                 os.system(f"nohup python3 optimizer.py {path} &")
 
 def optimizeGeneral(paths):
