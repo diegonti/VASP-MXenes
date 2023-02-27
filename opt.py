@@ -57,6 +57,7 @@ try: T = sys.argv[2]
 except IndexError: T = ""
 if T == "None": T = ""
 
+# Inputs in program, if needed
 # n = 2                               # MXene n number (thickness)
 # T = "O2"                            # Termination
 
@@ -68,10 +69,10 @@ MX = mc + mn                                    # All studied MXenes (pristine)
 MXT = [i + T for i in MX if i != ""]            # All studied MXenes (temrinated)
 
 # Structure cases
-stacking = ["ABA","ABC"]
+stacking = ["ABC","ABA"]
 hABA = ["H","HMX","HX"]
 hABC = ["HM","HMX","HX"]
-hollows = [hABA,hABC]
+hollows = [hABC,hABA]
 
 home = os.path.expanduser("~")
 

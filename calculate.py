@@ -122,13 +122,13 @@ else:
     mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
     mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
     MX = mc + mn                                    # All studied MXenes (pristine)
-    MXT = [i + T for i in MX if i != ""]            # All studied MXenes (temrinated)
+    MXT = [i + T for i in MX if i != ""]            # All studied MXenes (terminated)
 
     # Structure cases
     stacking = ["ABC","ABA"]
     hABA = ["H","HMX","HX"]
     hABC = ["HM","HMX","HX"]
-    hollows = [hABA,hABC]
+    hollows = [hABC,hABA]
 
 if general_calculation: calculateGeneral(paths)
 else:
@@ -140,3 +140,8 @@ else:
         accept = input(f"Are you sure you want to calculate terminated MXenes with n = {n} and T = {T}? (Y/n): ")
         if accept == "Y": calculateMXT(n,T)
         else: print("Closing...")
+
+#! Changes:
+# import general searcher that provides paths and use general calculator.
+# get mx/stack/hollows from name path or function gives it
+# try except if mx/stack/hollows not found
