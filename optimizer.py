@@ -146,6 +146,7 @@ while True:
         try: 
             extension += dirs[0]+"/"
             counter += 1
+            folders.append(dirs[0])
             continue
         except IndexError: pass
     else: os.system(f"qsub -N {poscar.name}{stack} script")
@@ -163,7 +164,7 @@ while True:
         updateOutFiles(stack,hollows)
         copyToParent(vaccuum_reduced,contcar)
             
-        print(f"\u2713 {path}: Process optimized")
+        print(f"\u2713 {path}: Process optimized. {counter} iterations.")
         break
 
     # Finishig the program when too many iteration pass
@@ -185,9 +186,10 @@ while True:
     cpvasp(next_opt)
 
     # Each possible optimization next step
-    optimizationNextStep(next_opt,extension)
+    extension = optimizationNextStep(next_opt,extension)
 
     counter += 1
+
 
     
 
