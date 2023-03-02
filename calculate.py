@@ -82,6 +82,7 @@ def calculateGeneral(paths):
             try: shutil.copy("CONTCAR",dir+"POSCAR")
             except FileNotFoundError: print(f"Passing {i}"); break
             if os.path.exists(path+dir+"vasp.out"): continue # --force
+            # see also if OUTCAR in file
             
             os.chdir(dir)
             start = dir.split("/")[0].lower()

@@ -12,7 +12,7 @@ home = os.path.expanduser("~")
 os.chdir(home)
 
 dirsMXT = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
-dirsMXT = ["DOS/","DOS/PBE0/","BS/"]
+dirsMX = ["DOS/","DOS/PBE0/","BS/"]
 
 def parseTermination(T):
     """Parses the Termination user input. Decides if its Pristine or Terminated"""
@@ -33,14 +33,23 @@ def parseTarget(target:str):
 
     return extras
 
-# def selectOut(path,pristine):
-#     if pristine:
-#         if "ABA" in
-#         pass
-#     else:
-#         pass
+def getStructure(path):
+    """Gets structure (stacking and hollows) from the folder path."""
+    # Stacking
+    if "/ABA/" in path: stack = "ABA"
+    elif "/ABC/" in path: stack = "ABC"
 
-#     return out_folder
+    # Hollows
+    hollows = ""
+    h = ["/HM/","/HMX/","/HX/","/H/"]
+    for hollow in h: 
+        if hollow in path: hollows = hollow.split("/")[1]
+
+    return stack, hollows
+
+def pathMX(n,mx,mxt,stack,hollow):
+    return f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
+
 
 class SEARCH():
 
@@ -53,14 +62,14 @@ class SEARCH():
         self.n = None
         self.T = None
         self.pristine = None
-        self.data = None
+        self.search_data = None
         self.search_paths = None
         self.target = None
 
         self.M = ["Cr","Hf","Mo","Nb","Sc","Ta","Ti","V","W","Y","Zr"]
         self.stacking = ["ABC","ABA"]
-        hABA = ["H","HMX","HX"]
         hABC = ["HM","HMX","HX"]
+        hABA = ["H","HMX","HX"]
         self.hollows = [hABC,hABA]
         
 
@@ -129,35 +138,41 @@ class SEARCH():
         counter = 0
         search_paths, search_data = [], []
         for i,path in enumerate(paths):
-            if os.path.exists(path): 
+            target_path = path+extras
+            if os.path.exists(target_path): 
                 counter += 1
-                search_paths.append(path + extras)
+                search_paths.append(target_path)
                 search_data.append(data[i])
-            else: print(f"{path} : Path not found.")
+            else: print(f"{target_path} : Path not found.")
         print(f"Searched n = {n} T = {T}: Found {counter} files from the total {len(paths)}.")
 
         self.search_paths = search_paths
         self.search_data = search_data
         return paths, search_data 
 
+
     def move(self,destination:str,n:int,T:str=None,name:str=None):
 
-        search_paths = self.search_paths
+        search_paths,data = self.search_paths,self.search_data
         T, pristine = parseTermination(T)
         if name is None: name = self.target
 
-        
+        # Options: mx>mxt // contcar>calculate
         if destination.lower().startswith("home"): self.moveHome()
 
-        if destination.lower().startswith("mx"):
-            destination_paths,data = self.path_tree(n,T)
+        if destination.lower().startswith("mx>mxt"):
 
-        # for folder in new_folders:
-        #   try: os.mkdir(folder)
-        #   except FileExistsError: pass
+            # destination_paths,data = self.path_tree(n,T)
 
-        # for path in move_paths:pass
-            ## asegurarse que sean el mismo MX
+            for s_path,s_data in zip(search_paths,self.search_data):
+                # for hollow and stacking
+                mx,stack = s_data 
+
+                for h in self.hollows[self.stacking.index(stack)]:
+                    destination_path = f"{home}/M{n+1}X{n}/{mx}/{mx+T}/{stack}/{h}/"
+                    # path exists como en search?
+                    shutil.copy(s_path,destination_path)
+
 
     def moveHome(self,path_folders:str=None,name:str=None):
         n = self.n
@@ -197,10 +212,6 @@ mx_folders = ["ABC","ABA"]
 
 if __name__ == "__main__":
     
-    # new_folders = mx_folders
-    # for f in new_folders:
-    #     try: os.mkdir(f)
-    #     except FileExistsError: pass
-
-    paths,data = SEARCH().path_tree(2,"O2")
-    print(paths)
+    searcher = SEARCH()
+    searcher.search(target="CONTCAR",n=2,T="")
+    searcher.move(destination="mx>mxt",n=2,T="O2",name="POSCAR")
