@@ -70,7 +70,7 @@ class MX():
             self.pristine = "".join([str(p) for p in self.cparts[:-2]])
         else: 
             self.terminal = False
-            self.pristine = self.mxName
+            self.pristine = self.name
         
         # Establishes if the MXene is OH terminated (special treatment)
         if self.atoms[-2]+self.atoms[-1] == "OH":
@@ -89,7 +89,7 @@ class MX():
         # INPUT FILES DIRECTORIES
         if self.terminal: 
             self.shift = 1
-            self.pdir = f"./MXenes/{self.pristine}/{self.mxName}/{self.stacking}/{self.hollows}/" 
+            self.pdir = f"./MXenes/{self.pristine}/{self.name}/{self.stacking}/{self.hollows}/" 
         else: 
             self.shift = 0
             self.pdir = f"./MXenes/{self.pristine}/{self.stacking}/"     
@@ -382,9 +382,9 @@ if __name__ == "__main__":
 
         if not mx.terminal: mkdir(f"MXenes/{mx.pristine}/{mx.stacking}/")
         elif mx.terminal: mkdir(
-            f"MXenes/{mx.pristine}/{mx.mxName}/",
-            f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/",
-            f"MXenes/{mx.pristine}/{mx.mxName}/{mx.stacking}/{mx.hollows}/")
+            f"MXenes/{mx.pristine}/{mx.name}/",
+            f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/",
+            f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/{mx.hollows}/")
         mkdir(*mx.dirs)
 
 
