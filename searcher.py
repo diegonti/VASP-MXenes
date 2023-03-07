@@ -8,6 +8,8 @@ Diego Ontiveros
 import os
 import shutil
 
+from structure import CONTCAR
+
 home = os.path.expanduser("~")
 os.chdir(home)
 
@@ -29,6 +31,8 @@ def parseTarget(target:str):
     elif target.lower().startswith("dos") and target.endswith("0"): extras = "DOS/PBE0/DOSCAR"
     elif target.lower().startswith("cont"): extras = "CONTCAR"
     elif target.lower().startswith("loc"): extras = "WF/LOCPOT"
+    elif target.lower().startswith("opt"): extras = "opt/"
+    elif target.lower().startswith("wf"): extras = "WF/"
     elif target.lower().startswith("bader"): extras = "bader/ACF.dat"
 
     return extras
@@ -151,7 +155,7 @@ class SEARCH():
         return paths, search_data 
 
 
-    def move(self,destination:str,n:int,T:str=None,name:str=None):
+    def move(self,destination:str,n:int,T:str=None,action="addT",name:str=None):
 
         search_paths,data = self.search_paths,self.search_data
         T, pristine = parseTermination(T)
@@ -171,7 +175,13 @@ class SEARCH():
                 for h in self.hollows[self.stacking.index(stack)]:
                     destination_path = f"{home}/M{n+1}X{n}/{mx}/{mx+T}/{stack}/{h}/"
                     # path exists como en search?
-                    shutil.copy(s_path,destination_path)
+                    if os.path.exists(destination_path):
+                        shutil.copy(s_path,destination_path+name)
+                        if action=="addT":
+                            contcar = CONTCAR(s_path)
+                            contcar.addT(T,stack,h)
+                            contcar.write(destination_path+name)
+                    else: print(f"{destination_path} : Path not found.")
 
 
     def moveHome(self,path_folders:str=None,name:str=None):
@@ -183,11 +193,11 @@ class SEARCH():
 
         if path_folders is None: path_folders = f"{home}/searcher/"
 
+        # Creating folders
         try: os.mkdir(path_folders)
         except FileExistsError: pass
         os.chdir(path_folders)
 
-        # Creating folders
         if pristine: folders = mx_folders
         else: folders = mxt_folders
         for folder in folders:
@@ -196,22 +206,32 @@ class SEARCH():
 
         for path,data in zip(search_paths, search_data):
 
-            # Selct out folder
-            if pristine: out_folder = data[1]+" "+data[2]+"/"
+            # Select out folder
+            if pristine: out_folder = data[1]+"/"
             else: out_folder = data[1]+" "+data[2]+"/"
 
             # copy from search path to destination
             shutil.copy(path,f"{out_folder}/{name}_{data[0]}")
+
+    def remove(self, target:str):
+        search_paths,data = self.search_paths,self.search_data
+        for s_path in search_paths:
+            try:
+                os.chdir(s_path)
+                os.system(f"find . -name '{target}' -type f -delete")
+                # os.chdir(original_path)
+            except FileNotFoundError: print(f"{s_path} : Path not found.")
             
 
 
 ############################### MAIN PROGRAM ###############################
 
-mxt_folders = ["ABC HM","ABC HMX","ABC HX","ABA H","ABA HMX","ABA HX"]
+mxt_folders = ["ABC_HM","ABC_HMX","ABC_HX","ABA_H","ABA_HMX","ABA_HX"]
 mx_folders = ["ABC","ABA"]
 
 if __name__ == "__main__":
     
     searcher = SEARCH()
     searcher.search(target="CONTCAR",n=2,T="")
-    searcher.move(destination="mx>mxt",n=2,T="O2",name="POSCAR")
+    # searcher.remove("CHG*")
+    # searcher.move(destination="mx>mxt",n=2,T="O2",name="POSCAR")
