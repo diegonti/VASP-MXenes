@@ -81,7 +81,7 @@ class DOSCAR():
         fmt = params.get("format","png")
         extension = "_sp" if self.spc else ""
         if not self.mantain_name: out_name = f"{self.file}_{self.mx.name}{extension}.{fmt}"
-        else: out_name = self.file
+        else: out_name = f"{self.file}_{extension}.{fmt}"
         file_path = f"{out_path}{out_name}"
         outFiles = os.listdir(out_path)
         if out_name in outFiles: #In case there are repeated names
@@ -405,7 +405,8 @@ if __name__ == "__main__":
         dos.plot(
             ["M","red"],["X","blue"],["Term","green"],
             spc = False,
-            out_path = "DOSout"
+            out_path = "DOSout",
+            mantain_name=True
         )
 
         # Plots spin contributions (if spin polarized)
@@ -414,5 +415,6 @@ if __name__ == "__main__":
                 ["Ma","orange"], ["Mb","cyan"],["Xa","pink"],["Xb","violet"], 
                 ["Terma","yellow"],["Termb","grey"],
                 spc = True,
-                out_path = "DOSout"
+                out_path = "DOSout",
+                mantain_name=True
             )

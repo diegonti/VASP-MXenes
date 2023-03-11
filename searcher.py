@@ -233,6 +233,10 @@ mx_folders = ["ABC","ABA"]
 if __name__ == "__main__":
     
     searcher = SEARCH()
-    searcher.search(target="CONTCAR",n=2,T="")
-    # searcher.remove("CHG*")
+
+    searcher.search(target="DOSCAR",n=2,T="")
+    # searcher.moveHome()
+
     # searcher.move(destination="mx>mxt",n=2,T="O2",name="POSCAR")
+
+    # searcher.remove("CHG*")
