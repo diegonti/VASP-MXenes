@@ -5,7 +5,6 @@ Implemented now for OUTCAR files. (CONTCAR in structure.py)
 Diego Ontiveros
 """
 
-import random
 
 class OUTCAR():
     def __init__(self,path) -> None:

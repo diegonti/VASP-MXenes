@@ -10,8 +10,9 @@ import shutil
 
 from structure import CONTCAR
 
-home = os.path.expanduser("~")
-os.chdir(home)
+# home = os.path.expanduser("~")
+home = ".."
+# os.chdir(home)
 
 dirsMXT = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
 dirsMX = ["DOS/","DOS/PBE0/","BS/"]

@@ -43,45 +43,71 @@ def getBandGap(E,T,Ef):
 
 
 class DOSCAR():
-    def __init__(self,path):
+    def __init__(self,path:str):
         self.path = path
-        self.file = path.replace("./DOSin/","")
+        self.file = path.split("/")[-1]
 
         ##Data gathering and celaning to out list
-        self.out = []
-        with open(path,"r") as infile:
-
-            for n,line in enumerate(infile):
-                rline = line.strip() #Removes inecessary whitespaces at the begining and end of line
-                line = rline.split() #Splits the line by the whitespaces into sublists
-
-                for i,nl in enumerate(line):   #Floating the numbers of the lines,
-                    try: nl = float(nl)        #except when tey are strings
-                    except ValueError: pass
-                    line[i] = nl
-
-                if n == 0: self.nAtoms = int(line[0])   #Number of atoms in cell
-                if n == 4: 
-                    self.mx = MX(rline)          #Name of the MXene, specified by SYSTEM = Mn+1XnT2 in the INCAR
-                if n == 5: EMAX, EMIN, self.NEDOS, self.Ef = line[0], line[1], int(line[2]), line[3]
-
-                self.out.append(line)
+        self.out = self.getData()
         
         self.spin = getSpin(self.out)
 
 
-    # def plot(self, *args, spin=False, xlabel="Energy (eV)", ylabel="DOS", linewidth=1, figsize=(), show=False):
-    def plot(self, *args, **params):
-        """Plot method for MXene DOSCARS. It chooses spin or non-spin polarised automatically. Returns Eg, VBM, CBM \n
-        *Args: Specify list with which atoms/orbitals (M,X,Term) you want to see plotted and color [atom,color].\n
-        **Params: Specify the plot parameters (xlabel,ylabel,xlim,ylim,figsize,format,dpi), also, specify if the spin contributions are plotted for with spc=True.      """
+    def getData(self):
+            """Gathers the data from the DOSCAR file."""
+            out = []
+            with open(self.path,"r") as infile:
+
+                for n,line in enumerate(infile):
+                    rline = line.strip() #Removes inecessary whitespaces at the begining and end of line
+                    line = rline.split() #Splits the line by the whitespaces into sublists
+
+                    for i,nl in enumerate(line):   #Floating the numbers of the lines,
+                        try: nl = float(nl)        #except when tey are strings
+                        except ValueError: pass
+                        line[i] = nl
+
+                    if n == 0: self.nAtoms = int(line[0])   #Number of atoms in cell
+                    if n == 4: self.mx = MX(rline)          #Name of the MXene, specified by SYSTEM = Mn+1XnT2 in the INCAR
+                    if n == 5: EMAX, EMIN, self.NEDOS, self.Ef = line[0], line[1], int(line[2]), line[3]
+
+                    out.append(line)
+            self.out = out
+            return self.out
+    
+    def saveImage(self,out_path,params):
+        """Saves the generated plot as an image to the given path."""
         
+        fmt = params.get("format","png")
+        extension = "_sp" if self.spc else ""
+        if not self.mantain_name: out_name = f"{self.file}_{self.mx.name}{extension}.{fmt}"
+        else: out_name = self.file
+        file_path = f"{out_path}{out_name}"
+        outFiles = os.listdir(out_path)
+        if out_name in outFiles: #In case there are repeated names
+            file_path = file_path.replace(f".{fmt}",f"(d).{fmt}")
+            plt.savefig(file_path,format=fmt,dpi=params.get("dpi",1200))
+        else: plt.savefig(file_path,format=fmt,dpi=params.get("dpi",1200))
+
+
+
+    # def plot(self, *args, spin=False, xlabel="Energy (eV)", ylabel="DOS", linewidth=1, figsize=(), show=False):
+    def plot(self,*args, out_path:str=None,mantain_name=False,**params, ):
+        """Plot method for MXene DOSCARS. It chooses spin or non-spin polarised automatically. Returns Eg, VBM, CBM \n
+        `out_path` : Folder Path where the DOS plot will be saved
+        `*Args` : Specify list with which atoms/orbitals (M,X,Term) you want to see plotted and color [atom,color].\n
+        `**Params` : Specify the plot parameters (xlabel,ylabel,xlim,ylim,figsize,format,dpi), also, specify if the spin contributions are plotted for with spc=True.      """
+        
+        if out_path is None: self.out_path = self.path.split(self.file)[0]
+        else: self.out_path = out_path
+        if not out_path.endswith("/"): self.out_path += "/"
+        self.mantain_name = mantain_name
         self.params = params
 
         plt.rcParams["figure.autolayout"] = True         #To autoajust plot if figsize is changed
         plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
         
-        #CREAR CLASE DE PARAMS?
+        #!CREAR CLASE DE PARAMS?
 
 
         ##Gathering the parameters to plot and their respective colour
@@ -204,14 +230,8 @@ class DOSCAR():
         plot.set_ylim(params.get("ylim",(0,20)))
         plot.legend(frameon=False,fontsize = "x-small")
 
-        #Saves Plot as .png
-        outFiles = os.listdir("./DOSout") + ["LAST"]
-        outFiles = ["./DOSout/" + outFiles[i] for i in range(len(outFiles))]
-        fileName = f"./DOSout/{fname}.png"
-        if fileName in outFiles: #In case there are repeated names
-            fileName = fileName.replace(".png","(d).png")
-            plt.savefig(fileName,format=params.get("format","png"),dpi=params.get("dpi",1200))
-        else: plt.savefig(f"./DOSout/{fname}.png",format="png",dpi=params.get("dpi",1200))
+        #Saves Plot
+        self.saveImage(self.out_path,params)
 
         if params.get("show",False): plt.show() #In case the plots want to be shown on screen as they are created
 
@@ -228,6 +248,7 @@ class DOSCAR():
         Ef,nAtoms,NEDOS = self.Ef,self.nAtoms,self.NEDOS
         mx, toPlot,colors, params = self.mx, self.toPlot, self.colors, self.params
         spc = params.get("spc",False)
+        self.spc = spc
 
         ##Gathering of the parameters to plot and their respective colour
         if spc == True: 
@@ -346,14 +367,15 @@ class DOSCAR():
         elif spc: plot.set_ylim([-15,15])
         plot.legend(frameon=False,fontsize = "x-small")
 
-        #Saves Plot as .png
-        outFiles = os.listdir("./DOSout") + ["LAST"]
-        outFiles = ["./DOSout/" + outFiles[i] for i in range(len(outFiles))]
-        fileName = f"./DOSout/{fname}.png"
-        if fileName in outFiles: #In case there are repeated names
-            fileName = fileName.replace(".png","(d).png")
-            plt.savefig(fileName,format=params.get("format","png"),dpi=params.get("dpi",1200))
-        else: plt.savefig(f"./DOSout/{fname}.png",format="png",dpi=params.get("dpi",1200))
+        #Saves Plot as .png (#!)
+        # outFiles = os.listdir("./DOSout") + ["LAST"]
+        # outFiles = ["./DOSout/" + outFiles[i] for i in range(len(outFiles))]
+        # fileName = f"./DOSout/{fname}.png"
+        # if fileName in outFiles: #In case there are repeated names
+        #     fileName = fileName.replace(".png","(d).png")
+        #     plt.savefig(fileName,format=params.get("format","png"),dpi=params.get("dpi",1200))
+        # else: plt.savefig(f"./DOSout/{fname}.png",format="png",dpi=params.get("dpi",1200))
+        self.saveImage(self.out_path,params)
 
         if params.get("show",False): plt.show() #In case the plots want to be shown on screen as they are created
 
@@ -382,7 +404,8 @@ if __name__ == "__main__":
         # Plots PDOS (non-spin polarized)        
         dos.plot(
             ["M","red"],["X","blue"],["Term","green"],
-            spc = False
+            spc = False,
+            out_path = "DOSout"
         )
 
         # Plots spin contributions (if spin polarized)
@@ -390,5 +413,6 @@ if __name__ == "__main__":
             dos.plot(
                 ["Ma","orange"], ["Mb","cyan"],["Xa","pink"],["Xb","violet"], 
                 ["Terma","yellow"],["Termb","grey"],
-                spc = True
+                spc = True,
+                out_path = "DOSout"
             )

@@ -122,7 +122,8 @@ def copyToParent(vaccuum_reduced:bool,contcar:CONTCAR):
 ####################################################################################
 ################################### MAIN PROGRAM ###################################
 
-home = os.path.expanduser("~")
+# home = os.path.expanduser("~")
+home = ".."
 path = sys.argv[1]
 path1 = path + "opt/"
 max_iterations = 50

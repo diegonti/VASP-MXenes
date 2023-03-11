@@ -91,7 +91,8 @@ def calculateGeneral(paths):
 
 ############################ MAIN PROGRAM #####################
 
-home = os.path.expanduser("~")
+# home = os.path.expanduser("~")
+home = ".."
 
 if sys.argv[1].startswith("--help"):
     print("-p  paths  --> performs the calculation to a secuence of paths.")
