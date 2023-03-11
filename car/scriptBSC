@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH --job-name=vasp
+#SBATCH --output=vasp.out
+#SBATCH --error=vasp.err
+#SBATCH --ntasks=48
+#SBATCH --time=70:55:00
+
+# Loading the modules needed
+module purge
+module load intel impi mkl vasp/5.4.4
+
+# Creating the current dir (in projects) and temporal dir (in scratch) variables
+export DIR=$(pwd -P)
+export TEMP=${DIR/"projects"/"scratch"}
+
+# Copying inpot files and changing to the temporal directory
+mkdir -p $TEMP
+cp * $TEMP
+cd $TEMP
+
+# Running the program
+mpirun vasp_std
+
+# Copying output files to project directory
+cp * $DIR
+## cp CONTCAR OUTCAR DOSCAR CHGCAR OSZICAR
+
+# Removing temporal directory
+## cd $DIR; rm -r $TEMP  
+
