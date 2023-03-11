@@ -153,7 +153,7 @@ class SEARCH():
 
         self.search_paths = search_paths
         self.search_data = search_data
-        return paths, search_data 
+        return search_paths, search_data 
 
 
     def move(self,destination:str,n:int,T:str=None,action="addT",name:str=None):

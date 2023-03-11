@@ -35,7 +35,7 @@ for n in [2,3]:
         except FileExistsError: pass
 
 
-    paths = searcher.search("DOSCAR",n=n,T=T)
+    paths,data = searcher.search("DOSCAR",n=n,T=T)
 
     for path in paths:
         dos = DOSCAR(path)
