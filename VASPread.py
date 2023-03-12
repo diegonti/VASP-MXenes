@@ -91,7 +91,7 @@ class OUTCAR():
             out.append(dat)
             out_raw.append(raw_dat)
         
-        if out == []: print(f"Target '{target}' not found. Path: {path}")
+        if out == []: print(f"Target '{target}' not found. Path: {self.path}")
 
         return out, out_raw
     
@@ -132,7 +132,8 @@ class OUTCAR():
         # Optimization criteria
         pressure_optimized = abs(last_pressure) <= 1.00
         forces_optimized = len(forces_max) == 0
-        repeat_isif7 = abs(last_pressure)>abs(pressures[-2])<0.2
+        try: repeat_isif7 = abs(last_pressure)>abs(pressures[-2])<0.2
+        except IndexError: repeat_isif7 = False
 
         # Optimization results depending on each case
         next_optimize = ""
