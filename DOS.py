@@ -105,7 +105,8 @@ class DOSCAR():
         self.params = params
 
         plt.rcParams["figure.autolayout"] = True         #To autoajust plot if figsize is changed
-        plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
+        # plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
+
         
         #!CREAR CLASE DE PARAMS?
 
@@ -152,7 +153,7 @@ class DOSCAR():
             iT = np.append(iT,line[2])                           #Total integration
 
         bandgap, VBM, CBM = getBandGap(E,T,Ef)
-        print(f"{fname}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}")
+        print(f"{self.mx.mxName}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}")
         
         ##Loop for obtaining the orbitalic contribution to DOS for each atom. In DOSCAR distributed as the variables order
         #s, py,pz,px, dxy,dyz,dxz,dz2,dx2y2 (9A)
