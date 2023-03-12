@@ -4,7 +4,7 @@ Implemented now for OUTCAR files. (CONTCAR in structure.py)
 
 Diego Ontiveros
 """
-
+import os
 
 class OUTCAR():
     def __init__(self,path) -> None:
@@ -91,7 +91,9 @@ class OUTCAR():
             out.append(dat)
             out_raw.append(raw_dat)
         
-        if out == []: print(f"Target '{target}' not found. Path: {self.path}")
+        if out == []: 
+            print(f"Target '{target}' not found. Path: {os.path.abspath(self.path)}")
+            exit()
 
         return out, out_raw
     

@@ -67,7 +67,7 @@ def optimizationRandomStep(counter,vacuum=None):
         contcar.addVacuum(v=vacuum)
         os.rename("CONTCAR","CONTCARi")
         contcar.write(path="CONTCAR")
-        print(f"{path}: Vaccum to 10 at iteration {counter}")
+        print(f"{path}: Vaccum to 10 at iteration {counter}",flush=True)
         vaccuum_reduced = True
     else:
         vaccuum_reduced = False
@@ -126,6 +126,7 @@ def copyToParent(vaccuum_reduced:bool,contcar:CONTCAR):
 # home = ".."
 home = os.path.abspath("..")
 path = sys.argv[1]
+if not path.endswith("/"): path += "/"
 path1 = path + "opt/"
 max_iterations = 50
 
@@ -175,7 +176,7 @@ while True:
         print(f"Max iterations ({max_iterations}) surpassed. Case: {path}")
         break
     elif counter == 10:
-        print(f"{path}: Surpassed 10 iterations!")
+        print(f"{path}: Surpassed 10 iterations!",flush=True)
 
     # Case where neither forces or pressure are optimized
     if next_opt == "Random":
