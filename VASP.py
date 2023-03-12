@@ -338,7 +338,7 @@ class MX():
         elif cluster.lower() == "bsc": source = "./car/scriptBSC"
 
         destination1 = self.pdir
-        shutil.copy(source, destination1)
+        shutil.copy(source, destination1+"script")
         for dir in self.dirs:
             shutil.copy(source,dir+"script")
 
@@ -350,35 +350,7 @@ class MX():
         shutil.copy(source,destination)
 
 
-### ----------------------------------------- INICIO PROGRAMA ---------------------------------------------------- ###
-###--------------------------------------------------------------------------------------------------------------- ###
-
-# INPUTS
-n = 2                               # MXene n number (thickness)
-T = ""                            # Termination
-stacking, hollows = "ABC", "HM"     # Structure
-M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
-
-mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
-mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
-mx = mc + mn                                    # All studied MXenes (pristine)
-mx = [i + T for i in mx if i != ""]             # All studied MXenes (temrinated)
-lenMX = len(mx)
-
-MXenes = [MX(mx[i],stacking,hollows) for i in range(lenMX)]
-
-
-if __name__ == "__main__":
-
-    # Creates /MXene folder
-    cwd = os.getcwd()
-    try: os.mkdir("MXenes") ###! Change to variable
-    except FileExistsError: pass
-
-    # Generates input files for each MXene in list
-    for mx in MXenes:
-
-        # Creates dirs-subdirs
+def createDirs(mx:MX):
         try: os.mkdir(f"MXenes/{mx.pristine}/")
         except FileExistsError: pass
 
@@ -388,12 +360,49 @@ if __name__ == "__main__":
             f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/",
             f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/{mx.hollows}/")
         mkdir(*mx.dirs)
+### ----------------------------------------- INICIO PROGRAMA ---------------------------------------------------- ###
+###--------------------------------------------------------------------------------------------------------------- ###
+
+# INPUTS
+n = 3                               # MXene n number (thickness)
+T = "F2"                            # Termination
+
+# stacking, hollow = "ABC", "HM"     # Structure
+
+M = ["Sc","Y","Ti","Zr","Hf","V","Nb","Ta","Cr","Mo","W"]
+
+mc = [m + str(n+1) + "C" + str(n) for m in M]   # X = C cases
+mn = [m + str(n+1) + "N" + str(n) for m in M]   # X = N cases
+mx = mc + mn                                    # All studied MXenes (pristine)
+mxt = [i + T for i in mx if i != ""]             # All studied MXenes (temrinated)
+lenMX = len(mxt)
+
+stackings = ["ABC","ABA"]
+hollows = [["HM","HMX","HX"],["H","HMX","HX"]]
 
 
-        #Cambios de los parámetros de mx han de ser aqui!
+if __name__ == "__main__":
 
-        mx.POSCAR()         # Writes POSCAR (positions)
-        mx.POTCAR()         # Writes POTCAR (concatenated PP)    
-        mx.KPOINTS()        # Writes KPOINTS (k-mesh or k-path)
-        mx.INCAR()          # Writes INCAR (for each calculations)
-        mx.script("bsc")    # Writes script (to send calculation)
+    # Creates /MXene folder
+    cwd = os.getcwd()
+    try: os.mkdir("MXenes") ###! Change to variable
+    except FileExistsError: pass
+
+    for i,stack in enumerate(stackings):
+        for hollow in hollows[i]:
+
+            MXenes = [MX(mxt[j],stack,hollow) for j in range(lenMX)]
+
+            # Generates input files for each MXene in list
+            for mx in MXenes:
+
+                # Creates dirs-subdirs
+                createDirs(mx)
+
+                #Cambios de los parámetros de mx han de ser aqui!
+
+                mx.POSCAR()         # Writes POSCAR (positions)
+                mx.POTCAR()         # Writes POTCAR (concatenated PP)    
+                mx.KPOINTS()        # Writes KPOINTS (k-mesh or k-path)
+                mx.INCAR()          # Writes INCAR (for each calculations)
+                mx.script("bsc")    # Writes script (to send calculation)
