@@ -74,7 +74,7 @@ hABC = ["HM","HMX","HX"]
 hollows = [hABC,hABA]
 
 # home = os.path.expanduser("~")
-home = ".."
+home = os.path.abspath("..")
 
 if T == "": 
     accept = input(f"Are you sure you want to optimize pristine MXenes with n = {n}? (Y/n): ")

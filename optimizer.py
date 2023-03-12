@@ -123,13 +123,15 @@ def copyToParent(vaccuum_reduced:bool,contcar:CONTCAR):
 ################################### MAIN PROGRAM ###################################
 
 # home = os.path.expanduser("~")
-home = ".."
+# home = ".."
+home = os.path.abspath("..")
 path = sys.argv[1]
 path1 = path + "opt/"
 max_iterations = 50
 
 extension = ""
 stack,hollows = getStructure(path)
+stack_indicator = 1 if stack=="ABA" else 0
 
 folders = []
 counter = 0
@@ -150,7 +152,7 @@ while True:
             folders.append(dirs[0])
             continue
         except IndexError: pass
-    else: os.system(f"qsub -N {poscar.name}{stack} script")
+    else: os.system(f"qsub -N {poscar.name}{stack_indicator} script")
 
     # Waits until OUTCAR is formed
     while not os.path.exists(path_outcar): time.sleep(1)
