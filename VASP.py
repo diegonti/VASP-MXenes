@@ -331,14 +331,16 @@ class MX():
                         outfile.write(line)
                     outfile.write(f"SYSTEM = {self.name}")
     
-    def script(self):
+    def script(self,cluster="iqtc"):
         """Creates a copy of the script file in each directory."""
 
-        source = "./car/script"
+        if cluster.lower() == "iqtc": source = "./car/scriptIQTC"
+        elif cluster.lower() == "bsc": source = "./car/scriptBSC"
+
         destination1 = self.pdir
         shutil.copy(source, destination1)
         for dir in self.dirs:
-            shutil.copy(source,dir)
+            shutil.copy(source,dir+"script")
 
     def bader(self):
         """Copies the bader script to the bader/ directory"""
@@ -390,8 +392,8 @@ if __name__ == "__main__":
 
         #Cambios de los parámetros de mx han de ser aqui!
 
-        mx.POSCAR()     # Writes POSCAR (positions)
-        mx.POTCAR()     # Writes POTCAR (concatenated PP)    
-        mx.KPOINTS()    # Writes KPOINTS (k-mesh or k-path)
-        mx.INCAR()      # Writes INCAR (for each calculations)
-        mx.script()     # Writes script (to send calculation)
+        mx.POSCAR()         # Writes POSCAR (positions)
+        mx.POTCAR()         # Writes POTCAR (concatenated PP)    
+        mx.KPOINTS()        # Writes KPOINTS (k-mesh or k-path)
+        mx.INCAR()          # Writes INCAR (for each calculations)
+        mx.script("bsc")    # Writes script (to send calculation)
