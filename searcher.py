@@ -159,29 +159,30 @@ class SEARCH():
     def move(self,destination:str,n:int,T:str=None,action="addT",name:str=None):
 
         search_paths,data = self.search_paths,self.search_data
+
         T, pristine = parseTermination(T)
         if name is None: name = self.target
 
         # Options: mx>mxt // contcar>calculate
         if destination.lower().startswith("home"): self.moveHome()
 
-        if destination.lower().startswith("mx>mxt"):
+        elif destination.lower().startswith("mx>mxt"):
 
             # destination_paths,data = self.path_tree(n,T)
 
-            for s_path,s_data in zip(search_paths,self.search_data):
+            for s_path,s_data in zip(search_paths,data):
                 # for hollow and stacking
-                mx,stack = s_data 
+                mx,stack,hollow = s_data 
 
                 for h in self.hollows[self.stacking.index(stack)]:
                     destination_path = f"{home}/M{n+1}X{n}/{mx}/{mx+T}/{stack}/{h}/"
                     # path exists como en search?
                     if os.path.exists(destination_path):
-                        shutil.copy(s_path,destination_path+name)
                         if action=="addT":
                             contcar = CONTCAR(s_path)
                             contcar.addT(T,stack,h)
                             contcar.write(destination_path+name)
+                        else: shutil.copy(s_path,destination_path+name)
                     else: print(f"{destination_path} : Path not found.")
 
 
@@ -234,9 +235,9 @@ if __name__ == "__main__":
     
     searcher = SEARCH()
 
-    searcher.search(target="DOSCAR",n=2,T="")
+    searcher.search(target="CONTCAR",n=2,T="")
+    searcher.move(destination="mx>mxt",n=2,T="O2",name="opt/POSCAR")
     # searcher.moveHome()
 
-    # searcher.move(destination="mx>mxt",n=2,T="O2",name="POSCAR")
 
     # searcher.remove("CHG*")

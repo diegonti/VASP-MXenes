@@ -213,7 +213,7 @@ class CONTCAR():
         data = self.addVacuum(v=30)   # shifts to zero and reescales to get vacuum == 30
         data = self.shift(shift=1)    # shifts the layer by 1 Ang
 
-        data[5].append(T)
+        data[5].append(T[0])
         data[6].append("2")
 
         M = data[9:9+n+1]
