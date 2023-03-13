@@ -14,6 +14,7 @@ class OUTCAR():
 
         self.path = path
         self.data,self.raw_data = self.getData()
+        self.folders = None
 
 
     def getData(self):
@@ -92,8 +93,7 @@ class OUTCAR():
             out_raw.append(raw_dat)
         
         if out == []: 
-            print(f"Target '{target}' not found. Path: {os.path.abspath(self.path)}")
-            exit()
+            print(f"Target '{target}' not found. Path: {os.path.abspath(self.path)}",flush=True)
 
         return out, out_raw
     
@@ -112,6 +112,13 @@ class OUTCAR():
         # Getting external pressure and forces data
         pressure, pressure_raw = self.search("external pressure")
         force, force_raw = self.search("TOTAL-FORCE",until="total drift")
+
+        if pressure == []: 
+            error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed")
+            if error_out != []:
+                print(f"Detected Error EDDAV. {os.path.abspath(self.path)}")
+                # list[19], None, None, "error"
+                return [None]*19, None, None, "error"
 
         # Creating list of pressures
         pressures = []
