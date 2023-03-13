@@ -35,6 +35,7 @@ def parseTarget(target:str):
     elif target.lower().startswith("opt"): extras = "opt/"
     elif target.lower().startswith("wf"): extras = "WF/"
     elif target.lower().startswith("bader"): extras = "bader/ACF.dat"
+    else: extras = target
 
     return extras
 
