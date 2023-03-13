@@ -46,7 +46,9 @@ def repeated(folders,next_opt):
         repeat = next_opt == folders[-1] and next_opt == folders[-2]
     except IndexError: repeat = False
 
-    cases.remove(next_opt)
+    try: cases.remove(next_opt)
+    except ValueError: pass
+
     if repeat: next_opt = cases[0]
 
     return next_opt
@@ -75,8 +77,20 @@ def optimizationRandomStep(counter,vacuum=None):
     next_opt = random.choice(["isif7","isif2","isif4"])
     return next_opt, vaccuum_reduced
 
+
+def optimizationError(next_opt,folders):
+    """changes script to less cores if EDDDAV error is found."""
+    if next_opt == "error":
+        next_opt = folders[-1]
+
+        os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+        os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
+            
+    return next_opt
+
+
 def optimizationNextStep(next_opt,extension):
-    """Creates the next optimization step depending on next_opt."""
+    """Creates the next optimization step in INCAR depending on next_opt."""
     extension += next_opt + "/"
     
     if next_opt == "isif7": 
@@ -182,15 +196,20 @@ while True:
     if next_opt == "Random":
         next_opt,vaccuum_reduced = optimizationRandomStep(counter,vacuum=10)
 
-    # Generates next_opt folder and copies necessary files
+    # To avaid repeted calculations
     next_opt = repeated(folders,next_opt)
+    
+    # If EDDDAV Error detected
+    next_opt = optimizationError(next_opt,folders)
+
+    # Generates next_opt folder and copies necessary files
     try: os.mkdir(next_opt)
     except FileExistsError: pass
-    folders.append(next_opt)
     cpvasp(next_opt)
+    folders.append(next_opt)
 
     # Each possible optimization next step
-    extension = optimizationNextStep(next_opt,extension)
+    extension,next_opt = optimizationNextStep(next_opt,extension)
 
     counter += 1
 
