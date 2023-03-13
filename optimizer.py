@@ -136,8 +136,10 @@ def copyToParent(vaccuum_reduced:bool,contcar:CONTCAR):
 ####################################################################################
 ################################### MAIN PROGRAM ###################################
 
-# home = os.path.expanduser("~")
-# home = ".."
+# Cluster PATHS
+cluter_home = os.path.realpath(os.path.expanduser("~"))
+if "gpfs/" in cluter_home or "/ub" in cluter_home: queue = "sbatch -J"
+else: queue = "qsub -N"
 home = os.path.abspath("..")
 path = sys.argv[1]
 if not path.endswith("/"): path += "/"

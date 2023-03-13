@@ -24,10 +24,9 @@ def calculateMXT(n:int,T:str):
 
                 path = f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
                 os.chdir(path)
-                print(path)
 
-                dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
-
+                dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/"]
+                # extra_dirs = ["BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
                 for dir in dirs: 
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
@@ -35,7 +34,7 @@ def calculateMXT(n:int,T:str):
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
-                    os.system(f"qsub -N {start}{mxt}_{j}{k} script")
+                    os.system(f"{queue} {start}{mxt}_{j}{k} script")
                     os.chdir(path)
 
       
@@ -50,7 +49,6 @@ def calculateMX(n:int):
                 
                 path = f"{home}/M{n+1}X{n}/{mx}/{stack}/"
                 os.chdir(path)
-                print(path)
 
                 dirs = ["DOS/","DOS/PBE0/","BS/"]
 
@@ -61,7 +59,7 @@ def calculateMX(n:int):
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
-                    os.system(f"qsub -N {start}{mx}_{j} script")
+                    os.system(f"{queue} {start}{mx}_{j} script")
                     os.chdir(path)
 
 
@@ -86,13 +84,17 @@ def calculateGeneral(paths):
             
             os.chdir(dir)
             start = dir.split("/")[0].lower()
-            os.system(f"qsub -N {start}_{i} script")
+            os.system(f"{queue} {start}_{i} script")
             os.chdir(path)
 
 ############################ MAIN PROGRAM #####################
 
-# home = os.path.expanduser("~")
-home = ".."
+# Cluster PATHS
+cluter_home = os.path.realpath(os.path.expanduser("~"))
+if "gpfs/" in cluter_home or "/ub" in cluter_home: queue = "sbatch -J"
+else: queue = "qsub -N"
+home = os.path.abspath("..")
+
 
 if sys.argv[1].startswith("--help"):
     print("-p  paths  --> performs the calculation to a secuence of paths.")

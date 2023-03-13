@@ -237,7 +237,7 @@ if __name__ == "__main__":
     searcher = SEARCH()
 
     searcher.search(target="CONTCAR",n=2,T="")
-    searcher.move(destination="mx>mxt",n=2,T="O2",name="opt/POSCAR")
+    # searcher.move(destination="mx>mxt",n=2,T="O2",name="opt/POSCAR")
     # searcher.moveHome()
 
 
