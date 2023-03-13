@@ -368,14 +368,7 @@ class DOSCAR():
         elif spc: plot.set_ylim([-15,15])
         plot.legend(frameon=False,fontsize = "x-small")
 
-        #Saves Plot as .png (#!)
-        # outFiles = os.listdir("./DOSout") + ["LAST"]
-        # outFiles = ["./DOSout/" + outFiles[i] for i in range(len(outFiles))]
-        # fileName = f"./DOSout/{fname}.png"
-        # if fileName in outFiles: #In case there are repeated names
-        #     fileName = fileName.replace(".png","(d).png")
-        #     plt.savefig(fileName,format=params.get("format","png"),dpi=params.get("dpi",1200))
-        # else: plt.savefig(f"./DOSout/{fname}.png",format="png",dpi=params.get("dpi",1200))
+        #Saves Plot as .png
         self.saveImage(self.out_path,params)
 
         if params.get("show",False): plt.show() #In case the plots want to be shown on screen as they are created
