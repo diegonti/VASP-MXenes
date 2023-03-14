@@ -90,8 +90,8 @@ def calculateGeneral(paths):
 ############################ MAIN PROGRAM #####################
 
 # Cluster PATHS
-cluter_home = os.path.realpath(os.path.expanduser("~"))
-if "gpfs/" in cluter_home or "/ub" in cluter_home: queue = "sbatch -J"
+cluster_home = os.path.realpath(os.path.expanduser("~"))
+if "gpfs/" in cluster_home or "/ub" in cluster_home: queue = "sbatch -J"
 else: queue = "qsub -N"
 home = os.path.abspath("..")
 

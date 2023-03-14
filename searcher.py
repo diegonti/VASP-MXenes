@@ -10,9 +10,6 @@ import shutil
 
 from structure import CONTCAR
 
-# home = os.path.expanduser("~")
-home = ".."
-# os.chdir(home)
 
 dirsMXT = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
 dirsMX = ["DOS/","DOS/PBE0/","BS/"]
@@ -231,6 +228,7 @@ class SEARCH():
 
 mxt_folders = ["ABC_HM","ABC_HMX","ABC_HX","ABA_H","ABA_HMX","ABA_HX"]
 mx_folders = ["ABC","ABA"]
+home = os.path.abspath("..")
 
 if __name__ == "__main__":
     
