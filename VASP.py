@@ -365,7 +365,7 @@ def createDirs(mx:MX):
 
 # INPUTS
 n = 3                               # MXene n number (thickness)
-T = "F2"                            # Termination
+T = "H2"                            # Termination
 
 # stacking, hollow = "ABC", "HM"     # Structure
 

@@ -170,7 +170,7 @@ while True:
             folders.append(dirs[0])
             continue
         except IndexError: pass
-    else: os.system(f"{queue} {poscar.name}{stack_indicator} script")
+    else: os.system(f"{queue} {poscar.name}_{stack_indicator}{hollows} script")
 
     # Waits until OUTCAR is formed
     while not os.path.exists(path_outcar): time.sleep(1)
