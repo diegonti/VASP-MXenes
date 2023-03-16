@@ -208,7 +208,7 @@ class SEARCH():
 
             # Select out folder
             if pristine: out_folder = data[1]+"/"
-            else: out_folder = data[1]+" "+data[2]+"/"
+            else: out_folder = data[1]+"_"+data[2]+"/"
 
             # copy from search path to destination
             shutil.copy(path,f"{out_folder}/{name}_{data[0]}")
