@@ -105,7 +105,7 @@ class CONTCAR():
                 outFile.write(str_line)
                 pass
 
-    def getGeom(self):
+    def getGeom(self,extra_dist=False):
         """Returns MXene lattice parameter a and width d in Armstrongs. \n
         For terminated n=1 MXenes, returns also d(M-T) for each surface."""
         
@@ -126,14 +126,13 @@ class CONTCAR():
 
         d = round(max(posz)*c,14)     # Width of the slab
 
-        # if len(posz) == 5:
-        #     # GENERALIZAR PARA N>2 --> self.posM ?
-        #     dMO1 = (posz[4]-posz[nAtoms-1])*c  # Top surface (HMX)
-        #     dMO2 = (posz[0]-posz[nAtoms-2])*c  # Bottom surface (HM)
-        #     return a, d, dMO1, dMO2
-        # else: return a,d
 
-        return a,d
+        if extra_dist:
+            dMO1 = (posz[0]-posz[-2])*c             # Bottom surface (HM)
+            dMO2 = (posz[-1]-posz[self.mx.n])*c     # Top surface (HMX)
+            return a, d, dMO1, dMO2
+        else: return a,d
+
 
     def toZero(self):
         """Shifts positions of atoms to start at zero."""
@@ -314,5 +313,5 @@ if __name__ == "__main__":
 
         ##Prints cell parameters for input CONTCARs
         print(cont)
-        print(f"{contcar.mx.mxName}: {contcar.getGeom()}")
+        print(f"{contcar.mx.mxName}: {contcar.getGeom(extra_dist=True)}")
 
