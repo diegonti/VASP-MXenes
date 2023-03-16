@@ -1,7 +1,18 @@
-from VASP import MX
-import matplotlib.pyplot as plt
-import numpy as np
+"""
+Script for Visualizing the VASP DOSCAR files.
+Reads a DOSCAR input file and returns the DOS plot, while printing the bandgap, VBM and CBM.
+The DOSCAR() class contains the general plot() function that accepts arguments of the style ["specie", "color"],
+as for example: dos.plot(["M","red"], ["X","blue"], ["T","green"]) to plot the Metal (M), X atom and Terminaton (T) in the specified colours.
+
+
+Diego Ontiveros
+"""
 import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+
+import numpy as np
+import matplotlib.pyplot as plt
+from VASP import MX
 
 
 def getSpin(out):
@@ -153,7 +164,7 @@ class DOSCAR():
             iT = np.append(iT,line[2])                           #Total integration
 
         bandgap, VBM, CBM = getBandGap(E,T,Ef)
-        print(f"{self.mx.mxName}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}")
+        print(f"{self.mx.mxName}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}",flush=True)
         
         ##Loop for obtaining the orbitalic contribution to DOS for each atom. In DOSCAR distributed as the variables order
         #s, py,pz,px, dxy,dyz,dxz,dz2,dx2y2 (9A)
@@ -235,6 +246,7 @@ class DOSCAR():
         self.saveImage(self.out_path,params)
 
         if params.get("show",False): plt.show() #In case the plots want to be shown on screen as they are created
+        plt.close(fig)
 
 
     def DOS_sp(self):
@@ -275,7 +287,7 @@ class DOSCAR():
             iT = np.append(iT,line[3]+line[4])                           #Total integration (iTa,iTb)
 
         bandgap, VBM, CBM = getBandGap(E,T,Ef)
-        print(f"{fname}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}")
+        print(f"{self.mx.mxName}: Eg = {bandgap:.3f}   VBM = {VBM:.3f}   CBM = {CBM:.3f}",flush=True)
         
         ##Loop for obtaining the orbitalic contribution to DOS for each atom. In DOSCAR distributed as the variables order
         #sa,sb, pya,pyb,pza,pzb,pxa,pxb, dxya,dxyb,dyza,dyzb,dxza,dxzb,dz2a,dz2b,dx2y2a,dx2y2b (18 OA)
@@ -372,6 +384,7 @@ class DOSCAR():
         self.saveImage(self.out_path,params)
 
         if params.get("show",False): plt.show() #In case the plots want to be shown on screen as they are created
+        plt.close(fig)
 
 
     def DOS_general(self):
