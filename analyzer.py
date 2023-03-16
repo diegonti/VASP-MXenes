@@ -5,12 +5,12 @@ Diego Ontiveros
 """
 
 import os
-
+# os.environ['OPENBLAS_NUM_THREADS'] = '1'
 from searcher import SEARCH, getStructure, parseTermination, mx_folders,mxt_folders
 from DOS import DOSCAR
 
 
-home = ".."
+home = os.path.abspath("..")
 searcher = SEARCH()
 target = "DOSCAR"
 T = ""
@@ -19,7 +19,7 @@ T, pristine = parseTermination(T)
 
 
 
-for n in [2,3]:
+for n in [1]:
 
     # Creating folders
     path_folders = f"{home}/searcher_dos{n}/"
@@ -35,7 +35,7 @@ for n in [2,3]:
         except FileExistsError: pass
 
 
-    paths,data = searcher.search("DOSCAR",n=n,T=T)
+    paths,data = searcher.search(target,n=n,T=T)
 
     for path in paths:
         dos = DOSCAR(path)
@@ -45,12 +45,14 @@ for n in [2,3]:
         if pristine: out_folder = stack+"/"
         else: out_folder = stack+"_"+hollows+"/"
 
+        print(f"{stack} {hollows} ",end='',flush=True)
         dos.plot(
             ["M","red"],["X","blue"],["Term","green"],
             spc = False,
             out_path = out_folder
         )
 
+        print(f"{stack} {hollows} ",end='')
         # Plots spin contributions (if spin polarized)
         if dos.spin=="sp":
             dos.plot(
