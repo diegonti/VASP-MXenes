@@ -81,7 +81,8 @@ def optimizationRandomStep(counter,vacuum=None):
 def optimizationError(next_opt,folders):
     """changes script to less cores if EDDDAV error is found."""
     if next_opt == "error":
-        next_opt = folders[-1]
+        try: next_opt = folders[-1]
+        except IndexError: next_opt = random.choice(["isif7","isif2","isif4"])
 
         os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
         os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
@@ -169,7 +170,7 @@ while True:
             folders.append(dirs[0])
             continue
         except IndexError: pass
-    else: os.system(f"qsub -N {poscar.name}{stack_indicator} script")
+    else: os.system(f"{queue} {poscar.name}{stack_indicator} script")
 
     # Waits until OUTCAR is formed
     while not os.path.exists(path_outcar): time.sleep(1)
@@ -211,7 +212,7 @@ while True:
     folders.append(next_opt)
 
     # Each possible optimization next step
-    extension,next_opt = optimizationNextStep(next_opt,extension)
+    extension = optimizationNextStep(next_opt,extension)
 
     counter += 1
 

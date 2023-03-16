@@ -113,12 +113,11 @@ class OUTCAR():
         pressure, pressure_raw = self.search("external pressure")
         force, force_raw = self.search("TOTAL-FORCE",until="total drift")
 
-        if pressure == []: 
-            error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed")
-            if error_out != []:
-                print(f"Detected Error EDDAV. {os.path.abspath(self.path)}")
-                # list[19], None, None, "error"
-                return [None]*19, None, None, "error"
+        error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed")
+        if error_out != []:
+            print(f"Detected Error EDDAV. {os.path.abspath(self.path)}")
+            # list[19], None, None, "error"
+            return [None]*19, None, None, "error"
 
         # Creating list of pressures
         pressures = []
@@ -190,7 +189,7 @@ if __name__ == "__main__":
     path = "./car/OUTCAR"
 
     outcar = OUTCAR(path)
-    final_energy,energies = outcar.getEnergy()
+    # final_energy,energies = outcar.getEnergy()
     pressures, forces, last_pressure, next_optimize = outcar.getOpt()
 
 
