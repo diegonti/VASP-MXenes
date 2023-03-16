@@ -28,9 +28,9 @@ def calculateMXT(n:int,T:str):
                 dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/"]
                 # extra_dirs = ["BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
                 for dir in dirs: 
+                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
-                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -53,9 +53,9 @@ def calculateMX(n:int):
                 dirs = ["DOS/","DOS/PBE0/","BS/"]
 
                 for dir in dirs: 
+                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mx}_{stack}"); break
-                    if os.path.exists(path+dir+"vasp.out"): continue # --force
                     
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
@@ -77,9 +77,9 @@ def calculateGeneral(paths):
         else: dirs = ["DOS/","DOS/PBE0/","BS/"]
 
         for dir in dirs: 
+            if os.path.exists(path+dir+"vasp.out"): continue # --force
             try: shutil.copy("CONTCAR",dir+"POSCAR")
             except FileNotFoundError: print(f"Passing {i}"); break
-            if os.path.exists(path+dir+"vasp.out"): continue # --force
             # see also if OUTCAR in file
             
             os.chdir(dir)
