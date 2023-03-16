@@ -37,7 +37,8 @@ class OUTCAR():
                after:int=None,
                before:int=None,
                until:str=None,
-               repeat:bool=True):
+               repeat:bool=True,
+               print_error:bool=True):
         """Searched for a target in a VASP OUTCAR file.
 
         Parameters
@@ -92,7 +93,7 @@ class OUTCAR():
             out.append(dat)
             out_raw.append(raw_dat)
         
-        if out == []: 
+        if out == [] and print_error: 
             print(f"Target '{target}' not found. Path: {os.path.abspath(self.path)}",flush=True)
 
         return out, out_raw
@@ -113,7 +114,7 @@ class OUTCAR():
         pressure, pressure_raw = self.search("external pressure")
         force, force_raw = self.search("TOTAL-FORCE",until="total drift")
 
-        error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed")
+        error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed",print_error=False)
         if error_out != []:
             print(f"Detected Error EDDAV. {os.path.abspath(self.path)}")
             # list[19], None, None, "error"
