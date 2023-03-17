@@ -53,12 +53,13 @@ def repeated(folders,next_opt):
 
     return next_opt
 
-def cpvasp(next_opt):
+def cpvasp(next_opt,error_flag):
     """Copies the input VASP files to the next folder"""
+    pos_file = "POSCAR" if error_flag else "CONTCAR"
     shutil.copy("KPOINTS",next_opt+"/")
     shutil.copy("POTCAR",next_opt+"/")
     shutil.copy("script",next_opt+"/")
-    shutil.copy("CONTCAR",next_opt+"/POSCAR")
+    shutil.copy(pos_file,next_opt+"/POSCAR")
 
 def optimizationRandomStep(counter,vacuum=None):
     """Reduce vacuum if too many iterations have passed. Choose a random isif for the next step."""
@@ -80,14 +81,16 @@ def optimizationRandomStep(counter,vacuum=None):
 
 def optimizationError(next_opt,folders):
     """changes script to less cores if EDDDAV error is found."""
+    error_flag = False
     if next_opt == "error":
+        error_flag = True
         try: next_opt = folders[-1]
         except IndexError: next_opt = random.choice(["isif7","isif2","isif4"])
 
         os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
         os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
             
-    return next_opt
+    return next_opt, error_flag
 
 
 def optimizationNextStep(next_opt,extension):
@@ -203,12 +206,12 @@ while True:
     next_opt = repeated(folders,next_opt)
     
     # If EDDDAV Error detected
-    next_opt = optimizationError(next_opt,folders)
+    next_opt, error_flag = optimizationError(next_opt,folders)
 
     # Generates next_opt folder and copies necessary files
     try: os.mkdir(next_opt)
     except FileExistsError: pass
-    cpvasp(next_opt)
+    cpvasp(next_opt,error_flag)
     folders.append(next_opt)
 
     # Each possible optimization next step
