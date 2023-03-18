@@ -110,15 +110,16 @@ class OUTCAR():
         `last_pressure` : External pressure of the last step.
         `next_optimize` : Optimization type to do next (isif2 or isif7). "optimized" if all optimized.  
         """
-        # Getting external pressure and forces data
-        pressure, pressure_raw = self.search("external pressure")
-        force, force_raw = self.search("TOTAL-FORCE",until="total drift")
-
+        # Detecting if OUTCAR has EDDDAV error
         error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed",print_error=False)
         if error_out != []:
             print(f"Detected Error EDDDAV. {os.path.abspath(self.path)}",flush=True)
             # list[19], None, None, "error"
             return [None]*19, None, None, "error"
+        
+        # Getting external pressure and forces data
+        pressure, pressure_raw = self.search("external pressure")
+        force, force_raw = self.search("TOTAL-FORCE",until="total drift")
 
         # Creating list of pressures
         pressures = []

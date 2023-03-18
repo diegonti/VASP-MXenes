@@ -52,7 +52,8 @@ for n in [1]:
             out_path = out_folder
         )
 
-        print(f"{stack} {hollows} ",end='')
+        continue
+        print(f"{stack} {hollows} ",end='',flush=True)
         # Plots spin contributions (if spin polarized)
         if dos.spin=="sp":
             dos.plot(
