@@ -116,7 +116,7 @@ class OUTCAR():
 
         error_out, error_raw = self.search("Error EDDDAV: Call to ZHEGV failed",print_error=False)
         if error_out != []:
-            print(f"Detected Error EDDAV. {os.path.abspath(self.path)}")
+            print(f"Detected Error EDDDAV. {os.path.abspath(self.path)}",flush=True)
             # list[19], None, None, "error"
             return [None]*19, None, None, "error"
 
