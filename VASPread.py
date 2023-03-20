@@ -124,13 +124,17 @@ class OUTCAR():
         # Creating list of pressures
         pressures = []
         for p in pressure:
-            pi = float(p[0][3])
+            try: pi = float(p[0][3])
+            except ValueError: 
+                print(f"Detected Error Convergence. {os.path.abspath(self.path)}",flush=True)
+                pi = 2
             pressures.append(pi)
 
         # Creating list of forces
         forces = []
         for f in force[-1][2:-2]:
-            fi = float(f[-1])
+            try: fi = float(f[-1])
+            except ValueError: fi = 1
             forces.append(fi)
 
         # Getting absolute values
