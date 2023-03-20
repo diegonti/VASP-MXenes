@@ -9,26 +9,52 @@ import os
 import sys
 import shutil
 
-def calculateMXT(n:int,T:str):
+from VASPread import OUTCAR
+
+def calculateMXT(n:int,T:str,calcError=True):
     """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
 
     Parameters
     ----------
     `n` : MXene index.
     `T` : Termination.
+    `calcError` : To recalculate job if OUTCAR presents error.
     """
     # For Terminated cases
     for mx,mxt in zip(MX,MXT):
         for j,stack in enumerate(stacking):
             for k,hollow in enumerate(hollows[j]):
 
+                # Go to the MXT path
                 path = f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
                 os.chdir(path)
 
                 dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/"]
                 # extra_dirs = ["BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
+
+                # Do the calculation in each calculation directory (DOS, BS)
                 for dir in dirs: 
-                    if os.path.exists(path+dir+"vasp.out"): continue # --force
+
+                    # In case tha calculation is already done
+                    if os.path.exists(path+dir+"vasp.out"): 
+
+                        # And in case there has been an Error
+                        if os.path.exists(path+dir+"OUTCAR") and calcError:
+  
+                            outcar = OUTCAR(path+dir+"OUTCAR")
+                            info = outcar.getOpt()
+                            if info[-1] == "error":
+                                os.chdir(dir)
+                                start = dir.split("/")[0].lower()
+
+                                os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+                                os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
+                                os.system(f"{queue} {start}{mxt}_{j}{k} script")
+                                os.chdir(path)
+
+                        continue
+                    
+                    # Move the CONTCAR and send the job to queue
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
                     
@@ -38,10 +64,11 @@ def calculateMXT(n:int,T:str):
                     os.chdir(path)
 
       
-def calculateMX(n:int):
+def calculateMX(n:int,calcError=True):
     """
     Performs optimization for all cases of pristine MXenes (Mn+1Xn).
     `n` : MXene index.
+    `calcError` : To recalculate job if OUTCAR presents error.
     """    
     # For pristine cases
     for mx in MX:
@@ -53,10 +80,29 @@ def calculateMX(n:int):
                 dirs = ["DOS/","DOS/PBE0/","BS/"]
 
                 for dir in dirs: 
-                    if os.path.exists(path+dir+"vasp.out"): continue # --force
+
+                    # In case tha calculation is already done
+                    if os.path.exists(path+dir+"vasp.out"): 
+
+                        # And in case there has been an Error
+                        if os.path.exists(path+dir+"OUTCAR") and calcError:
+  
+                            outcar = OUTCAR(path+dir+"OUTCAR")
+                            info = outcar.getOpt()
+                            if info[-1] == "error":
+                                os.chdir(dir)
+                                start = dir.split("/")[0].lower()
+
+                                os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+                                os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
+                                os.system(f"{queue} {start}{mx}_{j} script")
+                                os.chdir(path)
+                        continue
+
                     try: shutil.copy("CONTCAR",dir+"POSCAR")
                     except FileNotFoundError: print(f"Passing {mx}_{stack}"); break
                     
+                    # Move the CONTCAR and send the job to queue
                     os.chdir(dir)
                     start = dir.split("/")[0].lower()
                     os.system(f"{queue} {start}{mx}_{j} script")
