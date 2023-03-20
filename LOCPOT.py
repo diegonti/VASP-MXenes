@@ -1,7 +1,14 @@
-import matplotlib.pyplot as plt
+"""
+Calculates local potential from the LOCPOT file by doing plane means along
+the directon of the vaccum. Returns plot and Vaccuum potential.
+
+Diego Ontiveros
+"""
+
 import os
 import itertools
 import numpy as np
+import matplotlib.pyplot as plt
 
 def isJanus(means,t,low,high,e):
     """Searches the vacuum region of the slab [low,high] and returns True in the case for Janus materials (with a e% of tolerance)."""

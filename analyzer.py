@@ -1,5 +1,7 @@
 """
 Searches DOSCARs in the directory tree, calculates DOS and returns plots.
+For a specified n, T, and target (DOSCAR for PBE or DOSCAR0 for PBE0), searches DOSCAR
+and creates plot, which is saves in its respective stack_hollow/ folder in the home dir.
 
 Diego Ontiveros
 """
@@ -16,7 +18,6 @@ target = "DOSCAR"
 T = ""
 
 T, pristine = parseTermination(T)
-
 
 
 for n in [1]:

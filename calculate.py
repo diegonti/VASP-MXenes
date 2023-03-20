@@ -1,6 +1,6 @@
 """
 Runs over all paths to do electornic calculations (DOS, BS, WF) for each case.
-Run after optimization. Copies CONTCAR to BS7DOS/WF files and sends job to queue.
+Run after optimization. Copies CONTCAR to BS/DOS/WF files and sends job to queue.
 
 Diego Ontiveros
 """
