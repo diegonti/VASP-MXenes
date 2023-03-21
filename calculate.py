@@ -2,12 +2,20 @@
 Runs over all paths to do electornic calculations (DOS, BS, WF) for each case.
 Run after optimization. Copies CONTCAR to BS/DOS/WF files and sends job to queue.
 
+To use, specify the n (index) and T (termination) of the MXene:
+python3 calculate.py [-h] -n N_INDEX [-T TERMINATION]
+
+OR input a specific path: 
+python3 calculate.py [-h] -p PATH
+
+If both -n and -p falgs are used. The -p one has preference.
+
 Diego Ontiveros
 """
 
 import os
-import sys
 import shutil
+from argparse import ArgumentParser
 
 from VASPread import OUTCAR
 
@@ -16,8 +24,8 @@ def calculateMXT(n:int,T:str,calcError=True):
 
     Parameters
     ----------
-    `n` : MXene index.
-    `T` : Termination.
+    `n` : MXene index from the formula Mn+1XnT2.
+    `T` : Termination with the index (e.g 'O2').
     `calcError` : To recalculate job if OUTCAR presents error.
     """
     # For Terminated cases
@@ -51,7 +59,6 @@ def calculateMXT(n:int,T:str,calcError=True):
                                 os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
                                 os.system(f"{queue} {start}{mxt}_{j}{k} script")
                                 os.chdir(path)
-
                         continue
                     
                     # Move the CONTCAR and send the job to queue
@@ -67,7 +74,7 @@ def calculateMXT(n:int,T:str,calcError=True):
 def calculateMX(n:int,calcError=True):
     """
     Performs optimization for all cases of pristine MXenes (Mn+1Xn).
-    `n` : MXene index.
+    `n` : MXene index from the formula Mn+1Xn.
     `calcError` : To recalculate job if OUTCAR presents error.
     """    
     # For pristine cases
@@ -133,6 +140,7 @@ def calculateGeneral(paths):
             os.system(f"{queue} {start}_{i} script")
             os.chdir(path)
 
+
 ############################ MAIN PROGRAM #####################
 
 # Cluster PATHS
@@ -141,28 +149,26 @@ if "gpfs/" in cluster_home or "/ub" in cluster_home: queue = "sbatch -J"
 else: queue = "qsub -N"
 home = os.path.abspath("..")
 
+# User arguments parsing
+parser = ArgumentParser(description="Runs over all paths to do electronic calculations (DOS, BS, WF) for each case.\
+    Run this scripts after optimization (opt.py). It copies CONTCAR to the BS/DOS/WF folders and sends job to queue.",
+    usage="\n To use, specify the n (index) and T (termination) of the MXene: \n    python3 calculate.py [-h] -n N_INDEX [-T TERMINATION]\n\
+ OR input a specific path: \n    python3 calculate.py [-h] -p PATH\n\
+ If both -n and -p falgs are used. The -p one has preference.")
 
-if sys.argv[1].startswith("--help"):
-    print("-p  paths  --> performs the calculation to a secuence of paths.")
-    print("-m  n T  --> performs the calculation for MXenes for the given index (n) and termination (T). Also when no flag is given.")
+parser.add_argument("-p","--path",type=str,default=None,help="Individual MXene structure folder where the calculation will be done. Optional. Has preference over -n.")
+parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.")
+parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
+                    For pristine MXenes, don't use this or use None. Defaults to None.")
 
-    exit()
-elif sys.argv[1].startswith("-p"): 
-    paths = sys.argv[2:]
-    general_calculation = True
+args = parser.parse_args()
+paths, n, T = args.path, args.n_index, args.termination
+
+if paths is None and n is None: print(f"Some arguments are needed. For help, run python3 calculate.py -h")
+
+
+if not paths is None: calculateGeneral(paths)
 else:
-    general_calculation = False
-    if sys.argv[1].startswith("-m"): pos = 1
-    else: pos = 0
-
-    # MXene n index input (thickness)
-    try: n = int(sys.argv[1+pos])
-    except IndexError: raise IndexError("Add the index (n) and termination (T) as arguments. (for pristine don't add T or T=None, for terminated, T=O2)")
-
-    # MXene termination input
-    try: T = sys.argv[2+pos]
-    except IndexError: T = ""
-    if T == "None": T = ""
 
     # n = 2                               # MXene n number (thickness)
     # T = "O2"                            # Termination
@@ -180,8 +186,6 @@ else:
     hABC = ["HM","HMX","HX"]
     hollows = [hABC,hABA]
 
-if general_calculation: calculateGeneral(paths)
-else:
     if T == "": 
         accept = input(f"Are you sure you want to calculate pristine MXenes with n = {n}? (Y/n): ")
         if accept == "Y": calculateMX(n)

@@ -2,11 +2,14 @@
 Runs over all paths to optimize (using optimizer.py) each case.
 Uses shell commands and nohup to run the processes in the background.
 
+To use, specify the n (index) and T (termination) of the MXene:
+python3 opt.py [-h] -n N_INDEX [-T TERMINATION]
+
 Diego Ontiveros
 """
 
 import os
-import sys
+from argparse import ArgumentParser
 
 def optimizeMXT(n:int,T:str):
     """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
@@ -47,18 +50,19 @@ def optimizeGeneral(paths):
 
 ######################### MAIN PROGRAM #########################
 
-# MXene n index input (thickness)
-try: n = int(sys.argv[1])
-except IndexError: raise IndexError("Add the index (n) and termination (T) as arguments. (for pristine don't add T or T=None, for terminated, T=O2)")
-
-# MXene termination input
-try: T = sys.argv[2]
-except IndexError: T = ""
-if T == "None": T = ""
-
 # Inputs in program, if needed
-# n = 2                               # MXene n number (thickness)
-# T = "O2"                            # Termination
+# n = 2                               # MXene n index (thickness)
+# T = "O2"                            # MXene Termination
+
+# Parsing user arguments
+parser = ArgumentParser(description="Runs over all specified paths (with n and T) to run a background optimization proces. \
+                        More precisely, uses nohup to run the optimization.py script for each MXene structure folder.")
+parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.",required=True)
+parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
+                    For pristine MXenes, don't use this or use None. Defaults to None.")
+args = parser.parse_args()
+n,T = args.n_index, args.termination
+if T == "None": T = ""
 
 # MXene cases
 M = ["Cr","Hf","Mo","Nb","Sc","Ta","Ti","V","W","Y","Zr"]
