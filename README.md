@@ -10,6 +10,11 @@ The scripts are divided into 3 parts:
 - [Graphic Representation](#graphic-representation): Scripts to visualize DOSCAR and LOCPOT files.
 
 <br>
+<div style="text-align: center;">
+<img src="car/graphical_abstract%20(v4).png" alt= "MXene Photocatalytic Water Splitting" width=600>
+</div>
+<br>
+
 
 ## General Workflow
 
@@ -89,11 +94,11 @@ The avobe scripts are used internally by the scripts in the general workflow.
 <br><br>
 
 
-## Help
-<br><br>
-
-
 ## Utilities 
 
 The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, from where the POTCAR file of the structure will be created. The `/car` folder has different input files models. Both are used by the `VASP.py` script for creating the input files.
+<br><br>
+
+
+## Help
 <br><br>
