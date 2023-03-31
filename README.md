@@ -9,6 +9,11 @@ The scripts are divided into 3 parts:
 
 - [Graphic Representation](#graphic-representation): Scripts to visualize DOSCAR and LOCPOT files.
 
+
+In here you will find also some [Utilities](#utilities), (PP/ and car/) folders, that contain data files and templates needed for the scripts.
+
+Finally, for any doubts or concerns go to the [Help](#help) section.
+
 <br>
 <p align="center">
 <img src="car/graphical_abstract%20(v4).png" alt= "MXene Photocatalytic Water Splitting" width=600>
@@ -116,4 +121,11 @@ The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, fro
 
 
 ## Help
+
+In many cases, the scripts themnselves are well documented and will have a header of explanation and usage. The General Workflow scripts, have a [-h] and [--help] flag that indicates also usage and flags.
+
+Take in mind that this are script developed by a learning master student (myself), and may not serve for general pourpuse calculations.
+
+For any doubts or questions, contact [Diego Ontiveros](https://github.com/diegonti) ([Mail](mailto:diegonti.doc@gmail.com)).
+
 <br><br>
