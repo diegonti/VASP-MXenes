@@ -15,7 +15,7 @@ The scripts are divided into 3 parts:
 
 These scripts follow the general workflow that I as a researcher would use for calculating the electronic properties (DOS and Band Structure) of different compounds, here focused on MXenes ($M_{n+1}X_nT_2$): <br><br>
 
-1. Generate the input files:
+1. Generate input files:
 
 Here, the file `VASP.py` is used. Its main purpuse is [VASP](https://www.vasp.at/) input file management, it generates a tree of folders for a given MXene width $n$ and termination $T_x$, considering stackings ($ABC$ and $ABA$) and termination hollow position ($H_M$, $H_{MX}$ and $H_X$ for $ABC$,  and $H$, $H_{MX}$ and $H_X$ for $ABA$), and containing each folder different subfolders for the calculations needed (optimization opt/, density of states DOS/, band structures BS/, and workfunction WF/). Each subfolder has its necessary files (INCAR, POTCAR, KPOINTS, script and POSCAR), which the right parameters for the given MXene and calculation case. Moreover, it also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...), which is used by other scripts.
 
@@ -57,7 +57,7 @@ If both -n and -p falgs are used. The -p one has preference.
 
 4. Analyze
 
-Once the DOSCAR files are generated in the last step. They can be analyzed with the `analyzer.py` script, which uses a target to search for the PBE (target = dos) or PBE0 (target = dos0) DOSCAR files . Again, the script runs over all paths for a given $n$ and $T$, and uses the `DOS.py` script to make a plot of the DOS, which is placed in its correspondent folder (depending on stacking and hollows) in the home directoy, and to compute the bandgap, VBM and CBM, which can be appended to a specific file. The before mentioned can be done in the background with the following command:
+Once the DOSCAR files are generated in the last step. They can be analyzed with the `analyzer.py` script, which uses a target to search for the PBE (target = dos) or PBE0 (target = dos0) DOSCAR files . Again, the script runs over all paths for a given $n$ and $T$, and uses the `DOS.py` script to make a plot of the DOS, which is placed in its correspondent folder (depending on stacking and hollows) in the home directoy, and to compute the bandgap ($E_g$), $VBM$ and $CBM$, which can be appended to a specific file. The before mentioned can be done in the background with the following command:
 
 ```
 $ nohup python3 analyzer.py > output_filename.dat &
@@ -69,23 +69,31 @@ And with this four steps, the road for calculating a group of MXenes is done! Wi
 <br><br>
 
 
-## Graphic Representation
-
-`DOS.py` `LOCPOT.py`
-
 ## File Management
 
 `searcher.py` `VASPRead.py` `structure.py` 
 
+The file `structure.py` has different functions that allow the modification and analysis of POSCAR/CONTCAR files, for example to shift the atoms to the origin after an optimization, to add a certain amount of vacuum and rescale the atom fractional coordinates, or to add the Oxygen termination to the different hollow sites in the pristine MXene optimized CONTCAR. It also reads POSCAR/CONTCAR files and return the cell parameter $a$ and width $d$. Reads the input files in `/CONTCARin` and returns the modified files in `/CONTCARout`.
+<br><br>
+
+
+## Graphic Representation
+
+To create plots of the data, two scripts have been developed:
+
+The `DOS.py` file reads a given spin- or non-spin- polarized DOSCAR file and generates the Total, atom or orbital Projected DOS plot images in the specified output path. It also returns the bandgap information ($E_g$, Valence Band Minimum $VBM$ and Condunction Band Minimum $CBM$). This script is optimized for pristine and terminated MXenes ($M_{n+1}X_nT_2$), and assumes M > X > T as the input order of the atoms (which is the order given in the input files by the `VASP.py` script).
+
+The `LOCPOT.py` file reads a given LOCPOT file (or searches for one in the current folder) and generates a local potential plot along the vacuum direction of the MXene slab ($z$) in an output file. It also returns the vacuum energy $V_{vaccum}$ or energies if its a Janus material.
+
+The avobe scripts are used internally by the scripts in the general workflow.
+<br><br>
+
+
 ## Help
+<br><br>
 
-## Details:
-The file `DOS.py` reads all the spin-polarized DOSCAR files in the input folder, `/DOsin` and generates the Total, atom or orbital Projected DOS plot images in a output file, `/DOSout`. It also returns the bandgap information (E<sub>g</sub>, VBM, CBM). This script is optimized for pristine and terminated MXenes (_M<sub>n+1</sub>X<sub>n</sub>T<sub>2</sub>_). The script assumes M > X > T as the input order of atoms.
 
-The file `LOCPOT.py` reads all the LOCPOT files in the input folder `/WFin` or a LOCPOT file in the current folder and generates a local potential plot along the vacuum direction of the MXene slab (_z_) in an output file, `/WFout`. It also returns the vacuum energy _V<sub>vacuum</sub>_.
-
-The file `structure.py` has different functions that allow the modification and analysis of POSCAR/CONTCAR files, for example to shift the atoms to the origin after an optimization, to add a certain amount of vacuum and rescale the atom fractional coordinates, or to add the Oxygen termination to the different hollow sites in the pristine MXene optimized CONTCAR. It also reads POSCAR/CONTCAR files and return the cell parameter _a_ and width _d_. Reads the input files in `/CONTCARin` and returns the modified files in `/CONTCARout`.
-
-The file `VASP.py` is mainly for [VASP](https://www.vasp.at/) input file management, it generates the indicated specific folders containing the necessary input files for the different VASP calculations. It also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...)
+## Utilities 
 
 The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, from where the POTCAR file of the structure will be created. The `/car` folder has different input files models. Both are used by the `VASP.py` script for creating the input files.
+<br><br>
