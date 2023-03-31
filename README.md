@@ -10,9 +10,9 @@ The scripts are divided into 3 parts:
 - [Graphic Representation](#graphic-representation): Scripts to visualize DOSCAR and LOCPOT files.
 
 <br>
-<div style="text-align: center;">
+<p align="center">
 <img src="car/graphical_abstract%20(v4).png" alt= "MXene Photocatalytic Water Splitting" width=600>
-</div>
+</p>
 <br>
 
 
