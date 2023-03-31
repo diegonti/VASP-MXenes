@@ -133,19 +133,20 @@ def WF(file,name,incwd=False,tol_janus=5):
 
 ### MAIN program
 
-cwd = os.listdir()
-if "LOCPOT" in cwd:
-    WF("LOCPOT","LOCPOTplt",incwd = True)
+if __name__ == "__main__":
+    cwd = os.listdir()
+    if "LOCPOT" in cwd:
+        WF("LOCPOT","LOCPOTplt",incwd = True)
 
-elif "WFin" in cwd and "LOCPOT" not in cwd:
+    elif "WFin" in cwd and "LOCPOT" not in cwd:
 
-    ##Reads LOCPOTs from WFin folder and returns the plots in WFout
-    try: os.mkdir("WFout")
-    except FileExistsError: pass
-    inFiles = os.listdir("./WFin")
-    fileNames = [f for f in inFiles if os.path.isfile("./WFin/"+f)]
-    inFiles = ["./WFin/" + f for f in inFiles if os.path.isfile("./WFin/"+f)]
+        ##Reads LOCPOTs from WFin folder and returns the plots in WFout
+        try: os.mkdir("WFout")
+        except FileExistsError: pass
+        inFiles = os.listdir("./WFin")
+        fileNames = [f for f in inFiles if os.path.isfile("./WFin/"+f)]
+        inFiles = ["./WFin/" + f for f in inFiles if os.path.isfile("./WFin/"+f)]
 
-    for file,name in zip(inFiles,fileNames):
-        WF(file,name,tol_janus=10)
+        for file,name in zip(inFiles,fileNames):
+            WF(file,name,tol_janus=10)
 
