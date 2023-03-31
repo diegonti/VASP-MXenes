@@ -20,14 +20,14 @@ The scripts are divided into 3 parts:
 
 These scripts follow the general workflow that I as a researcher would use for calculating the electronic properties (DOS and Band Structure) of different compounds, here focused on MXenes ($M_{n+1}X_nT_2$): <br><br>
 
-1. Generate input files:
+- ### 1. Generate input files:
 
 Here, the file `VASP.py` is used. Its main purpuse is [VASP](https://www.vasp.at/) input file management, it generates a tree of folders for a given MXene width $n$ and termination $T_x$, considering stackings ($ABC$ and $ABA$) and termination hollow position ($H_M$, $H_{MX}$ and $H_X$ for $ABC$,  and $H$, $H_{MX}$ and $H_X$ for $ABA$), and containing each folder different subfolders for the calculations needed (optimization opt/, density of states DOS/, band structures BS/, and workfunction WF/). Each subfolder has its necessary files (INCAR, POTCAR, KPOINTS, script and POSCAR), which the right parameters for the given MXene and calculation case. Moreover, it also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...), which is used by other scripts.
 
 To create the folders for pristine MXenes with $n=2$, simply set $n=2$ and $T=""$ in the code and run the script. The tree of folders will be generated in a MXenes/ folder, which can be send to the cluster (or generated righ there).
 <br><br>
 
-2. Optimize:
+- ### 2. Optimize:
 
 For pristine and terminated MXenes, an initial POSCAR file is generated in the `opt/` folder. For pristine MXenes, it is a good starting point, but for the terminated ones, is better to use the optimized pristine structure and add the termination to the hollows, and use that as the initial geometry. For that, the `searcher.py` script (more in depth later) has a function that allows to automatically take the already optimized pristine CONTCARS, add the specified termination (using the `structure.py` script) and place it in the right terminated MXene folder as the initial POSCAR.
 
@@ -45,7 +45,7 @@ $ python3 opt.py -n N_INDEX [-T TERMINATION]
 Once optimized, the optimized CONTCAR and OUTCAR are placed in the parent folder of each MXene structure, to be ready for subsequent electronic calculations. 
 <br><br>
 
-3. Calculate 
+- ### 3. Calculate 
 
 With the optimized geometries, DOS and BS calculations can be send with the `calculate.py` script, which moves over all the tree subfolders of the specified $n$ and $T$ and sends PBE and PBE0 BS and DOS calculations (each calculation has its own subfolder, as generated with the `VASP.py` script).
 
@@ -60,7 +60,7 @@ $ python3 calculate.py -p PATH
 If both -n and -p falgs are used. The -p one has preference.
 <br><br>
 
-4. Analyze
+- ### 4. Analyze
 
 Once the DOSCAR files are generated in the last step. They can be analyzed with the `analyzer.py` script, which uses a target to search for the PBE (target = dos) or PBE0 (target = dos0) DOSCAR files . Again, the script runs over all paths for a given $n$ and $T$, and uses the `DOS.py` script to make a plot of the DOS, which is placed in its correspondent folder (depending on stacking and hollows) in the home directoy, and to compute the bandgap ($E_g$), $VBM$ and $CBM$, which can be appended to a specific file. The before mentioned can be done in the background with the following command:
 
@@ -76,9 +76,24 @@ And with this four steps, the road for calculating a group of MXenes is done! Wi
 
 ## File Management
 
-`searcher.py` `VASPRead.py` `structure.py` 
+Several scripts have been developed for managin and analyzing VASP output files and navigating through the paths tree in an easier way:
 
-The file `structure.py` has different functions that allow the modification and analysis of POSCAR/CONTCAR files, for example to shift the atoms to the origin after an optimization, to add a certain amount of vacuum and rescale the atom fractional coordinates, or to add the Oxygen termination to the different hollow sites in the pristine MXene optimized CONTCAR. It also reads POSCAR/CONTCAR files and return the cell parameter $a$ and width $d$. Reads the input files in `/CONTCARin` and returns the modified files in `/CONTCARout`.
+The `searcher.py` script is a general path searcher for the cluster folders. It searches in a tree-style path structure such as the one given by the `VASP.py` file generator. It has different internal functions that allow several tasks, such as:
+1. Given a $n$ and $T$, and a target (DOSCAR, CONTCAR, etc), searches for that target in the list of all possible paths for all MXene cases for that $n$ and $T$, and counts how many files are found. If any is not found, returns where it's missing.
+2. Move CONTCARS from pristine MXenes to its corresponent terminated one, with the specified termination.
+3. Removes the specified files (e.g. 'CHG*') for a specified $n$ and $T$ batch of MXenes.
+
+To run the desired task, modify the main part of the code.
+
+The `VASPRead.py` script quickly gets information from an OUTCAR file. It has a general file searcher and functions to get the optimization information (OUTCAR.getOpt()) and energies (OUTCAR.getEnergy()). It is used internally by the `optimizer.py` script, to analyze the OUTCAR and decide the next step of the optimization.
+
+The `structure.py` script has different functions that allow the modification and analysis of POSCAR/CONTCAR files, for example:
+1. To shift the atoms to the origin after an optimization (or any amount). CONTCAR.toZero() and CONTCAR.shift()
+2. To add a certain amount of vacuum and rescale the atom fractional coordinates. CONTCAR.addVaccum(v)
+3. To add a termination to the different hollow sites in the pristine MXene optimized CONTCAR. CONTCAR.addT(T,stack,hollow)
+4. To read POSCAR/CONTCAR files and return the cell parameter $a$ and width $d$. CONTCAR.getGeom()
+
+It is internally used by the `optimizer.py` and `searcher.py` scripts.
 <br><br>
 
 
@@ -90,7 +105,7 @@ The `DOS.py` file reads a given spin- or non-spin- polarized DOSCAR file and gen
 
 The `LOCPOT.py` file reads a given LOCPOT file (or searches for one in the current folder) and generates a local potential plot along the vacuum direction of the MXene slab ($z$) in an output file. It also returns the vacuum energy $V_{vaccum}$ or energies if its a Janus material.
 
-The avobe scripts are used internally by the scripts in the general workflow.
+The avobe scripts are used internally by the scripts in the general workflow, mainly in `analyzer.py`.
 <br><br>
 
 
