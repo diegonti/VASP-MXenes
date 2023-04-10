@@ -50,7 +50,7 @@ $ python3 opt.py -n N_INDEX [-T TERMINATION]
 Once optimized, the optimized CONTCAR and OUTCAR are placed in the parent folder of each MXene structure, to be ready for subsequent electronic calculations. 
 <br><br>
 
-- ### 3. Calculate 
+- ### 3. Calculate:
 
 With the optimized geometries, DOS and BS calculations can be send with the `calculate.py` script, which moves over all the tree subfolders of the specified $n$ and $T$ and sends PBE and PBE0 BS and DOS calculations (each calculation has its own subfolder, as generated with the `VASP.py` script).
 
@@ -65,7 +65,7 @@ $ python3 calculate.py -p PATH
 If both -n and -p falgs are used. The -p one has preference.
 <br><br>
 
-- ### 4. Analyze
+- ### 4. Analyze:
 
 Once the DOSCAR files are generated in the last step. They can be analyzed with the `analyzer.py` script, which uses a target to search for the PBE (target = dos) or PBE0 (target = dos0) DOSCAR files . Again, the script runs over all paths for a given $n$ and $T$, and uses the `DOS.py` script to make a plot of the DOS, which is placed in its correspondent folder (depending on stacking and hollows) in the home directoy, and to compute the bandgap ($E_g$), $VBM$ and $CBM$, which can be appended to a specific file. The before mentioned can be done in the background with the following command:
 
