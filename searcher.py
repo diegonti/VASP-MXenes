@@ -179,6 +179,7 @@ class SEARCH():
                         if action=="addT":
                             contcar = CONTCAR(s_path)
                             contcar.addT(T,stack,h)
+                            # contcar.addT(T2,stack,h)
                             contcar.write(destination_path+name)
                         else: shutil.copy(s_path,destination_path+name)
                     else: print(f"{destination_path} : Path not found.")
@@ -234,9 +235,11 @@ if __name__ == "__main__":
     
     searcher = SEARCH()
 
-    searcher.search(target="CONTCAR",n=2,T="")
-    # searcher.move(destination="mx>mxt",n=2,T="O2",name="opt/POSCAR")
-    # searcher.moveHome()
+    searcher.search(target="CONTCAR",n=1,T="")
 
+    # searcher.search(target="CONTCAR",n=1,T="")
+    # searcher.move(destination="mx>mxt",n=1,T="O2",name="opt/POSCAR")
+    
+    # searcher.moveHome()
 
     # searcher.remove("CHG*")
