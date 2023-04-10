@@ -203,8 +203,16 @@ class DOSCAR():
 
         ##Creates arrays for the termination (Term) contributions (only if there is termination)
         Term,Terms,Termp,Termd= [np.zeros(NEDOS-1) for i in range(4)]
+        Term2,Term2s,Term2p,Term2d= [np.zeros(NEDOS-1) for i in range(4)]
         if mx.terminal:
-            if mx.T_AB: pass #OH termination not implemented. Works for single atom terminations
+            if mx.T_AB: #OH termination not implemented. Works for single atom terminations
+                for i in range(-4,-2):
+                    Term += atT[i]
+                    Terms += s[i]; Termp += p[i]; Termd += d[i]
+                for i in range(-2,0):
+                    Term2 += atT[i]
+                    Term2s += s[i]; Term2p += p[i]; Term2d += d[i]
+            
             else: #To take the last two lists (where the Term data is)
                 for i in range(-2,0):
                     Term += atT[i]
@@ -224,10 +232,14 @@ class DOSCAR():
             if pname == "T": pname = "Total"
             if "M" in pname: pname = pname.replace("M",mx.atoms[0]+" ")
             if "X" in pname: pname = pname.replace("X",mx.atoms[1]+" ")
-            if mx.terminal:
-                if "Term" in pname: pname = pname.replace("Term",mx.atoms[2]+" ")
-            else: 
-                if "Term" in pname: continue
+            
+            if mx.terminal and "Term" in pname and not "Term2" in pname:
+                pname = pname.replace("Term",mx.atoms[2]+" ")
+            elif "Term" in pname and not "Term2" in pname: continue
+            
+            if mx.terminal and "Term2" in pname and mx.T_AB: # OH
+                pname = pname.replace("Term2",mx.atoms[3]+" ")
+            elif "Term2" in pname: continue
             
             #PLOT. Plots the corresponding parameter introduced in *args with the energy
             plot.plot(E,param, label = f"{pname}", color = colors[i], linewidth = 1)
