@@ -92,7 +92,7 @@ class DOSCAR():
         fmt = params.get("format","png")
         extension = "_sp" if self.spc else ""
         if not self.mantain_name: out_name = f"{self.file}_{self.mx.name}{extension}.{fmt}"
-        else: out_name = f"{self.file}_{extension}.{fmt}"
+        else: out_name = f"{self.file}{extension}.{fmt}"
         file_path = f"{out_path}{out_name}"
         outFiles = os.listdir(out_path)
         if out_name in outFiles: #In case there are repeated names
@@ -204,7 +204,7 @@ class DOSCAR():
         ##Creates arrays for the termination (Term) contributions (only if there is termination)
         Term,Terms,Termp,Termd= [np.zeros(NEDOS-1) for i in range(4)]
         if mx.terminal:
-            if mx.OH: pass #OH termination not implemented. Works for single atom terminations
+            if mx.T_AB: pass #OH termination not implemented. Works for single atom terminations
             else: #To take the last two lists (where the Term data is)
                 for i in range(-2,0):
                     Term += atT[i]
@@ -333,8 +333,22 @@ class DOSCAR():
 
         ##Creates arrays for the termination (Term) contributions (only if there is termination)
         Term,Terma,Termb, Terms,Termp,Termd, Termsa,Termpa,Termda,Termsb,Termpb,Termdb = [np.zeros(NEDOS-1) for i in range(12)]
+        Term2,Term2a,Term2b, Term2s,Term2p,Term2d, Term2sa,Term2pa,Term2da,Term2sb,Term2pb,Term2db = [np.zeros(NEDOS-1) for i in range(12)]
         if mx.terminal:
-            if mx.OH: pass #OH termination not implemented. Works for single atom terminations
+            if mx.T_AB:  #OH termination not implemented. Works for single atom terminations
+                for i in range(-4,-2):   # O termination
+                    Term += atT[i]
+                    Terma += atTa[i]; Termb += atTb[i]
+                    Terms += s[i]; Termp += p[i]; Termd += d[i]
+                    Termsa += sa[i]; Termpa += pa[i]; Termda += da[i]
+                    Termsb += sb[i]; Termpb += pb[i]; Termdb += db[i]
+                for i in range(-2,0):   # H termination
+                    Term2 += atT[i]
+                    Term2a += atTa[i]; Term2b += atTb[i]
+                    Term2s += s[i]; Term2p += p[i]; Term2d += d[i]
+                    Term2sa += sa[i]; Term2pa += pa[i]; Term2da += da[i]
+                    Term2sb += sb[i]; Term2pb += pb[i]; Term2db += db[i]
+
             else: #To take the last two lists (where the Term data is)
                 for i in range(-2,0):
                     Term += atT[i]
@@ -361,10 +375,16 @@ class DOSCAR():
             if pname == "Tβ": pname = "Total β"
             if "M" in pname: pname = pname.replace("M",mx.atoms[0]+" ")
             if "X" in pname: pname = pname.replace("X",mx.atoms[1]+" ")
-            if mx.terminal:
-                if "Term" in pname: pname = pname.replace("Term",mx.atoms[2]+" ")
-            else: 
-                if "Term" in pname: continue
+
+            if mx.terminal and "Term" in pname and not "Term2" in pname:
+                pname = pname.replace("Term",mx.atoms[2]+" ")
+            elif "Term" in pname and not "Term2" in pname: continue
+
+            if mx.terminal and "Term2" in pname and mx.T_AB: # OH
+                pname = pname.replace("Term2",mx.atoms[3]+" ")
+            elif "Term2" in pname: continue
+
+            #! ADD ABC case and correct AB case
 
             #PLOT. Plots the corresponding parameter introduced in *args with the energy
             plot.plot(E,param, label = f"{pname}", color = colors[i], linewidth = 1)
@@ -410,12 +430,13 @@ if __name__ == "__main__":
 
         # Plots PDOS (non-spin polarized)        
         dos.plot(
-            ["M","red"],["X","blue"],["Term","green"],
+            ["M","red"],["X","blue"],["Term","green"],["Term2","pink"],
             spc = False,
             out_path = "DOSout",
             mantain_name=True
         )
 
+        continue
         # Plots spin contributions (if spin polarized)
         if dos.spin=="sp":
             dos.plot(

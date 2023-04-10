@@ -264,8 +264,8 @@ class CONTCAR():
         t1,t2 = posT
 
 
-        data.insert(9+2*n+1,t1)
-        data.insert(9+2*n+2,t2)
+        data.insert(9+nAtoms,t1) # nAtoms
+        data.insert(9+nAtoms+1,t2)
         self.updateData(data)
         self.data = data
 
@@ -296,8 +296,9 @@ if __name__ == "__main__":
         # contcar.addVacuum(v=10)
         # contcar.write()
 
-        ## Adds Termination to optimized M2X CONTCAR.
-        # contcar.addT("O",hollows="HMX")
+        ## Adds Termination to optimized CONTCAR.
+        # contcar.addT("O2",hollows="HMX")
+        # contcar.addT("H2",hollows="HMX")
         # contcar.write()
 
         ## Shifts the slab a certain amount

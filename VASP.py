@@ -67,15 +67,16 @@ class MX():
         # Establishes if the MXene has termination
         if len(self.atoms) >= 3 and len(self.index) >= 3:
             self.terminal = True
-            self.pristine = "".join([str(p) for p in self.cparts[:-2]])
+            self.pristine = "".join([str(p) for p in self.cparts[:4]])
         else: 
             self.terminal = False
             self.pristine = self.name
         
         # Establishes if the MXene is OH terminated (special treatment)
-        if self.atoms[-2]+self.atoms[-1] == "OH":
-            self.OH = True
-        else: self.OH = False
+        if len(self.atoms)>3: self.T_AB = True
+        else: self.T_AB = False
+
+        # self.T_ABC
 
         # MXene structure
         self.stacking = stacking    # Stacking
@@ -97,6 +98,7 @@ class MX():
         if self.terminal:
             dirs_terminated = ["opt","DOS","DOS/PBE0", "BS","BS/PBE","BS/PBE0","BS/PBE/BS2","BS/PBE0/BS2",
                         "WF"]
+            # dirs_terminated = ["DOS","DOS/PBE0"]
             self.dirs = [self.pdir + i +"/" for i in dirs_terminated]
             self.extra_dirs = ["bader"]
         else:
@@ -365,7 +367,7 @@ def createDirs(mx:MX):
 
 # INPUTS
 n = 3                               # MXene n number (thickness)
-T = "H2"                            # Termination
+T = "O2H2"                          # Termination ((OH)2==O2H2)
 
 # stacking, hollow = "ABC", "HM"     # Structure
 
