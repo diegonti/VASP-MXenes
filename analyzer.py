@@ -41,14 +41,14 @@ for n in [1]:
     for path in paths:
         dos = DOSCAR(path)
         stack,hollows = getStructure(path)
-
+        # if stack=="ABC":continue
         # Select out folder
         if pristine: out_folder = stack+"/"
         else: out_folder = stack+"_"+hollows+"/"
 
         print(f"{stack} {hollows} ",end='',flush=True)
         dos.plot(
-            ["M","red"],["X","blue"],["Term","green"],
+            ["M","red"],["X","blue"],["Term","green"],["Term2","fuchsia"],
             spc = False,
             out_path = out_folder
         )
@@ -59,7 +59,7 @@ for n in [1]:
         if dos.spin=="sp":
             dos.plot(
                 ["Ma","orange"], ["Mb","cyan"],["Xa","pink"],["Xb","violet"], 
-                ["Terma","yellow"],["Termb","grey"],
+                ["Terma","yellow"],["Termb","grey"],["Term2a","fuchsia"],["Term2b","coral"],
                 spc = True,
                 out_path = out_folder
             )
