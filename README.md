@@ -63,6 +63,11 @@ OR, it you want to send calculations for a specific MXene case, run:
 $ python3 calculate.py -p PATH
 ```
 If both -n and -p falgs are used. The -p one has preference.
+
+Moreover, to do LOCPOT calculations for WF, use the -WF flag and optionally the -l flag, along the specified -n and -T:
+```
+$ python3 calculate.py -n N_INDEX [-T TERMINATION] [-WF] [-l LIMITWF]
+```
 <br><br>
 
 - ### 4. Analyze:
