@@ -62,6 +62,7 @@ class DOSCAR():
         self.out = self.getData()
         
         self.spin = getSpin(self.out)
+        self.bandgap = None
 
 
     def getData(self):
@@ -85,6 +86,41 @@ class DOSCAR():
                     out.append(line)
             self.out = out
             return self.out
+    
+    def getBandgap(self):
+        """Computes bandgap from data."""
+        out = self.out
+        Ef,nAtoms,NEDOS = self.Ef,self.nAtoms,self.NEDOS
+
+        data = [] #Gathers the points for each section of the data in diferent lists
+        for at in range(nAtoms+1):
+            data.append(out[(at)*NEDOS+6+(at):(at+1)*NEDOS+6+(at)])
+
+        if self.spin == "nsp":
+            ##Loop for obtaining the Total DOS data, taking into account that in the DOSCAR are distributed as E|Tα|Tβ|iTa|iTb
+            E,T,iT = [np.array([]) for i in range(3)]          #Each paramater goes to a dedicated list with its name
+            for line in data[0][1:]:
+                E = np.append(E,line[0]-Ef)                          #Energy points (corrected by the fermi level, Ef)
+                T = np.append(T,line[1])                             #Total DOS
+                iT = np.append(iT,line[2])                           #Total integration
+
+            bandgap, VBM, CBM = getBandGap(E,T,Ef)
+            self.bandgap = (bandgap, VBM, CBM)
+            return bandgap, VBM, CBM
+        
+        elif self.spin == "sp":
+            ##Loop for obtaining the Total DOS data, taking into account that in the DOSCAR are distributed as E|Tα|Tβ|iTa|iTb
+            E,T,iT,Ta,Tb,iTb,iTa = [np.array([]) for i in range(7)]          #Each paramater goes to a dedicated list with its name
+            for line in data[0][1:]:
+                E = np.append(E,line[0]-Ef)                                  #Energy points (corrected by the fermi level, Ef)
+                Ta = np.append(Ta,line[1]); Tb = np.append(Tb,line[2])       #Total α (Ta) and Total β (Tb) DOS contributions
+                iTa = np.append(iTa,line[3]); iTb = np.append(iTb,line[4])   #Total DOS integrations for a and b
+                T = np.append(T,line[1]+line[2])                             #Total DOS (Ta+Tb)
+                iT = np.append(iT,line[3]+line[4])                           #Total integration (iTa,iTb)
+            
+            bandgap, VBM, CBM = getBandGap(E,T,Ef)
+            self.bandgap = (bandgap, VBM, CBM)
+            return bandgap, VBM, CBM
     
     def saveImage(self,out_path,params):
         """Saves the generated plot as an image to the given path."""

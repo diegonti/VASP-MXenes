@@ -18,6 +18,7 @@ import shutil
 from argparse import ArgumentParser
 
 from VASPread import OUTCAR
+from DOS import DOSCAR
 
 def calculateMXT(n:int,T:str,calcError=True):
     """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
@@ -141,6 +142,65 @@ def calculateGeneral(paths):
             os.chdir(path)
 
 
+def calculateWF(n:int,T:str,limit=1.23,calcError=True):
+    """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
+
+    Parameters
+    ----------
+    `n` : MXene index from the formula Mn+1XnT2.
+    `T` : Termination with the index (e.g 'O2').
+    `calcError` : To recalculate job if OUTCAR presents error.
+    """
+    # For Terminated cases
+    for mx,mxt in zip(MX,MXT):
+        for j,stack in enumerate(stacking):
+            for k,hollow in enumerate(hollows[j]):
+
+                # Go to the MXT path
+                path = f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
+                os.chdir(path)
+
+                dir = "WF/"
+
+                # see DOS0
+                dos = DOSCAR(path+"DOS/PBE0/DOSCAR")
+                Eg,VBM,CBM = dos.getBandgap()
+
+                if Eg >= limit: 
+                    # print(f"{mxt} {stack} {hollow} : {Eg} {VBM} Correct.")
+                    print(path,Eg,VBM,CBM,flush=True)
+                else: continue
+
+
+                # In case tha calculation is already done
+                if os.path.exists(path+dir+"vasp.out"): 
+
+                    # And in case there has been an Error
+                    if os.path.exists(path+dir+"OUTCAR") and calcError:
+
+                        outcar = OUTCAR(path+dir+"OUTCAR")
+                        info = outcar.getOpt()
+                        if info[-1] == "error":
+                            os.chdir(dir)
+                            start = dir.split("/")[0].lower()
+
+                            os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+                            os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
+                            os.system(f"{queue} {start}{mxt}_{j}{k} script")
+                            os.chdir(path)
+                    continue
+                
+                # Move the CONTCAR and send the job to queue
+                try: shutil.copy("CONTCAR",dir+"POSCAR")
+                except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
+                
+                os.chdir(dir)
+                start = dir.split("/")[0].lower()
+                # os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+                # os.system(rf"sed -i '/-q iqtc/c\#$ -q iqtc06.q' script")
+                os.system(f"{queue} {start}{mxt}_{j}{k} script")
+                os.chdir(path)
+
 ############################ MAIN PROGRAM #####################
 
 # Cluster PATHS
@@ -154,17 +214,24 @@ parser = ArgumentParser(description="Runs over all paths to do electronic calcul
     Run this scripts after optimization (opt.py). It copies CONTCAR to the BS/DOS/WF folders and sends job to queue.",
     usage="\n To use, specify the n (index) and T (termination) of the MXene: \n    python3 calculate.py [-h] -n N_INDEX [-T TERMINATION]\n\
  OR input a specific path: \n    python3 calculate.py [-h] -p PATH\n\
- If both -n and -p falgs are used. The -p one has preference.")
+ If both -n and -p falgs are used. The -p one has preference.\n\
+ Moreover, to do LOCPOT calculations for WF, use the -WF flag and optionally the -l flag, along the specified -n and -T:\n\
+    python3 calculate.py [-h] -n N_INDEX [-T TERMINATION] [-WF] [-l LIMITWF]")
 
 parser.add_argument("-p","--path",type=str,default=None,help="Individual MXene structure folder where the calculation will be done. Optional. Has preference over -n.")
 parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.")
 parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
                     For pristine MXenes, don't use this or use None. Defaults to None.")
+parser.add_argument("-WF","--workfunction",action="store_true",help="To send LOCPOT calculations. Use the -l flag to send only for a specified bandgap limit.")
+parser.add_argument("-l","--limitWF",type=float,default=1.23,help="The structures with bandgap > limit will be calculated. Defaults to 0.")
 
 args = parser.parse_args()
 paths, n, T = args.path, args.n_index, args.termination
+calc_wf, limitWF = args.workfunction, args.limitWF
 
-if paths is None and n is None: print(f"Some arguments are needed. For help, run python3 calculate.py -h")
+
+if calc_wf and n is None: parser.error("-WF requires -n flag and optinally -T.")
+elif paths is None and n is None: parser.error(f"Some arguments are needed. For help, run python3 calculate.py -h.")
 
 
 if not paths is None: calculateGeneral(paths)
@@ -186,14 +253,17 @@ else:
     hABC = ["HM","HMX","HX"]
     hollows = [hABC,hABA]
 
-    if T == "": 
-        accept = input(f"Are you sure you want to calculate pristine MXenes with n = {n}? (Y/n): ")
-        if accept == "Y": calculateMX(n)
-        else: print("Closing...")
-    else: 
-        accept = input(f"Are you sure you want to calculate terminated MXenes with n = {n} and T = {T}? (Y/n): ")
-        if accept == "Y": calculateMXT(n,T)
-        else: print("Closing...")
+    if calc_wf:
+        calculateWF(n,T,limitWF)
+    else:
+        if T == "": 
+            accept = input(f"Are you sure you want to calculate pristine MXenes with n = {n}? (Y/n): ")
+            if accept == "Y": calculateMX(n)
+            else: print("Closing...")
+        else: 
+            accept = input(f"Are you sure you want to calculate terminated MXenes with n = {n} and T = {T}? (Y/n): ")
+            if accept == "Y": calculateMXT(n,T)
+            else: print("Closing...")
 
 #! Changes:
 # import general searcher that provides paths and use general calculator.
