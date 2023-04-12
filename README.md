@@ -70,7 +70,7 @@ Moreover, to do LOCPOT calculations for WF, use the -WF flag and optionally the 
 ```
 $ python3 calculate.py -n N_INDEX [-T TERMINATION] [-WF] [-l LIMITWF]
 ```
-<br>
+
 
 - ### 4. Analyze:
 
