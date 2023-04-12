@@ -1,5 +1,5 @@
 # VASP - MXenes scripts
-Python scripts used for my chemistry final degree thesis [_Bandgap Engineering on MXene Compounds by Structure, Composition, and Surface Termination_](http://hdl.handle.net/2445/189371) and subsequent masters degree work. Created to ease and automate the project for making it more efficient. The following are a group of scripts that allow to work with the VASP program in a more batched way, generating, sending calculations and analyzing, not just one by one (boring) but in high amounts of cases at the same time. As a lazy guy myself, it's better if a program can do it for you...
+Python scripts used for my chemistry final degree thesis [_Bandgap Engineering on MXene Compounds by Structure, Composition, and Surface Termination_](http://hdl.handle.net/2445/189371) and subsequent masters degree work. Created to ease and automate the project for making it more efficient. The following are a group of scripts that allow to work with the VASP program in a more batched way, generating, sending calculations and analyzing, not just one by one (boring) but in high amounts of cases at the same time. As a lazy guy myself, I always say that it's better if a program can do it for you...
 
 The scripts are divided into 3 parts:
 
@@ -29,7 +29,9 @@ These scripts follow the general workflow that I as a researcher would use for c
 
 Here, the file `VASP.py` is used. Its main purpuse is [VASP](https://www.vasp.at/) input file management, it generates a tree of folders for a given MXene width $n$ and termination $T_x$, considering stackings ($ABC$ and $ABA$) and termination hollow position ($H_M$, $H_{MX}$ and $H_X$ for $ABC$,  and $H$, $H_{MX}$ and $H_X$ for $ABA$), and containing each folder different subfolders for the calculations needed (optimization opt/, density of states DOS/, band structures BS/, and workfunction WF/). Each subfolder has its necessary files (INCAR, POTCAR, KPOINTS, script and POSCAR), which the right parameters for the given MXene and calculation case. Moreover, it also has the principal MXene class, `MX()`, that contains the MXene information (n, atoms, indices, termination, name,...), which is used by other scripts.
 
-To create the folders for pristine MXenes with $n=2$, simply set $n=2$ and $T=""$ in the code and run the script. The tree of folders will be generated in a MXenes/ folder, which can be send to the cluster (or generated righ there).
+The script file in each subfolder is the bash script for submitting a job. Here are some examples for IQTC and Marenostrum4 clusters, but please put there the right script you want to use (with the name "script"). 
+
+For example, to create the folders for pristine MXenes with $n=2$, simply set $n=2$ and $T=$"" in the code and run the script. The tree of folders will be generated in a MXenes/ folder, which can be send to the cluster (or generated right there).
 <br><br>
 
 - ### 2. Optimize:
@@ -68,7 +70,7 @@ Moreover, to do LOCPOT calculations for WF, use the -WF flag and optionally the 
 ```
 $ python3 calculate.py -n N_INDEX [-T TERMINATION] [-WF] [-l LIMITWF]
 ```
-<br><br>
+<br>
 
 - ### 4. Analyze:
 
@@ -121,7 +123,7 @@ The avobe scripts are used internally by the scripts in the general workflow, ma
 
 ## Utilities 
 
-The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, from where the POTCAR file of the structure will be created. The `/car` folder has different input files models. Both are used by the `VASP.py` script for creating the input files.
+The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, from where the POTCAR file of the structure will be created. The `/car` folder has different input files models. Both are used by the `VASP.py` script for creating the input files. In the `/car` folder, is also found the bash script that will be used for sending calculations to the cluster, put there the one that you want to use.
 <br><br>
 
 
@@ -129,7 +131,7 @@ The `/PP` folder contains the pseudopotentials (POTCAR) files for each atom, fro
 
 In many cases, the scripts themnselves are well documented and will have a header of explanation and usage. The General Workflow scripts, have a [-h] and [--help] flag that indicates also usage and flags.
 
-Take in mind that this are script developed by a learning master student (myself), and may not serve for general pourpuse calculations.
+Take in mind that this are scripts developed by a learning master student (myself), and may not serve for general pourpuse calculations.
 
 For any doubts or questions, contact [Diego Ontiveros](https://github.com/diegonti) ([Mail](mailto:diegonti.doc@gmail.com)).
 
