@@ -7,34 +7,17 @@ Diego Ontiveros
 """
 
 import os
+from argparse import ArgumentParser
+
 # os.environ['OPENBLAS_NUM_THREADS'] = '1'
 from searcher import SEARCH, getStructure, parseTermination, mx_folders,mxt_folders
 from DOS import DOSCAR
+from LOCPOT import WF
 
 
-home = os.path.abspath("..")
-searcher = SEARCH()
-target = "DOSCAR"
-T = ""
-
-T, pristine = parseTermination(T)
-
-
-for n in [1]:
-
-    # Creating folders
-    path_folders = f"{home}/searcher_dos{n}/"
-    
-    try: os.mkdir(path_folders)
-    except FileExistsError: pass
-    os.chdir(path_folders)
-
-    if pristine: folders = mx_folders
-    else: folders = mxt_folders
-    for folder in folders:
-        try: os.mkdir(folder)
-        except FileExistsError: pass
-
+def analyzeDOS(n,T,target):
+    """Analyzes the DOSCAR of the path tree for the given n and T.\n 
+    Makes a plot in the correspondent /home folder, and returns bandgap information: Eg, VBM and CBM."""
 
     paths,data = searcher.search(target,n=n,T=T)
 
@@ -63,4 +46,70 @@ for n in [1]:
                 spc = True,
                 out_path = out_folder
             )
+
+def analyzeWF(n,T,target,limit):
+    paths = searcher.search(target,n=n,T=T)
+    for path in paths:
+        pass
+
+    pass
+
+
+home = os.path.abspath("..")
+searcher = SEARCH()
+target = "DOSCAR"
+
+# Parsing user arguments
+parser = ArgumentParser(description="Calls the visualization scripts (DOS and LOCPOT) to make plots and return bandgap or Vvsurf for the specified n and T. \
+                        Or for a given file of paths.",
+    usage= "\n\
+        General:        analyzer.py [-h] [-n N_INDEX] [-T TERMINATION] [-f FILE] [-DOS] [-WF]\n\
+        DOS analysis:   analyzer.py -DOS [-n N_INDEX] [-T TERMINATION] [-f FILE] \n\
+        WF analysis:    analyzer.py -WF [-n N_INDEX] [-T TERMINATION] [-f FILE]")
+parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.")
+parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
+                    For pristine MXenes, don't use this or use None. Defaults to None.")
+parser.add_argument("-f","--file",type=str,help="Read the paths to do analysis from a specified file.")
+parser.add_argument("-DOS","--DOS",action="store_true",help="To analyze DOSCAR (PBE) files (from paths in file or for the given -n and -T).")
+parser.add_argument("-DOS0","--DOS0",action="store_true",help="To analyze DOSCAR (PBE0) files (from paths in file or for the given -n and -T).")
+parser.add_argument("-WF","--WF",action="store_true",help="To analyze LOCPOT files (from paths in file or for the given -n and -T).")
+
+args = parser.parse_args()
+n,T = args.n_index, args.termination # limit?
+file,calc_dos,calc_dos0,calc_wf = args.file,args.DOS,args.DOS0,args.WF
+if T == "None": T = ""
+T, pristine = parseTermination(T)
+if file is None and n is None: parser.error(f"Some arguments are needed. Choose -file or -n. For help, run python3 calculate.py -h.")
+elif not calc_dos and not calc_wf: parser.error(f"Analysis flag needed. Choose -DOS or -WF. For help, run python3 calculate.py -h.")
+
+
+if calc_dos: 
+    target = "DOSCAR"
+    analyzeDOS(n,T,target)
+elif calc_dos0: 
+    target = "DOSCAR0"
+    analyzeDOS(n,T,target)
+elif calc_wf: 
+    target = "LOCPOT"
+    pass
+
+# analyzeDOS()
+# analyzeWF()
+# analyzeWF_fromfile()
+# analyzeDOS_fromfile()
+
+
+# Creating folders
+path_folders = f"{home}/searcher_dos{n}/"
+
+try: os.mkdir(path_folders)
+except FileExistsError: pass
+os.chdir(path_folders)
+
+if pristine: folders = mx_folders
+else: folders = mxt_folders
+for folder in folders:
+    try: os.mkdir(folder)
+    except FileExistsError: pass
+
 
