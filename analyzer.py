@@ -15,16 +15,14 @@ from DOS import DOSCAR
 from LOCPOT import WF
 
 
-def analyzeDOS(n,T,target):
+def analyzeDOS(paths):
     """Analyzes the DOSCAR of the path tree for the given n and T.\n 
     Makes a plot in the correspondent /home folder, and returns bandgap information: Eg, VBM and CBM."""
 
-    paths,data = searcher.search(target,n=n,T=T)
-
     for path in paths:
         dos = DOSCAR(path)
-        stack,hollows = getStructure(path)
-        # if stack=="ABC":continue
+        stack,hollows,pristine = getStructure(path)
+        # if stack=="ABA":continue
         # Select out folder
         if pristine: out_folder = stack+"/"
         else: out_folder = stack+"_"+hollows+"/"
@@ -47,24 +45,36 @@ def analyzeDOS(n,T,target):
                 out_path = out_folder
             )
 
-def analyzeWF(n,T,target,limit):
-    paths = searcher.search(target,n=n,T=T)
+
+def analyzeWF(paths,limit): 
+    """Analyzed the LOCPOT file for all the given paths. 
+    Makes a plot in the respective home folder and returns LOCPOT information: vaccuum potential for each surface."""
+
     for path in paths:
-        pass
+        stack,hollows,pristine = getStructure(path)
+        # if stack=="ABA":continue
 
-    pass
+        # Select out folder
+        if pristine: out_folder = stack+"/"
+        else: out_folder = stack+"_"+hollows+"/"
+        print(f"{stack} {hollows} ",end='',flush=True)
 
+        wf = WF(path)
+        wf.calculate(tol_janus=10)
+        wf.plot(name=out_folder+f"{wf.file}_{wf.mx.name}.png")
+
+
+############################# MAIN PROGRAM ####################################
 
 home = os.path.abspath("..")
 searcher = SEARCH()
-target = "DOSCAR"
 
 # Parsing user arguments
 parser = ArgumentParser(description="Calls the visualization scripts (DOS and LOCPOT) to make plots and return bandgap or Vvsurf for the specified n and T. \
                         Or for a given file of paths.",
     usage= "\n\
         General:        analyzer.py [-h] [-n N_INDEX] [-T TERMINATION] [-f FILE] [-DOS] [-WF]\n\
-        DOS analysis:   analyzer.py -DOS [-n N_INDEX] [-T TERMINATION] [-f FILE] \n\
+        DOS analysis:   analyzer.py -DOS[0] [-n N_INDEX] [-T TERMINATION] [-f FILE] \n\
         WF analysis:    analyzer.py -WF [-n N_INDEX] [-T TERMINATION] [-f FILE]")
 parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.")
 parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
@@ -83,22 +93,6 @@ if file is None and n is None: parser.error(f"Some arguments are needed. Choose 
 elif not calc_dos and not calc_wf: parser.error(f"Analysis flag needed. Choose -DOS or -WF. For help, run python3 calculate.py -h.")
 
 
-if calc_dos: 
-    target = "DOSCAR"
-    analyzeDOS(n,T,target)
-elif calc_dos0: 
-    target = "DOSCAR0"
-    analyzeDOS(n,T,target)
-elif calc_wf: 
-    target = "LOCPOT"
-    pass
-
-# analyzeDOS()
-# analyzeWF()
-# analyzeWF_fromfile()
-# analyzeDOS_fromfile()
-
-
 # Creating folders
 path_folders = f"{home}/searcher_dos{n}/"
 
@@ -106,10 +100,43 @@ try: os.mkdir(path_folders)
 except FileExistsError: pass
 os.chdir(path_folders)
 
-if pristine: folders = mx_folders
-else: folders = mxt_folders
-for folder in folders:
-    try: os.mkdir(folder)
-    except FileExistsError: pass
 
+# All possible combinations
+if file is None:
 
+    if pristine: folders = mx_folders
+    else: folders = mxt_folders
+    for folder in folders:
+        try: os.mkdir(folder)
+        except FileExistsError: pass
+    
+    if calc_dos: 
+        target = "DOSCAR"
+        paths = searcher.search(target,n,T)
+        analyzeDOS(paths)
+
+    elif calc_dos0: 
+        target = "DOSCAR0"
+        paths = searcher.search(target,n,T)
+        analyzeDOS(paths)
+
+    elif calc_wf: 
+        target = "LOCPOT"
+        paths = searcher.search(target,n,T)
+        analyzeWF(paths)
+
+else:
+    # if pristine: folders = mx_folders
+    # else: folders = mxt_folders
+    folders = mxt_folders
+    for folder in folders:
+        try: os.mkdir(folder)
+        except FileExistsError: pass
+
+    with open(file,"r") as inFile: 
+        paths = inFile.readlines()
+        # procesing of file here
+        for i,line in enumerate(paths): paths[i] = line.strip().split()[0] 
+
+    if calc_dos or calc_dos0: analyzeDOS(paths)
+    elif calc_wf: analyzeWF(paths)
