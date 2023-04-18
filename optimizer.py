@@ -35,7 +35,7 @@ def getStructure(path):
     for hollow in h: 
         if hollow in path: hollows = hollow.split("/")[1]
 
-    if hollow is "": pristine = True
+    if hollow == "": pristine = True
     else: pristine = False
 
     return stack, hollows, pristine
