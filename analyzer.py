@@ -46,7 +46,7 @@ def analyzeDOS(paths):
             )
 
 
-def analyzeWF(paths,limit): 
+def analyzeWF(paths,limit=None): 
     """Analyzed the LOCPOT file for all the given paths. 
     Makes a plot in the respective home folder and returns LOCPOT information: vaccuum potential for each surface."""
 
@@ -95,6 +95,7 @@ elif not calc_dos and not calc_wf: parser.error(f"Analysis flag needed. Choose -
 
 # Creating folders
 path_folders = f"{home}/searcher_dos{n}/"
+file_path = os.path.abspath(file)
 
 try: os.mkdir(path_folders)
 except FileExistsError: pass
@@ -133,10 +134,10 @@ else:
         try: os.mkdir(folder)
         except FileExistsError: pass
 
-    with open(file,"r") as inFile: 
+    with open(file_path,"r") as inFile: 
         paths = inFile.readlines()
         # procesing of file here
-        for i,line in enumerate(paths): paths[i] = line.strip().split()[0] 
+        # for i,line in enumerate(paths): paths[i] = line.strip().split()[0] + "WF/LOCPOT"
 
     if calc_dos or calc_dos0: analyzeDOS(paths)
     elif calc_wf: analyzeWF(paths)
