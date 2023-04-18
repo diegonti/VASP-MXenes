@@ -35,7 +35,10 @@ def getStructure(path):
     for hollow in h: 
         if hollow in path: hollows = hollow.split("/")[1]
 
-    return stack, hollows
+    if hollow is "": pristine = True
+    else: pristine = False
+
+    return stack, hollows, pristine
 
 ######################## Functions for each optimization step ########################
 def repeated(folders,next_opt):
@@ -151,7 +154,7 @@ path1 = path + "opt/"
 max_iterations = 50
 
 extension = ""
-stack,hollows = getStructure(path)
+stack,hollows,pristine = getStructure(path)
 stack_indicator = 1 if stack=="ABA" else 0
 
 folders = []

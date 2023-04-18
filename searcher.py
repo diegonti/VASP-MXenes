@@ -48,7 +48,10 @@ def getStructure(path):
     for hollow in h: 
         if hollow in path: hollows = hollow.split("/")[1]
 
-    return stack, hollows
+    if hollow is "": pristine = True
+    else: pristine = False
+
+    return stack, hollows, pristine
 
 def pathMX(n,mx,mxt,stack,hollow):
     return f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
