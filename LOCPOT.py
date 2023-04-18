@@ -10,6 +10,8 @@ import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
+from VASP import MX
+
 
 def isJanus(means,t,low,high,e):
     """Searches the vacuum region of the slab [low,high] and returns True in the case for Janus materials (with a e% of tolerance)."""
@@ -28,11 +30,12 @@ def isJanus(means,t,low,high,e):
 
 
 class WF():
-    def __init__(self,path) -> None:
+    def __init__(self,path:str) -> None:
         """Workfunction object that contains the LOCPOT information and function to compute
         and plot the local potential and vacuum energies. Yakes the path of the LOCPOT file as argument."""
 
         self.path = path
+        self.file = path.split("/")[-1]
         self.data = self.getData()
         self.t,self.means = None,None
         self.Vv, self.Vvsf1, self.Vvsf2 = None, None, None 
@@ -52,7 +55,7 @@ class WF():
                     try: e=float(e)
                     except ValueError: pass
                     line[i] = e
-
+                if n == 0: self.mx = MX(line[0])
                 if n == 4: self.latticeZ = line[2]       # c lattice parameter
                 if n == 5: atoms = line                  # Atom symbols
                 if n == 6: self.nAtoms = int(sum(line))  # nAtoms = sum of atom indeces
@@ -129,7 +132,7 @@ class WF():
                 elif t[i]>mid+1 and t[i]<high: Vcalc_sf2.append(m)
             Vvsf1 = np.mean(Vcalc_sf1)
             Vvsf2 = np.mean(Vcalc_sf2)
-            print(f"{name}: Vvsf1 = {Vvsf1}   Vvsf2 = {Vvsf2}")
+            print(f"{self.mx.mxName}: Vvsf1 = {Vvsf1}   Vvsf2 = {Vvsf2}", flush=True)
             self.t, self.means, self.Vvsf1, self.Vvsf2 = t,means, Vvsf1, Vvsf2
             return t,means, Vvsf1, Vvsf2
 
@@ -139,10 +142,10 @@ class WF():
                 if t[i]>low and t[i]<high:        # and averages them to estimate the Vvaccum
                     Vcalc.append(m)
             Vv = np.mean(Vcalc)
-            print(f"{name} = {Vv}")
+            print(f"{self.mx.mxName}: Vvsf1 = {Vv}   Vvsf2 = {Vv}", flush=True)
 
             self.t, self.means, self.Vv = t,means, Vv
-            return t,means, Vv
+            return t,means, Vv, Vv
         
 
     def plot(self,name,show=False,incwd=False):
