@@ -94,7 +94,8 @@ elif not calc_dos and not calc_wf: parser.error(f"Analysis flag needed. Choose -
 
 
 # Creating folders
-path_folders = f"{home}/searcher_dos{n}/"
+if not n is None: path_folders = f"{home}/searcher_dos{n}/"
+else: path_folders = f"{home}/searcher_dos/"
 file_path = os.path.abspath(file)
 
 try: os.mkdir(path_folders)
