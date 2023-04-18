@@ -132,6 +132,20 @@ class SEARCH():
 
 
     def search(self,target:str,n:int,T:str=None):
+        """Searches target into the tree of folders for a given n and T.
+
+        Parameters
+        ----------
+        `target` : Target descriptor of the file. (dos, dos0, locpot, WF/, opt/)
+        `n` : MXene index (Mn+1XnT2)
+        `T` : Optional. MXene termination. By default None.
+
+        Returns
+        -------
+        `search_paths` : List of the searched and found paths.
+        `search_data` : List with the data ([mxt,stack,hollow])
+
+        """
 
         T, pristine = parseTermination(T)
         self.n, self.T = n,T
@@ -158,6 +172,16 @@ class SEARCH():
 
 
     def move(self,destination:str,n:int,T:str=None,action="addT",name:str=None):
+        """Moves targeted files to the specified destination, for a given batch of n and T MXenes.
+
+        Parameters
+        ----------
+        `destination` : Type of file movement. 'mx>mxt' using pristine CONTCARS to the correspondent initial POSCARs for terminated cases.
+        `n` : MXene index (Mn+1XnT2)
+        `T` : Optional. MXene termination. By default None.
+        `action` : Action to do when moving, 'addT' for adding a termination to the pristine CONTCAR. By default "addT".
+        `name` : Name of the pasted file. By default takes the name of the target.
+        """
 
         search_paths,data = self.search_paths,self.search_data
 
@@ -189,6 +213,7 @@ class SEARCH():
 
 
     def moveHome(self,path_folders:str=None,name:str=None):
+        """Moves all the targeted files to their correspondent (stach_hollow/) folder in the hom/searcher_n dir created."""
         n = self.n
         T, pristine = parseTermination(self.T)
         if name is None: name = self.target
@@ -218,6 +243,7 @@ class SEARCH():
             shutil.copy(path,f"{out_folder}/{name}_{data[0]}")
 
     def remove(self, target:str):
+        """Removes the specified files for the searched paths and subfolders."""
         search_paths,data = self.search_paths,self.search_data
         for s_path in search_paths:
             try:
@@ -225,8 +251,17 @@ class SEARCH():
                 os.system(f"find . -name '{target}' -type f -delete")
                 # os.chdir(original_path)
             except FileNotFoundError: print(f"{s_path} : Path not found.")
-            
 
+    def action(self, target:str):
+        """General action to do in the searched paths."""
+        search_paths,data = self.search_paths,self.search_data
+        for s_path in search_paths:
+            try:
+                os.chdir(s_path)
+                os.system(f"{target}")
+                # os.chdir(original_path)
+            except FileNotFoundError: print(f"{s_path} : Path not found.")
+            
 
 ############################### MAIN PROGRAM ###############################
 
