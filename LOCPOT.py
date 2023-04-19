@@ -59,11 +59,15 @@ class WF():
                 if n == 4: self.latticeZ = line[2]       # c lattice parameter
                 if n == 5: atoms = line                  # Atom symbols
                 if n == 6: self.nAtoms = int(sum(line))  # nAtoms = sum of atom indeces
-                if n == 12: self.d = line[2]*self.latticeZ    # d = c*z(O) == MXene thickness
                 if n == 7+self.nAtoms+2:                 # Grid points (x,y,z)
                     self.grid = int(line[0]),int(line[1]),int(line[2])
 
                 self.data.append(line)
+
+        self.first_atom = self.data[7+2*self.mx.n+2][2]*self.latticeZ   # position of the lowest atom (T1)
+        if self.first_atom > 0.75: self.first_atom = self.first_atom - self.latticeZ
+        self.d = self.data[7+2*self.mx.n+3][2]*self.latticeZ            # d = c*z(T2) == MXene thickness
+        print(self.d, self.first_atom)
         return self.data
         
         
@@ -88,7 +92,7 @@ class WF():
 
 
         data = self.data
-        nAtoms, latticeZ, d = self.nAtoms, self.latticeZ, self.d
+        nAtoms, latticeZ, d, first_atom = self.nAtoms, self.latticeZ, self.d, self.first_atom
         x,y,z = self.grid
 
 
@@ -121,7 +125,7 @@ class WF():
 
         # Vacuum Energy calculation
         t = np.linspace(0,latticeZ, len(means))   # z axis vector along the c lattice parameter
-        low,high = d+3,latticeZ-3                 # Limits to do the mean for calculating Vvaccum
+        low,high = d+3,latticeZ+self.first_atom-3                 # Limits to do the mean for calculating Vvaccum
         mid = np.mean((low,high))
         Vcalc,Vcalc_sf1,Vcalc_sf2 = [],[],[]
         self.janus = isJanus(means,t,low,high,tol_janus)
