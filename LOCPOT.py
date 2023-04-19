@@ -67,7 +67,6 @@ class WF():
         self.first_atom = self.data[7+2*self.mx.n+2][2]*self.latticeZ   # position of the lowest atom (T1)
         if self.first_atom > 0.75: self.first_atom = self.first_atom - self.latticeZ
         self.d = self.data[7+2*self.mx.n+3][2]*self.latticeZ            # d = c*z(T2) == MXene thickness
-        print(self.d, self.first_atom)
         return self.data
         
         
