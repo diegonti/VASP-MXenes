@@ -6,6 +6,7 @@ Diego Ontiveros
 """
 
 import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 import itertools
 import numpy as np
 import matplotlib.pyplot as plt
@@ -187,8 +188,8 @@ class WF():
         plt.ylim(ymax=5)
         plt.legend(frameon=False)
 
-        if incwd: plt.savefig(f"{name}.png",format="png",dpi=600)
-        else: plt.savefig(f"{name}.png",format="png",dpi=600)
+        if incwd: plt.savefig(f"{name}",format="png",dpi=600)
+        else: plt.savefig(f"{name}",format="png",dpi=600)
 
         plt.close()
         #if show = plt.show()
