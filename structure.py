@@ -26,8 +26,6 @@ def pbc(vector):
 
         if i == 1 and d > 1/2: vector[1] = d - 1*1
         elif i == 1 and d < -1/2: vector[1] = d + 1*1
-        # if i == 1 and d > np.cos(np.radians(30))/2: vector[1] = d - 1*np.cos(np.radians(30))
-        # elif i == 1 and d < -np.cos(np.radians(30))/2: vector[1] = d + 1*np.cos(np.radians(30))        
 
     return vector    
 
