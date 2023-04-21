@@ -8,6 +8,7 @@ Diego Ontiveros
 from VASP import MX
 import warnings
 import os
+import numpy as np
 
 def test_data(data):
     print()
@@ -16,7 +17,19 @@ def test_data(data):
 
 def setFormat(number,decimals):
     return format(round(number,decimals),f".{decimals}f")
-    
+
+def pbc(vector): 
+    vector = vector.copy()
+    for i,d in enumerate(vector[:2]):
+        if i == 0 and d > 1/2: vector[0] = d - 1
+        elif i == 0 and d < -1/2: vector[0] = d + 1
+
+        if i == 1 and d > 1/2: vector[1] = d - 1*1
+        elif i == 1 and d < -1/2: vector[1] = d + 1*1
+        # if i == 1 and d > np.cos(np.radians(30))/2: vector[1] = d - 1*np.cos(np.radians(30))
+        # elif i == 1 and d < -np.cos(np.radians(30))/2: vector[1] = d + 1*np.cos(np.radians(30))        
+
+    return vector    
 
 class CONTCAR():
     def __init__(self,path:str) -> None:
@@ -111,11 +124,11 @@ class CONTCAR():
         
         data = self.toZero()
         nAtoms = self.nAtoms
-        lattice = data[:5]
+        lattice = np.array([[float(data[2:5][i][j]) for j in range(3)] for i in range(3)])
         positions = data[5:]
 
-        posz = []   # List with the z fractional positions
-        for i in range(nAtoms): posz.append(float(data[9+i][2]))
+        posz = [float(data[9+i][2]) for i in range(nAtoms)]   # List with the z fractional positions
+        pos = np.array([[float(data[9+i][j]) for j in range(3)] for i in range(nAtoms)])
 
         # Getting the length of each lattice parameters
         lattice_params = []
@@ -123,14 +136,35 @@ class CONTCAR():
             l = sum([float(li)**2 for li in data[2+i]])**0.5
             lattice_params.append(l)
         a,b,c = lattice_params
+        scale = lattice.T
 
         d = round(max(posz)*c,14)     # Width of the slab
 
+        if extra_dist and self.mx.terminal:
+            hMT1 = (posz[0]-posz[-2])*c             # Bottom surface (HM)
+            hMT2 = (posz[-1]-posz[self.mx.n])*c     # Top surface (HMX)
 
-        if extra_dist:
-            dMO1 = (posz[0]-posz[-2])*c             # Bottom surface (HM)
-            dMO2 = (posz[-1]-posz[self.mx.n])*c     # Top surface (HMX)
-            return a, d, dMO1, dMO2
+            dMT1 = np.linalg.norm(scale@pbc(pos[0]-pos[-2]))
+            dMT2 = np.linalg.norm(scale@pbc(pos[-1]-pos[self.mx.n]))
+
+            dXT1 = np.linalg.norm(scale@pbc(pos[self.mx.n+1]-pos[-2]))
+            dXT2 = np.linalg.norm(scale@pbc(pos[-1]-pos[2*self.mx.n]))
+        
+            dMX1 = np.linalg.norm(scale@pbc(pos[self.mx.n+1]-pos[0]))
+            dMX2 = np.linalg.norm(scale@pbc(pos[2*self.mx.n]-pos[self.mx.n]))
+
+            if self.mx.T_AB:
+                hMT1 = (posz[0]-posz[-4])*c             # Bottom surface (HM)
+                hMT2 = (posz[-3]-posz[self.mx.n])*c     # Top surface (HMX)
+                vec = pos[0]-pos[-4]
+                
+                dMT1 = np.linalg.norm(scale@pbc(pos[0]-pos[-4]))
+                dMT2 = np.linalg.norm(scale@pbc(pos[-3]-pos[self.mx.n]))
+                
+                dXT1 = np.linalg.norm(scale@pbc(pos[self.mx.n+1]-pos[-4]))
+                dXT2 = np.linalg.norm(scale@pbc(pos[-3]-pos[2*self.mx.n]))
+
+            return a, d, hMT1, hMT2, dMT1, dMT2, dXT1,dXT2, dMX1,dMX2
         else: return a,d
 
 
