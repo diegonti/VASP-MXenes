@@ -33,7 +33,7 @@ def getBandGap(E,T,Ef):
     
     searchVBM,searchCBM = False, False
     for i,e in enumerate(E):
-        if e == round(Ef-5*dE,3):
+        if e == round(Ef-5*dE,3) or e == round(Ef-5*dE,3)+0.001 or e == round(Ef-5*dE,3)-0.001:
             searchVBM = True
         if searchVBM:
             if T[i] == 0:
