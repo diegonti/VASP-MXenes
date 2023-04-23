@@ -90,13 +90,13 @@ file,calc_dos,calc_dos0,calc_wf = args.file,args.DOS,args.DOS0,args.WF
 if T == "None": T = ""
 T, pristine = parseTermination(T)
 if file is None and n is None: parser.error(f"Some arguments are needed. Choose -file or -n. For help, run python3 calculate.py -h.")
-elif not calc_dos and not calc_wf: parser.error(f"Analysis flag needed. Choose -DOS or -WF. For help, run python3 calculate.py -h.")
+elif not calc_dos and not calc_dos0 and not calc_wf: parser.error(f"Analysis flag needed. Choose -DOS or -WF. For help, run python3 calculate.py -h.")
 
 
 # Creating folders
 if not n is None: path_folders = f"{home}/searcher_dos{n}/"
 else: path_folders = f"{home}/searcher_dos/"
-file_path = os.path.abspath(file)
+if not file is None: file_path = os.path.abspath(file)
 
 try: os.mkdir(path_folders)
 except FileExistsError: pass
@@ -114,17 +114,17 @@ if file is None:
     
     if calc_dos: 
         target = "DOSCAR"
-        paths = searcher.search(target,n,T)
+        paths,data = searcher.search(target,n,T)
         analyzeDOS(paths)
 
     elif calc_dos0: 
         target = "DOSCAR0"
-        paths = searcher.search(target,n,T)
+        paths,data = searcher.search(target,n,T)
         analyzeDOS(paths)
 
     elif calc_wf: 
         target = "LOCPOT"
-        paths = searcher.search(target,n,T)
+        paths,data = searcher.search(target,n,T)
         analyzeWF(paths)
 
 else:
