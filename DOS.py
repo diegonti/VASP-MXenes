@@ -54,36 +54,59 @@ def getBandGap(E,T,Ef):
 
 
 class DOSCAR():
-    def __init__(self,path:str):
+    def __init__(self,path:str,short:bool=False):
         self.path = path
         self.file = path.split("/")[-1]
+        self.short = short
 
         ##Data gathering and celaning to out list
-        self.out = self.getData()
+        self.out = self.getData() if not short else self.getDataShort()
         
         self.spin = getSpin(self.out)
         self.bandgap = None
 
 
     def getData(self):
-            """Gathers the data from the DOSCAR file."""
-            out = []
-            with open(self.path,"r") as infile:
+        """Gathers the data from the DOSCAR file."""
+        out = []
+        with open(self.path,"r") as infile:
 
-                for n,line in enumerate(infile):
-                    rline = line.strip() #Removes inecessary whitespaces at the begining and end of line
-                    line = rline.split() #Splits the line by the whitespaces into sublists
+            for n,line in enumerate(infile):
+                rline = line.strip() #Removes inecessary whitespaces at the begining and end of line
+                line = rline.split() #Splits the line by the whitespaces into sublists
 
-                    for i,nl in enumerate(line):   #Floating the numbers of the lines,
-                        try: nl = float(nl)        #except when tey are strings
-                        except ValueError: pass
-                        line[i] = nl
+                for i,nl in enumerate(line):   #Floating the numbers of the lines,
+                    try: nl = float(nl)        #except when tey are strings
+                    except ValueError: pass
+                    line[i] = nl
 
-                    if n == 0: self.nAtoms = int(line[0])   #Number of atoms in cell
-                    if n == 4: self.mx = MX(rline)          #Name of the MXene, specified by SYSTEM = Mn+1XnT2 in the INCAR
-                    if n == 5: EMAX, EMIN, self.NEDOS, self.Ef = line[0], line[1], int(line[2]), line[3]
+                if n == 0: self.nAtoms = int(line[0])   #Number of atoms in cell
+                if n == 4: self.mx = MX(rline)          #Name of the MXene, specified by SYSTEM = Mn+1XnT2 in the INCAR
+                if n == 5: EMAX, EMIN, self.NEDOS, self.Ef = line[0], line[1], int(line[2]), line[3]
 
-                    out.append(line)
+                out.append(line)
+        self.out = out
+        return self.out
+    
+    def getDataShort(self):
+        """Gathers the firts part of the data from DOSCAR (total DOS)"""
+        out = []
+        self.NEDOS = 10
+        with open(self.path,"r") as inFile:
+            for n, line in enumerate(inFile):
+                rline = line.strip() #Removes inecessary whitespaces at the begining and end of line
+                line = rline.split() #Splits the line by the whitespaces into sublists
+
+                for i,nl in enumerate(line):   #Floating the numbers of the lines,
+                    try: nl = float(nl)        #except when tey are strings
+                    except ValueError: pass
+                    line[i] = nl
+
+                if n == 0: self.nAtoms = int(line[0])   #Number of atoms in cell
+                if n == 4: self.mx = MX(rline)          #Name of the MXene, specified by SYSTEM = Mn+1XnT2 in the INCAR
+                if n == 5: EMAX, EMIN, self.NEDOS, self.Ef = line[0], line[1], int(line[2]), line[3]
+                if n > self.NEDOS+6: break
+                out.append(line)
             self.out = out
             return self.out
     
@@ -92,14 +115,12 @@ class DOSCAR():
         out = self.out
         Ef,nAtoms,NEDOS = self.Ef,self.nAtoms,self.NEDOS
 
-        data = [] #Gathers the points for each section of the data in diferent lists
-        for at in range(nAtoms+1):
-            data.append(out[(at)*NEDOS+6+(at):(at+1)*NEDOS+6+(at)])
+        data = out[6:NEDOS+6]
 
         if self.spin == "nsp":
             ##Loop for obtaining the Total DOS data, taking into account that in the DOSCAR are distributed as E|Tα|Tβ|iTa|iTb
             E,T,iT = [np.array([]) for i in range(3)]          #Each paramater goes to a dedicated list with its name
-            for line in data[0][1:]:
+            for line in data[1:]:
                 E = np.append(E,line[0]-Ef)                          #Energy points (corrected by the fermi level, Ef)
                 T = np.append(T,line[1])                             #Total DOS
                 iT = np.append(iT,line[2])                           #Total integration
@@ -111,7 +132,7 @@ class DOSCAR():
         elif self.spin == "sp":
             ##Loop for obtaining the Total DOS data, taking into account that in the DOSCAR are distributed as E|Tα|Tβ|iTa|iTb
             E,T,iT,Ta,Tb,iTb,iTa = [np.array([]) for i in range(7)]          #Each paramater goes to a dedicated list with its name
-            for line in data[0][1:]:
+            for line in data[1:]:
                 E = np.append(E,line[0]-Ef)                                  #Energy points (corrected by the fermi level, Ef)
                 Ta = np.append(Ta,line[1]); Tb = np.append(Tb,line[2])       #Total α (Ta) and Total β (Tb) DOS contributions
                 iTa = np.append(iTa,line[3]); iTb = np.append(iTb,line[4])   #Total DOS integrations for a and b
@@ -145,6 +166,8 @@ class DOSCAR():
         `*Args` : Specify list with which atoms/orbitals (M,X,Term) you want to see plotted and color [atom,color].\n
         `**Params` : Specify the plot parameters (xlabel,ylabel,xlim,ylim,figsize,format,dpi), also, specify if the spin contributions are plotted for with spc=True.      """
         
+        if self.short: raise ValueError("You cannot use the plot() method when short=True was set!")
+        
         if out_path is None: self.out_path = self.path.split(self.file)[0]
         else: self.out_path = out_path
         if not out_path.endswith("/"): self.out_path += "/"
@@ -153,9 +176,6 @@ class DOSCAR():
 
         plt.rcParams["figure.autolayout"] = True         #To autoajust plot if figsize is changed
         # plt.rcParams["font.family"] = "Times New Roman"   #Cooler and more formal font
-
-        
-        #!CREAR CLASE DE PARAMS?
 
 
         ##Gathering the parameters to plot and their respective colour
@@ -475,7 +495,8 @@ if __name__ == "__main__":
     for file in inFiles:
 
         dos = DOSCAR(file)
-
+        print(dos.getBandgap())
+    
         # Plots PDOS (non-spin polarized)        
         dos.plot(
             ["M","red"],["X","blue"],["Term","green"],["Term2","pink"],
