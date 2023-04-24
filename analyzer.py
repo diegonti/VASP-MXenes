@@ -46,17 +46,18 @@ def analyzeDOS(paths):
             )
 
 
-def analyzeWF(paths,limit=None): 
+def analyzeWF(paths,limit=None,extra=''): 
     """Analyzed the LOCPOT file for all the given paths. 
     Makes a plot in the respective home folder and returns LOCPOT information: vaccuum potential for each surface."""
 
-    for path in paths:
+    for i,path in enumerate(paths):
         stack,hollows,pristine = getStructure(path)
         # if stack=="ABA":continue
 
         # Select out folder
         if pristine: out_folder = stack+"/"
         else: out_folder = stack+"_"+hollows+"/"
+        # print(*extra[i],end=' ',flush=True)
         print(f"{stack} {hollows} ",end='',flush=True)
 
         wf = WF(path)
@@ -138,7 +139,10 @@ else:
     with open(file_path,"r") as inFile: 
         paths = inFile.readlines()
         # procesing of file here
-        # for i,line in enumerate(paths): paths[i] = line.strip().split()[0] + "WF/LOCPOT"
+        # extra = []
+        # for i,line in enumerate(paths): 
+        #     extra.append(line.strip().split()[1:])
+        #     paths[i] = line.strip().split()[0] + "WF/LOCPOT"
 
     if calc_dos or calc_dos0: analyzeDOS(paths)
     elif calc_wf: analyzeWF(paths)
