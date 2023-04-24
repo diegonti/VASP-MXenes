@@ -5,10 +5,11 @@ This program works for VASP CONTCAR output files.
 Diego Ontiveros
 """
 
-from VASP import MX
-import warnings
 import os
+import warnings
+# os.environ['OPENBLAS_NUM_THREADS'] = '1'      # for problems importing numpy in MN4
 import numpy as np
+from VASP import MX
 
 def test_data(data):
     print()
@@ -19,6 +20,7 @@ def setFormat(number,decimals):
     return format(round(number,decimals),f".{decimals}f")
 
 def pbc(vector): 
+    """modifies vector with peridoc boundary conditions of a reciprocal cell. Vector in fractional coordinates."""
     vector = vector.copy()
     for i,d in enumerate(vector[:2]):
         if i == 0 and d > 1/2: vector[0] = d - 1
