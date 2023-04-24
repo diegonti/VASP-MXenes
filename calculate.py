@@ -163,7 +163,7 @@ def calculateWF(n:int,T:str,limit=1.23,calcError=True):
                 dir = "WF/"
 
                 # see DOS0
-                dos = DOSCAR(path+"DOS/PBE0/DOSCAR")
+                dos = DOSCAR(path+"DOS/PBE0/DOSCAR",short=True)
                 Eg,VBM,CBM = dos.getBandgap()
 
                 if Eg >= limit: 
