@@ -136,7 +136,7 @@ class WF():
                 elif t[i]>mid+1 and t[i]<high: Vcalc_sf2.append(m)
             Vvsf1 = np.mean(Vcalc_sf1)
             Vvsf2 = np.mean(Vcalc_sf2)
-            print(f"{self.mx.mxName}: Vvsf1 = {Vvsf1}   Vvsf2 = {Vvsf2}", flush=True)
+            print(f"{self.mx.mxName}  Vvsf1 = {Vvsf1}   Vvsf2 = {Vvsf2}", flush=True)
             self.t, self.means, self.Vvsf1, self.Vvsf2 = t,means, Vvsf1, Vvsf2
             return t,means, Vvsf1, Vvsf2
 
@@ -146,7 +146,7 @@ class WF():
                 if t[i]>low and t[i]<high:        # and averages them to estimate the Vvaccum
                     Vcalc.append(m)
             Vv = np.mean(Vcalc)
-            print(f"{self.mx.mxName}: Vvsf1 = {Vv}   Vvsf2 = {Vv}", flush=True)
+            print(f"{self.mx.mxName}  Vvsf1 = {Vv}   Vvsf2 = {Vv}", flush=True)
 
             self.t, self.means, self.Vv = t,means, Vv
             return t,means, Vv, Vv
