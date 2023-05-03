@@ -220,7 +220,7 @@ class SEARCH():
         search_paths = self.search_paths
         search_data = self.search_data
 
-        if path_folders is None: path_folders = f"{home}/searcher/"
+        if path_folders is None: path_folders = f"{home}/searcher_{n}_{'p' if pristine else T}/"
 
         # Creating folders
         try: os.mkdir(path_folders)
