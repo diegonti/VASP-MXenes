@@ -316,7 +316,9 @@ class MX():
                 params.append("IDIPOL"); values.append("3")
                 params.append("NGXF"); values.append("100")
                 params.append("NGYF"); values.append("100")
-                params.append("NGZF"); values.append("700")                
+                params.append("NGZF"); values.append("700") 
+            if "BS" in dir:
+                params.append("LWAVE");values.append(".TRUE.")
 
             with open(dir + "INCAR",'w') as outfile:
                 with open("./car/INCAR", 'r') as infile:
