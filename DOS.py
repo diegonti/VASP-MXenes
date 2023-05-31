@@ -110,7 +110,7 @@ class DOSCAR():
             self.out = out
             return self.out
     
-    def getBandgap(self):
+    def getBandgap(self,return_arrays=False):
         """Computes bandgap from data."""
         out = self.out
         Ef,nAtoms,NEDOS = self.Ef,self.nAtoms,self.NEDOS
@@ -127,7 +127,8 @@ class DOSCAR():
 
             bandgap, VBM, CBM = getBandGap(E,T,Ef)
             self.bandgap = (bandgap, VBM, CBM)
-            return bandgap, VBM, CBM
+            if return_arrays: return bandgap, VBM, CBM, E, T
+            else: return bandgap, VBM, CBM
         
         elif self.spin == "sp":
             ##Loop for obtaining the Total DOS data, taking into account that in the DOSCAR are distributed as E|Tα|Tβ|iTa|iTb
@@ -141,7 +142,8 @@ class DOSCAR():
             
             bandgap, VBM, CBM = getBandGap(E,T,Ef)
             self.bandgap = (bandgap, VBM, CBM)
-            return bandgap, VBM, CBM
+            if return_arrays: return bandgap, VBM, CBM, E, T
+            else: return bandgap, VBM, CBM
     
     def saveImage(self,out_path,params):
         """Saves the generated plot as an image to the given path."""

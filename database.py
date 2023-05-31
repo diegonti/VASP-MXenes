@@ -9,11 +9,32 @@ import os
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 import gc
 from pymatgen.core import periodic_table
+import numpy as np
 
 from searcher import SEARCH
 from structure import CONTCAR
 from DOS import DOSCAR
 from VASP import MX
+
+
+def make_histogram(E,DOS:np.ndarray,n_bins=100,E_min=-5,E_max=5):
+    sites = np.logical_and( E>=E_min , E<=E_max)
+    E_slice = E[sites]
+    dos_slice = DOS[sites]
+
+    bin_width = (E_max-E_min)/n_bins
+    bin_width_idx = len(E_slice)/n_bins
+
+    dos_hist = np.zeros(n_bins)
+    E_hist = np.zeros(n_bins)
+    for bin in range(n_bins):
+        start_idx = round(bin*bin_width_idx)
+        finish_idx = round((bin+1)*bin_width_idx)
+        DOS_bin = dos_slice[start_idx:finish_idx]
+        E_bin = E_slice[start_idx:finish_idx]
+        dos_hist[bin] = DOS_bin.mean()
+        E_hist[bin] = E_bin.mean()
+    return dos_hist,E_hist
 
 
 with open("database.txt","a") as outFile:
@@ -44,8 +65,10 @@ with open("database.txt","a") as outFile:
                 # Getting data
                 geom = contcar.getGeom(extra_dist=True)
                 geom_p = poscar.getGeom(extra_dist=True)
-                bandgap = doscar.getBandgap()
+                *bandgap,E,DOS = doscar.getBandgap(return_arrays=True)
                 bandgap0 = doscar0.getBandgap()
+
+                DOS_hist,E_hist = make_histogram(E,DOS)
 
                 delattr(doscar,"out")
                 delattr(doscar0,"out")
@@ -72,7 +95,9 @@ with open("database.txt","a") as outFile:
                               {M_el.Z}    {M_el.group}    {M_el.row}    {M_el.X}    {M_el.electron_affinity}    {M_el.van_der_waals_radius}    {M_el.atomic_radius.real}\
                               {X_el.Z}    {X_el.group}    {X_el.row}    {X_el.X}    {X_el.electron_affinity}    {X_el.van_der_waals_radius}    {X_el.atomic_radius.real}\
                               {T_el.Z}    {T_el.group}    {T_el.row}    {T_el.X}    {T_el.electron_affinity}    {T_el.van_der_waals_radius}    {T_el.atomic_radius.real}\
-                              {VBM}   {CBM}    {Eg}    {VBM0}   {CBM0}    {Eg0}\n")
+                              {VBM}   {CBM}    {Eg}    {VBM0}   {CBM0}    {Eg0} ")
+                for bin in DOS_hist: outFile.write(str(bin)+" ")
+                outFile.write("\n")
                 outFile.flush()
 
                 del doscar; del doscar0
