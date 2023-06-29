@@ -1,5 +1,5 @@
 # VASP - MXenes scripts
-Python scripts used for my chemistry final degree thesis [_Bandgap Engineering on MXene Compounds by Structure, Composition, and Surface Termination_](http://hdl.handle.net/2445/189371) and subsequent masters degree work. Created to ease and automate the project for making it more efficient. The following are a group of scripts that allow to work with the VASP program in a more batched way, generating, sending calculations and analyzing, not just one by one (boring) but in high amounts of cases at the same time. As a lazy guy myself, I always say that it's better if a program can do it for you...
+Python scripts used for my masters degree work, _Tuning MXenes toward their Use in Photocatalytic Water Splitting_. Created to ease and automate the project for making it more efficient. The following are a group of scripts that allow to work with the VASP program in a more batched way, generating, sending calculations and analyzing, not just one by one (boring) but in high amounts of cases at the same time. As a lazy guy myself, I always say that it's better if a program can do it for you...
 
 The scripts are divided into 3 parts:
 
