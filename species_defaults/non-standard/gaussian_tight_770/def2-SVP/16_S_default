@@ -1,0 +1,74 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "def2-SVP" defaults for S atom (to be pasted into control.in file)
+#
+################################################################################
+  species        S
+#     global species definitions
+    nucleus             16
+    mass                32.065
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         44 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4665  110
+      division   0.5810  194
+      division   0.7139  302
+      division   0.8274  434
+      division   0.9105  590
+#      division   1.0975  770
+#      division   1.2028  974
+#      outer_grid  974
+      outer_grid 770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   4.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   3.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# S def2-SVP
+ gaussian 0 5
+      9184.9303010           -0.0022294  
+      1381.5105503           -0.0166830  
+       313.8714758           -0.0752624  
+        88.0538706           -0.1937683  
+        27.0399149           -0.1771802  
+ gaussian 0 3
+        45.6487313           -0.1073606  
+         4.9664522            0.6506629  
+         2.0116242            0.5971216  
+ gaussian 0 1 0.35661077013
+ gaussian 0 1 0.13507221477
+ gaussian 1 5
+       261.9823344           -0.0092730  
+        61.3068947           -0.0665477  
+        19.1037299           -0.2482860  
+         6.6567720           -0.4870385  
+         2.3959635           -0.3933785  
+ gaussian 1 1 0.61776161679
+ gaussian 1 1 0.16993376871
+ gaussian 2 1 0.5500000

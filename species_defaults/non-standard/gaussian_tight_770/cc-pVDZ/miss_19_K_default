@@ -1,0 +1,50 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "cc-pVDZ" defaults for K atom (to be pasted into control.in file)
+#
+################################################################################
+  species        K
+#     global species definitions
+    nucleus             19
+    mass                39.0983
+#
+    l_hartree           6
+#
+    cut_pot             6.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         46 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.5285  110
+      division   0.7831  194
+      division   0.9986  302
+      division   1.0594  434
+#      division   1.1569  590
+#      division   1.2994  770
+#      division   1.4587  974
+#      outer_grid 974
+      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      4  s   1.
+    valence      3  p   6.
+#     ion occupancy
+    ion_occ      3  s   2.
+    ion_occ      3  p   6.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+

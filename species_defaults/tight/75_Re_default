@@ -1,0 +1,88 @@
+################################################################################
+#
+#  FHI-aims code project
+# Volker Blum, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "tight" defaults for Re atom (to be pasted into control.in file)
+#
+################################################################################
+  species          Re
+#     global species definitions
+    nucleus        75
+    mass           186.207
+#
+    l_hartree      6
+#
+    cut_pot        4.0  2.0  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    72  7.0
+    radial_multiplier  2
+    angular_grids specified
+      division   0.2750   50
+      division   0.7044  110
+      division   1.0550  194
+      division   1.2830  302
+      division   1.5612  434
+#      division   1.7755  590
+#      division   2.0267  770
+#      division   2.0574  974
+#      division   2.8945 1202
+#      outer_grid  974
+      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      6  s   2.
+    valence      5  p   6.
+    valence      5  d   5.
+    valence      4  f  14.
+#     ion occupancy
+    ion_occ      6  s   1.
+    ion_occ      5  p   6.
+    ion_occ      5  d   4.
+    ion_occ      4  f  14.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.775, 2.01, 2.50, 3.25, 4.25 AA
+#
+################################################################################
+#
+#  "First tier" - improvements: -543.50 meV to -29.94 meV
+     hydro 4 f 8
+     hydro 3 d 7
+     ionic 6 p auto
+     hydro 5 g 12
+     ionic 6 s auto
+#  "Second tier" - improvements: -24.32 meV to -1.10 meV
+#     hydro 6 h 16.4
+#     hydro 3 d 2.6
+#     hydro 4 f 9.6
+#     hydro 5 g 19.6
+#     hydro 3 p 3.4
+#     hydro 4 d 7.8
+#     hydro 1 s 0.6  
+#  "Third tier" - max. impr. -2.19 meV, min. impr. -0.24 meV
+#     hydro 5 f 10
+#     hydro 6 h 21.2
+#     hydro 5 g 39.6
+#     hydro 5 g 11.2
+#     hydro 4 d 5.4
+#     hydro 2 p 1.6
+#     hydro 4 s 4.6  
+#  "Fourth tier" - max. impr. -0.49 meV, min. impr. -0.12 meV
+#     hydro 6 h 20.8
+#     hydro 5 f 22
+#     hydro 5 p 9.8
+#     hydro 6 d 16
+#     hydro 4 f 3.3
+#     hydro 5 d 9.8
+#     hydro 2 p 5.4
+#     hydro 7 s 16

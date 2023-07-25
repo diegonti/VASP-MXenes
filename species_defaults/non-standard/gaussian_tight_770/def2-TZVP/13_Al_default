@@ -1,0 +1,85 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-TZVP" defaults for Al atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Al
+#     global species definitions
+    nucleus             13
+    mass                26.9815386
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         41 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.6594  110
+      division   0.8170  194
+      division   0.9059  302
+      division   1.0363  434
+      division   1.1443  590
+#      division   1.2621  770
+#      division   2.8177  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   1.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      2  p   6.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Al def2-TZVP
+ gaussian 0 7
+     37792.5507720            0.0005705  
+      5668.0682165            0.0044093  
+      1289.8582841            0.0226310  
+       364.8659603            0.0880256  
+       118.5763151            0.2522370  
+        42.0248676            0.4596055  
+        15.4995016            0.3327789  
+ gaussian 0 3
+        75.2080266            0.0192506  
+        23.0314090            0.0879067  
+         3.6348798           -0.3424670  
+ gaussian 0 2
+         1.6065050            1.5106266  
+         0.7610339            0.5807102  
+ gaussian 0 1 0.16556708849
+ gaussian 0 1 0.60041577113E-01
+ gaussian 1 5
+       452.5230319            0.0023111  
+       107.0819505            0.0185686  
+        34.1310213            0.0872162  
+        12.5870374            0.2690210  
+         4.9811920            0.5212832  
+ gaussian 1 1 2.0070350900
+ gaussian 1 1 0.80083714374
+ gaussian 1 1 0.20178927472
+ gaussian 1 1 0.57895550392E-01
+ gaussian 2 2
+         1.5700000            0.2000000  
+         0.3330000            1.0000000  
+ gaussian 2 1 0.111000000
+ gaussian 3 1 0.244000000

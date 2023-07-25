@@ -1,0 +1,64 @@
+Basis functions, grid defaults, and other defaults
+for chemical elements ("species"), for copy-paste
+into the FHI-aims input file "control.in". These 
+settings are deliberately kept openly visible, as an
+invitation to verify / optimize if needed. 
+Three full versions (all elements) are provided:
+
+      - "light" 
+      - "tight" 
+      - "really_tight" 
+
+Please refer to the manual (Sec. 2.2) for a quick
+overview of their purpose. We here repeat only that
+many DFT-LDA/GGA production tasks (e.g.,
+pre-relaxation) can and should first be done at the
+"light" level, while the "tight" level then allow a
+more detailed verification / post-convergence of
+all results. Finally, "really_tight" is provided in
+case stringent convergence tests are required - for
+example, when trying out larger basis sets ("tier
+3", "tier 4" etc.). Note that production
+calculations should not simply be run at at the
+"really_tight" level out of precaution. Of course,
+there may be good reasons to use modified
+really_tight for specific tasks where convergence is
+more subtle and requires checking by hand, such as
+in MP2, GW, RPA, i.e., the methods that involve the
+unoccupied spectrum explicitly.
+
+In addition, some further preconstructed
+special-purpose species defaults are provided in a
+"non-standard" subdirectory. 
+
+Particularly relevant additional species defaults include:
+
+* NAO-VCC-XZ : "Correlation consistent" numeric atom-centered
+               orbital basis sets for elements 1-20 by
+               Igor Ying Zhang and coworkers for FHI. These
+               basis sets are meant for methods that sum over
+               unoccupied states explicitly, such as RPA, 
+               MP2, or GW, and where a systematic convergence
+               of the total energy is desired. For standard
+               DFT-LDA/GGA, the usual FHI-aims "light", "tight'
+               or "really_tight" species defaults are sufficient.
+
+* gaussian_tight_770 : Collection of species defaults for use 
+               with the Gaussian-type orbital reference basis sets
+               by Dunning and others, also compiled by Igor Ying Zhang.
+               These species defaults can be
+               used for exact comparisons with Gaussian-type orbital
+               based codes. Note that FHI-aims still performs all
+               its operations numerically, not using the analytical
+               integration techniques of quantum chemistry that are
+               a consequence of the Gaussian shape. It is also
+               necessary to use much tighter integration grids for
+               these benchmark calculations than is normally the
+               case with FHI-aims - i.e., these species_defaults are not
+               meant for routine production calculations.
+
+* light_194 :  Partial example of how to edit the light species defaults for
+               very fast qualitative molecular dynamics calculations, sampling
+               etc. The restriction of the angular grids to 194 points max.
+               per radial shell is not recommended for definitive calculations,
+               however.

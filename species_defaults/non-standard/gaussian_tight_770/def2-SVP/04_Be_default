@@ -1,0 +1,64 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Be atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Be
+#     global species definitions
+    nucleus             4
+    mass                9.012182
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#     
+    radial_base         31 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4283  110
+      division   0.4792  194
+      division   0.5061  302
+      division   0.7227  434
+      division   0.8724  590
+#      division   0.9555  770
+#      division   2.9770  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+#     ion occupancy
+    ion_occ      2  s   1.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Be def2-SVP
+ gaussian 0 5
+       515.1861613            0.0055615  
+        77.5110376            0.0411901  
+        17.5524817            0.1791338  
+         4.8028941            0.4473672  
+         1.4516214            0.4200958  
+ gaussian 0 1 0.13281633620
+ gaussian 0 1 0.45837372213E-01
+ gaussian 1 3
+         3.6316917           -0.0290340  
+         0.7169569           -0.1687785  
+         0.1954193           -0.5140342  
+ gaussian 1 1 0.60515465890E-01

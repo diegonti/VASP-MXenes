@@ -1,0 +1,73 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Na atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Na
+#     global species definitions
+    nucleus             11
+    mass                22.98976928
+#
+    l_hartree           6
+#
+    cut_pot             5.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         40 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.5925  110
+      division   0.7843  194
+      division   1.0201  302
+      division   1.1879  434
+      division   1.3799  590
+#      division   1.4503  770
+#      division   7.0005  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   1.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   2.
+    ion_occ      2  p   6.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Na def2-SVP
+ gaussian 0 5
+      4098.2003908           -0.0058536  
+       616.4937403           -0.0436472  
+       139.9664400           -0.1943147  
+        39.0734411           -0.4868507  
+        11.9298472           -0.4188171  
+ gaussian 0 3
+        20.6599660            0.0859497  
+         1.9838861           -0.5635914  
+         0.6483632           -0.5195401  
+ gaussian 0 1 0.52443967404E-01
+ gaussian 0 1 0.28048160742E-01
+ gaussian 1 5
+        75.4018620            0.0154354  
+        17.2748190            0.0997383  
+         5.1842347            0.3120959  
+         1.6601212            0.4929567  
+         0.5123253            0.3242040  
+ gaussian 1 1 0.0520000
+ gaussian 2 1 0.1310000

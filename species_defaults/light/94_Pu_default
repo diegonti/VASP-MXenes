@@ -1,0 +1,82 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Pu atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+#
+################################################################################
+  species        Pu
+#     global species definitions
+    nucleus             94
+    mass                244
+#
+    l_hartree           4
+#
+    cut_pot             4.0  1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         77 5.5
+    radial_multiplier   1
+    angular_grids specified
+      division   0.0660  110
+      division   0.0897  194
+      division   0.1215  302
+#      division   0.8157  434
+#      division   0.9246  590
+#      division   1.0644  770
+#      division   7.7698  974
+#      outer_grid  974
+      outer_grid 302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      7  s   2.
+    valence      6  p   6.
+    valence      6  d   0.
+    valence      5  f   6.
+#     ion occupancy 
+    ion_occ     7  s    1.
+    ion_occ     6  p    6.
+    ion_occ     6  d    0.
+    ion_occ     5  f    5.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.81, 2.02, 2.5, 3.25, 4.25 AA
+#
+################################################################################
+#
+#  Necessary addition to the minimal basis
+   confined 6 d  auto
+#  "First tier" - max. impr. -1573.49 meV, min. impr. -39.69 meV
+     hydro 3 d 5
+     hydro 5 g 12
+     hydro 2 p 1.8
+     hydro 5 f 7.2
+     hydro 4 s 4.0 
+#  "Second tier" - max. impr. -138.69 meV, min. impr. -1.71 meV
+#     hydro 6 h 16.4
+#     hydro 4 f 7
+#     hydro 3 d 3.5
+#     hydro 5 g 17.6
+#     hydro 2 p 1.5
+#     ionic 7 s auto  
+#  "Third tier" - max. impr. -10.48 meV, min. impr. -0.84 meV
+#     hydro 6 f 16.8
+#     hydro 7 d 17.6
+#     hydro 5 g 36.8
+#     hydro 6 h 18   
+#     hydro 5 g 9.2
+#     hydro 5 p 17.2  
+#     hydro 1 s 0.35  
+#  A fourth tier could be added if required.

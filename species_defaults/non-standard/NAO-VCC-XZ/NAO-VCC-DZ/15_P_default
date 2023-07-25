@@ -1,0 +1,60 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVDZ" defaults for P atom (to be pasted into control.in file)
+#
+################################################################################
+  species        P
+#     global species definitions
+    nucleus             15
+    mass                30.973762
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         43 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.2995   50
+      division   0.5998  110
+      division   0.9240  194
+      division   1.0921  302
+      division   1.2863  434
+      division   1.3165  590
+#      division   1.4113  770
+#      division   1.5128  974
+#      division   2.4980 1202
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   3.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   2.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in      P for         NCC-pVDZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.08070966
+ hydro     2     p      3.47442021
+# polarization set
+ hydro     3     d      4.87964588
+# (sp) enhanced minimal set
+ hydro     1     s      2.24609023
+ hydro     1     s      4.49246861
+ hydro     1     s      8.98551353
+ hydro     2     p      3.97825698
+ hydro     2     p      4.49469448

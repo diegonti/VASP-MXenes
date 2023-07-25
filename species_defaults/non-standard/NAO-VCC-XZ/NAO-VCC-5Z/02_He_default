@@ -1,0 +1,60 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pV5Z" defaults for He atom (to be pasted into control.in file)
+#
+################################################################################
+  species        He
+#     global species definitions
+    nucleus             2
+    mass                4.002602
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#     
+    radial_base         27 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.3349  110
+      division   0.4719  194
+      division   0.5352  302
+      division   1.8809  770
+      outer_grid    770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      1  s   2.
+#     ion occupancy
+    ion_occ      1  s   1.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     He for         NCC-pV5Z
+#============================================
+# (sp) correlation set
+ hydro     1     s      0.69957104
+ hydro     1     s      1.30251142
+ hydro     1     s      2.42510894
+ hydro     1     s      4.51524131
+ hydro     2     p      4.04933032
+ hydro     2     p      5.91650749
+ hydro     2     p      8.64465433
+ hydro     2     p     12.63077055
+# polarization set
+ hydro     3     d     10.25312955
+ hydro     3     d     11.14232054
+ hydro     3     d     12.10862561
+ hydro     4     f     18.75274142
+ hydro     4     f     27.66361079
+ hydro     5     g     26.37080978
+# (sp) enhanced minimal set
+ hydro     1     s      8.40679929

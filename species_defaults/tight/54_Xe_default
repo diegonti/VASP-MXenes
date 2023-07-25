@@ -1,0 +1,70 @@
+################################################################################
+#
+#  FHI-aims code project
+# Volker Blum, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "tight" defaults for Xe atom (to be pasted into control.in file)
+#
+################################################################################
+  species          Xe
+#     global species definitions
+    nucleus        54
+    mass           131.293
+#
+    l_hartree      6
+#
+    cut_pot        4.0  2.0  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    64  7.0
+    radial_multiplier  2
+    angular_grids specified
+      division   0.7862  110
+      division   1.1196  194
+      division   1.4850  302
+      division   1.6329  434
+#      division   1.6858  590
+#      division   1.7978  770
+#      division   1.9188  974
+#      outer_grid  974
+      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      5  s   2.
+    valence      5  p   6.
+    valence      4  d  10.
+#     ion occupancy
+    ion_occ      5  s   1.
+    ion_occ      5  p   5.
+    ion_occ      4  d  10.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 3.0, 3.5, 4.06, 4.50, 5.25 Ang
+#
+#  Noble gas symmetric dimers converge quickly in DFT. If you find that
+#  you require a larger basis than tier 2, please contact us - VB, FHI.
+#
+################################################################################
+#  "First tier" - improvements: -33.50 meV to -0.77 meV
+     hydro 3 d 3.8
+     hydro 4 f 6.2
+     ionic 6 p auto
+     ionic 6 s auto
+#  "Second tier" - improvements: -0.75 meV to -0.05 meV
+#     hydro 5 g 8.4
+#     ionic 4 f auto
+#     hydro 3 d 3.1
+#     hydro 5 f 6.8
+#     hydro 6 h 10.8
+#     hydro 5 p 6.2
+#     hydro 1 s 12.8
+#  "Third tier" - no more improvements > 0.05 meV
+ 

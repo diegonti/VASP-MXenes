@@ -1,0 +1,68 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVQZ" defaults for Cl atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Cl
+#     global species definitions
+    nucleus             17
+    mass                35.453
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         45 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4412  110
+      division   0.5489  194
+      division   0.6734  302
+      division   0.7794  434
+      division   0.9402  590
+#      division   1.0779  770
+#      division   1.1792  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   5.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   4.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Cl for         NCC-pVQZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.34033901
+ hydro     1     s      2.83295399
+ hydro     1     s      5.98775999
+ hydro     2     p      2.26105736
+ hydro     2     p      4.52184017
+ hydro     2     p      9.04313128
+# polarization set
+ hydro     3     d      6.85460429
+ hydro     3     d      7.71422724
+ hydro     3     d      8.68165388
+ hydro     4     f      9.92922176
+ hydro     4     f     10.04698894
+ hydro     5     g     14.84633385
+# (sp) enhanced minimal set
+ hydro     1     s     11.05341368
+ hydro     1     s     20.41208376
+ hydro     1     s     37.69452363
+ hydro     2     p     16.17677483
+ hydro     2     p     31.64052823

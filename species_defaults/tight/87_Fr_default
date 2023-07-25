@@ -1,0 +1,82 @@
+################################################################################
+#
+#  FHI-aims code project
+# Volker Blum, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "tight" defaults for Fr atom (to be pasted into control.in file)
+#
+#  The onset of the cutoff pot'l is set to 6 A by default, because the neutral
+#  Fr atom is a large atom. However, this is very expensive. The radius should be
+#  much smaller in real-world situations, where Fr will be ionic. Please check 
+#  and reduce the cutoff radius explicitly.
+#
+################################################################################
+  species        Fr
+#     global species definitions
+    nucleus             87
+    mass                223
+#
+    l_hartree           6
+#
+    cut_pot             6.0  2.0  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         75 7.0
+    radial_multiplier   2
+    angular_grids specified
+      division   0.5994  110
+      division   0.8769  194
+      division   1.1095  302
+      division   1.2801  434
+#      division   1.4253  590
+#      division   7.7751  974
+#      outer_grid  974
+      outer_grid  434
+ ################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      7  s   1.
+    valence      6  p   6.
+    valence      5  d  10.
+    valence      4  f  14.
+#     ion occupancy
+    ion_occ     7  s    0.
+    ion_occ     6  p    6.
+    ion_occ     5  d   10.
+    ion_occ     4  f   14.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.85, 3.50, 4.43, 5.50 AA
+#
+################################################################################
+#  "First tier" - max. impr. -109.37 meV, min. impr. -6.38 meV
+     hydro 3 d 3.6
+     hydro 4 f 6.4
+     ionic 7 p auto
+     hydro 4 s 2.8
+     hydro 5 g 8.2
+#  "Second tier" - max. impr. -4.96 meV, min. impr. -0.20 meV
+#     hydro 4 f 16.4
+#     hydro 4 d 3.9
+#     hydro 5 f 6.2
+#     hydro 6 h 11.2
+#     hydro 3 s 2.1
+#     hydro 5 g 7
+#     hydro 2 p 1.6
+#  "Third tier" - max. impr. -0.23 meV, min. impr. -0.06 meV
+#     hydro 5 d 8.2
+#     hydro 3 p 2.1
+#     hydro 1 s 12
+#     hydro 6 h 9
+#     hydro 5 g 28.4
+#     hydro 6 f 14.4
+#  Further functions - impr. -0.06 meV and below
+#     hydro 5 d 12
+#     hydro 4 p 4

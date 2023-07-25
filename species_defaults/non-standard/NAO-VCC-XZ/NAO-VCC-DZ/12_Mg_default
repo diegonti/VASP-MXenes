@@ -1,0 +1,61 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVDZ" defaults for Mg atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Mg
+#     global species definitions
+    nucleus             12
+    mass                24.3050
+#
+    l_hartree           6
+#
+    cut_pot             5.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         40 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.5421   50
+      division   0.8500  110
+      division   1.0736  194
+      division   1.1879  302
+      division   1.2806  434
+      division   1.4147  590
+#      division   1.4867  770
+#      division   1.6422  974
+#      division   2.6134 1202
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   2.
+    ion_occ      2  p   6.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Mg for         NCC-pVDZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      0.91390429
+ hydro     2     p      2.31912271
+# polarization set
+ hydro     3     d      3.24061414
+# (sp) enhanced minimal basis
+ hydro     1     s      1.76141665
+ hydro     1     s      3.51532068
+ hydro     1     s      7.01564816
+ hydro     2     p      2.43592237
+ hydro     2     p      2.81533775

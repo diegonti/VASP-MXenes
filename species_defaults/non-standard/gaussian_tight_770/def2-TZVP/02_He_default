@@ -1,0 +1,54 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-TZVP" defaults for He atom (to be pasted into control.in file)
+#
+################################################################################
+  species        He
+#     global species definitions
+    nucleus             2
+    mass                4.002602
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#     
+    radial_base         27 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.3349  110
+      division   0.4719  194
+      division   0.5352  302
+#      division   1.8809  770
+      outer_grid    770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      1  s   2.
+#     ion occupancy
+    ion_occ      1  s   1.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# He def2-TZVP
+ gaussian 0 3
+        98.0783216            0.0075803  
+        14.7644042            0.0548486  
+         3.3185831            0.2207438  
+ gaussian 0 1 0.87413869551
+ gaussian 0 1 0.24459897208
+ gaussian 1 1 1.0000000

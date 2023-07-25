@@ -1,0 +1,74 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Cl atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Cl
+#     global species definitions
+    nucleus             17
+    mass                35.453
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         45 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4412  110
+      division   0.5489  194
+      division   0.6734  302
+      division   0.7794  434
+      division   0.9402  590
+#      division   1.0779  770
+#      division   1.1792  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   5.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   4.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Cl def2-SVP
+ gaussian 0 5
+     10449.8275660            0.0019708  
+      1571.7365221            0.0147547  
+       357.1206552            0.0666791  
+       100.2518594            0.1722892  
+        30.8127276            0.1588379  
+ gaussian 0 3
+        51.9237894           -0.1000930  
+         5.7045761            0.6084175  
+         2.3508377            0.5435215  
+ gaussian 0 1 0.44605124672
+ gaussian 0 1 0.16848856190
+ gaussian 1 5
+       307.6679057           -0.0087801  
+        72.1020155           -0.0635634  
+        22.5326803           -0.2401643  
+         7.8991765           -0.4779887  
+         2.8767268           -0.3851585  
+ gaussian 1 1 0.77459363955
+ gaussian 1 1 0.21037699698
+ gaussian 2 1 0.6500000

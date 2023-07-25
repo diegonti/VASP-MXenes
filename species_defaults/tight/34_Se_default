@@ -1,0 +1,79 @@
+################################################################################
+#
+#  FHI-aims code project
+# Volker Blum, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "tight" defaults for Se atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Se
+#     global species definitions
+    nucleus             34
+    mass                78.96
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         55 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.0830  110
+      division   0.1357  194
+      division   0.7377  302
+      division   0.8610  434
+#      division   0.9640  590
+#      division   1.0773  770
+#      division   2.5539  974
+#      outer_grid  974
+      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      4  s   2.
+    valence      4  p   4.
+    valence      3  d  10.
+#     ion occupancy
+    ion_occ      4  s   1.
+    ion_occ      4  p   3.
+    ion_occ      3  d  10.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.85 A, 2.15 A, 2.50 A, 3.00 A, 4.00 A
+#
+################################################################################
+#  "First tier" - improvements: -336.21 meV to -36.85 meV 
+     hydro 3 d 4.3
+     hydro 2 p 1.6
+     hydro 4 f 7.2
+     ionic 4 s auto
+#  "Second tier" - improvements: -14.39 meV to -1.49 meV
+#     hydro 5 g 10.4  
+#     hydro 4 p 4.5
+#     hydro 4 d 6.2
+#     hydro 4 f 11.2
+#     hydro 1 s 0.65
+#     hydro 6 h 15.2
+#  Third tier - improvements: -0.46 meV and below
+#     hydro 5 g 14.4
+#     ionic 4 d auto
+#     hydro 4 f 22.4
+#     hydro 5 f 7.4
+#     hydro 5 p 8
+#     hydro 5 s 9.4    
+#  Fourth tier - improvements: -0.12 meV and below
+#     hydro 5 d 11.6
+#     hydro 6 h 18
+#     hydro 4 p 4
+#     hydro 5 f 16
+#     hydro 4 s 3.9    
+
+

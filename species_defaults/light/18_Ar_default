@@ -1,0 +1,69 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Ar atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+################################################################################
+  species        Ar
+#     global species definitions
+    nucleus             18
+    mass                39.948
+#
+    l_hartree           4
+#
+    cut_pot             3.5          1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         46 5.0
+    radial_multiplier   1
+    angular_grids       specified
+      division   0.5855  110
+      division   0.8590  194
+      division   0.9692  302
+#      division   1.1235  590
+#      division   1.1911  770
+#      division   1.2623  974
+#      outer_grid  974
+      outer_grid  302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   6.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   5.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.25 A, 2.625 A, 3.0 A, 3.375 A, 4.0 A
+#
+#  Noble gas symmetric dimers converge quickly in DFT. If you find that
+#  you require a larger basis than tier 3, please contact us - VB, FHI.
+#
+################################################################################
+#  "First tier" - improvements: -57.34 meV to -1.14 meV
+     ionic 3 d auto
+     ionic 4 p auto
+#     hydro 4 f 7.4
+     hydro 3 s 4.5
+#  "Second tier" - improvements: -0.67 meV to -0.10 meV
+#     hydro 4 d 7.8
+#     hydro 5 g 10.4
+#     ionic 3 p auto
+#     hydro 1 s 15.2
+#  "Third tier" - improvements: -0.13 meV to -0.02 meV
+#     hydro 4 d 5.8
+#     hydro 5 f 9.2
+#     hydro 4 s 11.2
+#     hydro 5 p 10.8

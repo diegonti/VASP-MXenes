@@ -1,0 +1,63 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "6-311PD_biggest" defaults for Ne atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Ne
+#     global species definitions
+    nucleus             10
+    mass                20.1797
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         38 7.0
+    radial_multiplier   6
+    angular_grids       specified 
+      division   0.4737  110
+      division   0.6363  194
+      division   0.7448  302
+      division   0.8348  590
+#      division   1.0034  770
+#      division   1.7611  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   5.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Ne 6-311PD_biggest
+ gaussian 0 6
+     13995.7000000            0.0018328  
+      2117.1000000            0.0138827  
+       490.4250000            0.0680687  
+       143.8330000            0.2313280  
+        41.9265000            0.5858900  
+         6.1568400            0.3058830  
+ gaussian 2 1 9.2160000
+ gaussian 2 1 2.3040000
+ gaussian 2 1 0.5760000
+ gaussian 3 1 2.5000000

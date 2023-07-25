@@ -1,0 +1,64 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVQZ" defaults for Be atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Be
+#     global species definitions
+    nucleus             4
+    mass                9.012182
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#     
+    radial_base         31 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4283  110
+      division   0.4792  194
+      division   0.5061  302
+      division   0.7227  434
+      division   0.8724  590
+#      division   0.9555  770
+#      division   2.9770  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+#     ion occupancy
+    ion_occ      2  s   1.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Be for         NCC-pVQZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      0.71347674
+ hydro     1     s      1.63319932
+ hydro     1     s      3.73851015
+ hydro     2     p      2.17666617
+ hydro     2     p      3.14628284
+ hydro     2     p      4.54782451
+# polarization set
+ hydro     3     d      4.97421287
+ hydro     3     d      5.41885770
+ hydro     3     d      5.90324933
+ hydro     4     f      7.43446499
+ hydro     4     f      7.59833999
+ hydro     5     g     10.05552389
+# (sp) enhanced minimal set
+ hydro     1     s      4.46487694
+ hydro     1     s      7.27446925
+ hydro     2     p      4.84647620

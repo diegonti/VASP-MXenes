@@ -1,0 +1,76 @@
+################################################################################
+#
+#  FHI-aims code project
+#  Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Si atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Si
+#     global species definitions
+    nucleus             14
+    mass                28.0855
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         42 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4121   50
+      division   0.7665  110
+      division   1.0603  194
+      division   1.2846  302
+      division   1.4125  434
+      division   1.4810  590
+#      division   1.5529  770
+#      division   1.6284  974
+#      division   2.6016 1202
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   2.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   1.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Si def2-SVP
+ gaussian 0 5
+      6903.7118686            0.0013374  
+      1038.4346419            0.0099967  
+       235.8758148            0.0449102  
+        66.0693852            0.1146364  
+        20.2479458            0.1028006  
+ gaussian 0 3
+        34.3534817            0.0708373  
+         3.6370788           -0.4302884  
+         1.4002049           -0.4138277  
+ gaussian 0 1 0.20484414805
+ gaussian 0 1 0.77994095468E-01
+ gaussian 1 5
+       179.8390737            0.0061917  
+        41.9072588            0.0433994  
+        12.9552944            0.1563202  
+         4.4383267            0.2942000  
+         1.5462248            0.2353682  
+ gaussian 1 1 0.35607612302
+ gaussian 1 1 0.10008513762
+ gaussian 2 1 0.3500000

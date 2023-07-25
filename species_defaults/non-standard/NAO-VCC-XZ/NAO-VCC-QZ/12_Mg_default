@@ -1,0 +1,70 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVQZ" defaults for Mg atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Mg
+#     global species definitions
+    nucleus             12
+    mass                24.3050
+#
+    l_hartree           6
+#
+    cut_pot             5.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         40 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.5421   50
+      division   0.8500  110
+      division   1.0736  194
+      division   1.1879  302
+      division   1.2806  434
+      division   1.4147  590
+#      division   1.4867  770
+#      division   1.6422  974
+#      division   2.6134 1202
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   2.
+    ion_occ      2  p   6.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Mg for         NCC-pVQZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      0.64791905
+ hydro     1     s      1.07233928
+ hydro     1     s      1.77477656
+ hydro     2     p      1.97963569
+ hydro     2     p      2.56313713
+ hydro     2     p      3.31862674
+# polarization set
+ hydro     3     d      4.41736199
+ hydro     3     d      4.75389548
+ hydro     3     d      5.11606752
+ hydro     4     f      5.89338663
+ hydro     4     f      6.39526999
+ hydro     5     g      8.14462192
+# (sp) enhanced minimal basis
+ hydro     1     s      3.44813646
+ hydro     1     s      6.72829991
+ hydro     1     s     13.12883646
+ hydro     2     p      6.18667350
+ hydro     2     p     13.47870146

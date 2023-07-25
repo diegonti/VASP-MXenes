@@ -1,0 +1,88 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Nd atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+################################################################################
+  species          Nd
+#     global species definitions
+    nucleus        60
+    mass           144.242
+#
+    l_hartree      4
+#
+    cut_pot        4.0  1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    66  5.5
+    radial_multiplier  1
+    angular_grids specified
+      division   0.0851  110
+      division   0.1329  194
+      division   0.6933  302
+#      division   0.8063  434
+#      division   0.9338  590
+#      division   1.0141  770
+#      division   3.0511  974
+#      outer_grid  974
+      outer_grid  302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      6  s   2.
+    valence      5  p   6.
+    valence      5  d   0.
+    valence      4  f   4.
+#     ion occupancy
+    ion_occ      6  s   1.
+    ion_occ      5  p   6.
+    ion_occ      5  d   0.
+    ion_occ      4  f   3.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.80, 2.125, 2.625, 3.375, 4.5 AA
+#
+################################################################################
+#
+#  Necessary addition to the minimal basis
+   confined 5 d  auto
+#  "First tier" - improvements: -1427.83 meV to -28.23 meV
+     hydro 3 d 5
+     hydro 5 g 11.2
+     hydro 4 f 7.6
+     hydro 2 p 1.4
+     hydro 3 s 2.6 
+#  "Second tier" - improvements: -101.28 meV to -4.95 meV
+#     hydro 4 f 4.3
+#     hydro 6 h 15.6
+#     hydro 3 d 3
+#     hydro 2 p 2
+#     hydro 5 g 8.6
+#     hydro 4 s 3.6
+#  "Third tier" - max. impr. -12.66 meV, min. impr. -0.43 meV
+#     hydro 4 d 14
+#     hydro 6 h 12.4
+#     hydro 4 f 6.6
+#     hydro 5 g 24.8
+#     ionic 6 p auto
+#     hydro 1 s 0.75   
+#  "Fourth tier" - max. impr. -1.31 meV, min. impr. -0.39 meV
+#     hydro 6 d 18.8
+#     hydro 5 f 16
+#     hydro 4 p 6
+#     hydro 5 g 4.9
+#     hydro 3 d 4.2
+#     hydro 6 h 16
+#     hydro 5 g 12
+#     hydro 4 s 6.8

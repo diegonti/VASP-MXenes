@@ -1,0 +1,61 @@
+################################################################################
+#
+#  FHI-aims code project
+#  Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVDZ" defaults for Si atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Si
+#     global species definitions
+    nucleus             14
+    mass                28.0855
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         42 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4121   50
+      division   0.7665  110
+      division   1.0603  194
+      division   1.2846  302
+      division   1.4125  434
+      division   1.4810  590
+#      division   1.5529  770
+#      division   1.6284  974
+#      division   2.6016 1202
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   2.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   1.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Si for         NCC-pVDZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.62244661
+ hydro     2     p      3.49912580
+# polarization set
+ hydro     3     d      4.22038846
+# (sp) enhanced minimal set
+ hydro     1     s      1.82162894
+ hydro     1     s      2.31576459
+ hydro     1     s      2.94393963
+ hydro     2     p      3.59943827
+ hydro     2     p      4.18989423

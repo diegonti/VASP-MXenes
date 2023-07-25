@@ -1,0 +1,63 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVTZ" defaults for O atom (to be pasted into control.in file)
+#
+################################################################################
+  species        O
+#     global species definitions
+    nucleus             8
+    mass                15.9994
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         36 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.1817   50
+      division   0.3417  110
+      division   0.4949  194
+      division   0.6251  302
+      division   0.8014  434
+      division   0.8507  590
+#      division   0.8762  770
+#      division   0.9023  974
+#      division   1.2339 1202
+#      outer_grid 974
+      outer_grid 770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   4.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   3.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in      O for         NCC-pVTZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.84877109
+ hydro     1     s      3.09577821
+ hydro     2     p      2.44895734
+ hydro     2     p      5.85722578
+# polarization set
+ hydro     3     d      8.53701653
+ hydro     3     d      8.96275978
+ hydro     4     f     14.09619628
+# (sp) enhanced minimal basis
+ hydro     1     s      3.62165559
+ hydro     1     s      5.97272514
+ hydro     2     p      6.29404180

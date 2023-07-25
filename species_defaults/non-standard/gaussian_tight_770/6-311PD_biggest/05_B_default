@@ -1,0 +1,62 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "6-311PD_biggest" defaults for B atom (to be pasted into control.in file)
+#
+################################################################################
+  species        B
+#     global species definitions
+    nucleus             5
+    mass                10.811
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         32 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.3742  110
+      division   0.5197  194
+      division   0.5753  302
+      division   0.7664  434
+#      division   0.8392  770
+#      division   1.6522  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   1.
+#     ion occupancy
+    ion_occ      2  s   1.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# B 6-311PD_biggest
+ gaussian 0 6
+      2858.8900000            0.0021537  
+       428.1400000            0.0165823  
+        97.5282000            0.0821870  
+        27.9693000            0.2766180  
+         8.2157700            0.6293160  
+         1.1127800            0.1737700  
+ gaussian 2 1 1.6040000
+ gaussian 2 1 0.4010000
+ gaussian 2 1 0.1002500
+ gaussian 3 1 0.5000000

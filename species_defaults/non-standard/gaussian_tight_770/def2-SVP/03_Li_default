@@ -1,0 +1,63 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Li atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Li
+#     global species definitions
+    nucleus             3
+    mass                6.941
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#     
+    radial_base         29 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4484  110
+      division   0.5659  194
+      division   0.6315  302
+      division   0.6662  434
+      division   0.8186  590
+#      division   0.9037  770
+#      division   6.2760  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   1.
+#     ion occupancy
+    ion_occ      1  s   2.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Li def2-SVP
+ gaussian 0 5
+       266.2778552            0.0064920  
+        40.0697834            0.0477479  
+         9.0559944            0.2026880  
+         2.4503009            0.4860657  
+         0.7220957            0.4362698  
+ gaussian 0 1 0.52810884721E-01
+ gaussian 0 1 0.20960948798E-01
+ gaussian 1 2
+         1.4500000            0.2586000  
+         0.3000000            1.0000000  
+ gaussian 1 1 0.0820000

@@ -1,0 +1,77 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Al atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+################################################################################
+  species        Al
+#     global species definitions
+    nucleus             13
+    mass                26.9815386
+#
+    l_hartree           4
+#
+    cut_pot             3.5          1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         41 5.0
+    radial_multiplier   1
+    angular_grids       specified
+      division   0.6594  110
+      division   0.8170  194
+      division   0.9059  302
+#      division   1.0363  434
+#      division   1.1443  590
+#      division   1.2621  770
+#      division   2.8177  974
+#      outer_grid   974
+      outer_grid   302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   1.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      2  p   6.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.0 A, 2.5 A, 3.0 A, 3.75 A, 4.5 A
+#
+################################################################################
+#  "First tier" - improvements: -199.47 meV to -10.63 meV
+     ionic 3 d auto
+     ionic 3 p auto
+#     hydro 4 f 4.7
+     ionic 3 s auto
+#  "Second tier" - improvements: -5.35 meV to -1.57 meV
+#     hydro 5 g 7
+#     hydro 3 d 6
+#     hydro 2 s 11.6
+#     hydro 2 p 0.9
+#  "Third tier" - improvements: -0.63 meV to -0.20 meV
+#     hydro 5 f 7.6
+#     hydro 4 p 7.2
+#     hydro 4 s 3.7
+#     hydro 4 d 7.6
+#  "Fourth tier" - improvements: -0.17 meV to -0.08 meV
+#     hydro 4 d 13.6
+#     hydro 5 g 11.2
+#     hydro 4 d 0.9
+#     hydro 1 s 0.4
+#     hydro 4 p 0.1
+#     hydro 5 f 9.8
+#  Further basis functions that fell out of the optimization - noise level...
+#     hydro 4 p 5
+

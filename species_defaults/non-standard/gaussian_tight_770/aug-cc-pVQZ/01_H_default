@@ -1,0 +1,68 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "aug-cc-pVQZ" defaults for H atom (to be pasted into control.in file)
+#
+################################################################################
+  species        H
+#     global species definitions
+    nucleus             1
+    mass                1.00794
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#     
+    radial_base         24 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.1930   50
+      division   0.3175  110
+      division   0.4293  194
+      division   0.5066  302
+      division   0.5626  434
+      division   0.5922  590
+#      division   0.6227  974
+#      division   0.6868 1202
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      1  s   1.
+#     ion occupancy
+    ion_occ      1  s   0.5
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# H aug-cc-pVQZ
+ gaussian 0 3
+        82.6400000            0.0020060  
+        12.4100000            0.0153430  
+         2.8240000            0.0755790  
+ gaussian 0 1 0.7977000
+ gaussian 0 1 0.2581000
+ gaussian 0 1 0.0898900
+ gaussian 0 1 0.0236300
+ gaussian 1 1 2.2920000
+ gaussian 1 1 0.8380000
+ gaussian 1 1 0.2920000
+ gaussian 1 1 0.0848000
+ gaussian 2 1 2.0620000
+ gaussian 2 1 0.6620000
+ gaussian 2 1 0.1900000
+ gaussian 3 1 1.3970000
+ gaussian 3 1 0.3600000

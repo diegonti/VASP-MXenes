@@ -1,0 +1,61 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVTZ" defaults for F atom (to be pasted into control.in file)
+#
+################################################################################
+  species        F
+#     global species definitions
+    nucleus             9
+    mass                18.9984032
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         37 7.0
+    radial_multiplier   2
+    angular_grids       specified 
+      division   0.4014  110
+      division   0.5291  194
+      division   0.6019  302
+      division   0.6814  434
+      division   0.7989  590
+#      division   0.8965  770
+#      division   1.3427  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   5.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   4.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in      F for         NCC-pVTZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      2.79571831
+ hydro     1     s      3.59883615
+ hydro     2     p      2.79844642
+ hydro     2     p      7.10137981
+# polarization set
+ hydro     3     d      9.19074920
+ hydro     3     d     11.25968007
+ hydro     4     f     16.05919112
+# (sp) enhanced minimal set
+ hydro     1     s      9.62761974
+ hydro     1     s     11.10594321
+ hydro     2     p      7.75321023

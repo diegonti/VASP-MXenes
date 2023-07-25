@@ -1,0 +1,40 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2012
+#
+#  This species defaults file defines an empty site with no basis functions
+#  or nuclear potential, just integration grids.
+#
+#  We specify the default grids of Hydrogen, but this assumption should be checked
+#  by any user. 
+#
+#  We do need a cut_pot definition, as this is tied into the construction
+#  of our integration weights.
+#
+################################################################################
+  species        Emptium
+#     global species definitions
+    nucleus             0
+    mass                0
+#
+    l_hartree           4
+#
+    cut_pot             3.5  1.5  1.0
+    basis_dep_cutoff    1e-4
+#     
+    radial_base         24 5.0
+    radial_multiplier   1
+    angular_grids       specified
+      division   0.2421   50
+      division   0.3822  110
+      division   0.4799  194
+      division   0.5341  302
+#      division   0.5626  434
+#      division   0.5922  590
+#      division   0.6542  770
+#      division   0.6868 1202
+#      outer_grid  770
+      outer_grid  302
+#
+    include_min_basis .false.

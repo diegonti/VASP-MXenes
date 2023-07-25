@@ -1,0 +1,80 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2007
+#
+#  Suggested "safe" defaults for Ca atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Ca
+#     global species definitions
+    nucleus             20
+    mass                40.078
+#
+    l_hartree           8
+#
+    cut_pot             5.0          2.0  1.0
+    basis_dep_cutoff    0.d0
+#
+    radial_base         47 7.0
+    radial_multiplier   2
+    angular_grids       specified
+     division   0.5361  110
+     division   0.7866  194
+     division   0.9689  302
+     division   1.0269  434
+     division   1.2909  590
+#     division   1.3280  770
+#     division   1.4872  974
+#     outer_grid  974
+     outer_grid  590
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+#  Note: Ca+ ionic basis functions perform better than Ca2+ ionic
+#  basis functions for the neutral Ca dimer. This is why they are used here.
+#
+################################################################################
+#     valence basis states
+    valence      4  s   2.
+    valence      3  p   6.
+#     ion occupancy
+    ion_occ      4  s   1.
+    ion_occ      3  p   6.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.5 A, 3.0 A, 3.5 A, 4.0 A, 5.0 A
+#
+#  Ca appears to require two d functions in tier 1, because the atomic configuration
+#  does not provide a 3d valence function.
+#
+################################################################################
+#  "First tier" - improvements: -486.29 meV to -11.73 meV
+     ionic 3 d auto
+     ionic 4 p auto
+     hydro 3 d 2.3
+     hydro 4 f 4.8
+     ionic 4 s auto
+#  "Second tier" - improvements: -6.34 meV to -0.27 meV
+#     hydro 5 g 6.8
+#     hydro 3 p 3.8
+#     hydro 6 h 10.4
+#     hydro 1 s 0.55
+#     hydro 5 f 9.2
+#     hydro 5 p 3.3
+#     hydro 4 d 5    
+#  "Third tier" - improvements: -0.18 meV to -0.06 meV
+#     hydro 5 p 5.4  
+#     hydro 5 f 5
+#     hydro 5 s 4.6
+#     hydro 2 p 4.2
+#     hydro 5 g 9.8
+#     hydro 4 d 5.2
+#  Two extra functions (no real "tier") - improvements: -0.07 meV, -0.05 meV
+#     hydro 4 f 8.8
+#     hydro 2 p 1.2

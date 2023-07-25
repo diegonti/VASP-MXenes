@@ -1,0 +1,75 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-TZVP" defaults for Ne atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Ne
+#     global species definitions
+    nucleus             10
+    mass                20.1797
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         38 7.0
+    radial_multiplier   6
+    angular_grids       specified 
+      division   0.4737  110
+      division   0.6363  194
+      division   0.7448  302
+      division   0.8348  590
+#      division   1.0034  770
+#      division   1.7611  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   5.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Ne def2-TZVP
+ gaussian 0 6
+     45069.4640220            0.0002169  
+      6755.9768656            0.0016813  
+      1537.6502864            0.0087356  
+       435.5169767            0.0353613  
+       142.2865564            0.1132152  
+        51.6921538            0.2665465  
+ gaussian 0 2
+        20.3158705            0.3963196  
+         8.2021943            0.2558281  
+ gaussian 0 1 1.9681276278
+ gaussian 0 1 0.77904756001
+ gaussian 0 1 0.30229502043
+ gaussian 1 4
+        99.7829960            0.0065569  
+        23.1761241            0.0458880  
+         7.1163946            0.1733129  
+         2.4418711            0.3647527  
+ gaussian 1 1 0.83389605766
+ gaussian 1 1 0.26607311301
+ gaussian 2 1 4.01400000
+ gaussian 2 1 1.09600000
+ gaussian 3 1 2.54400000

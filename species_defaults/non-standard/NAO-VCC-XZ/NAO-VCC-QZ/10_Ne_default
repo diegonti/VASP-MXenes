@@ -1,0 +1,65 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVQZ" defaults for Ne atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Ne
+#     global species definitions
+    nucleus             10
+    mass                20.1797
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         38 7.0
+    radial_multiplier   2
+    angular_grids       specified 
+      division   0.4737  110
+      division   0.6363  194
+      division   0.7448  302
+      division   0.8348  590
+#      division   1.0034  770
+#      division   1.7611  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   5.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Ne for         NCC-pVQZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.83268646
+ hydro     1     s      3.41518287
+ hydro     1     s      6.36414044
+ hydro     2     p      2.88807503
+ hydro     2     p      5.25413203
+ hydro     2     p      9.55858248
+# polarization set
+ hydro     3     d      9.76277507
+ hydro     3     d     12.62994808
+ hydro     3     d     16.33916456
+ hydro     4     f     19.14009397
+ hydro     4     f     19.32182785
+ hydro     5     g     27.83930256
+# (sp) enhanced minimal set
+ hydro     1     s     11.73560848
+ hydro     1     s     14.13384708
+ hydro     2     p     10.30194311

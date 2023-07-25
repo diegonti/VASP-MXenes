@@ -1,0 +1,60 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVTZ" defaults for Ne atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Ne
+#     global species definitions
+    nucleus             10
+    mass                20.1797
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         38 7.0
+    radial_multiplier   2
+    angular_grids       specified 
+      division   0.4737  110
+      division   0.6363  194
+      division   0.7448  302
+      division   0.8348  590
+#      division   1.0034  770
+#      division   1.7611  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   6.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   5.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Ne for         NCC-pVTZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.81191592
+ hydro     1     s      3.76571472
+ hydro     2     p      8.09588538
+ hydro     2     p      8.29288837
+# polarization set
+ hydro     3     d     10.12551842
+ hydro     3     d     12.77461142
+ hydro     4     f     18.58713935
+# (sp) enhanced minimal set
+ hydro     1     s      6.76987379
+ hydro     1     s     11.99232585
+ hydro     2     p      9.54131585

@@ -1,0 +1,83 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "6-311PD_biggest" defaults for Al atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Al
+#     global species definitions
+    nucleus             13
+    mass                26.9815386
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         41 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.6594  110
+      division   0.8170  194
+      division   0.9059  302
+      division   1.0363  434
+      division   1.1443  590
+#      division   1.2621  770
+#      division   2.8177  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   1.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      2  p   6.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Al 6-311PD_biggest
+ gaussian 0 6
+     54866.4890000            0.0008390  
+      8211.7665000            0.0065270  
+      1866.1761000            0.0336660  
+       531.1293400            0.1329020  
+       175.1179700            0.4012660  
+        64.0055000            0.5313380  
+ gaussian 0 3
+        64.0055000            0.2023050  
+        25.2925070            0.6247900  
+        10.5349100            0.2274390  
+ gaussian 0 1 3.2067110
+ gaussian 0 1 1.1525550
+ gaussian 0 1 0.1766780
+ gaussian 0 1 0.0652370
+ gaussian 1 4
+       259.2836200            0.0094480  
+        61.0768700            0.0709740  
+        19.3032370            0.2956360  
+         7.0108820            0.7282190  
+ gaussian 1 2
+         2.6738650            0.6444670  
+         1.0365960            0.4174130  
+ gaussian 1 1 0.3168190
+ gaussian 1 1 0.1142570
+ gaussian 1 1 0.0413970
+ gaussian 2 1 1.3000000
+ gaussian 2 1 0.3250000
+ gaussian 2 1 0.0812500
+ gaussian 3 1 0.2500000

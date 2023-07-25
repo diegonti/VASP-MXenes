@@ -1,0 +1,75 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "aug-cc-pV5Z" defaults for H atom (to be pasted into control.in file)
+#
+################################################################################
+  species        H
+#     global species definitions
+    nucleus             1
+    mass                1.00794
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#     
+    radial_base         24 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.1930   50
+      division   0.3175  110
+      division   0.4293  194
+      division   0.5066  302
+      division   0.5626  434
+      division   0.5922  590
+#      division   0.6227  974
+#      division   0.6868 1202
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      1  s   1.
+#     ion occupancy
+    ion_occ      1  s   0.5
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# H aug-cc-pV5Z
+ gaussian 0 4
+       402.0000000            0.0002790  
+        60.2400000            0.0021650  
+        13.7300000            0.0112010  
+         3.9050000            0.0448780  
+ gaussian 0 1 1.2830000
+ gaussian 0 1 0.4655000
+ gaussian 0 1 0.1811000
+ gaussian 0 1 0.0727900
+ gaussian 0 1 0.0207000
+ gaussian 1 1 4.5160000
+ gaussian 1 1 1.7120000
+ gaussian 1 1 0.6490000
+ gaussian 1 1 0.2460000
+ gaussian 1 1 0.0744000
+ gaussian 2 1 2.9500000
+ gaussian 2 1 1.2060000
+ gaussian 2 1 0.4930000
+ gaussian 2 1 0.1560000
+ gaussian 3 1 2.5060000
+ gaussian 3 1 0.8750000
+ gaussian 3 1 0.2740000
+ gaussian 4 1 2.3580000
+ gaussian 4 1 0.5430000

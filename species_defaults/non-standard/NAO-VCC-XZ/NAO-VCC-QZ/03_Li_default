@@ -1,0 +1,64 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVQZ" defaults for Li atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Li
+#     global species definitions
+    nucleus             3
+    mass                6.941
+#
+    l_hartree           6
+#
+    cut_pot             5.0  2.0  1.0
+    basis_dep_cutoff    0e-4
+#     
+    radial_base         29 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4484  110
+      division   0.5659  194
+      division   0.6315  302
+      division   0.6662  434
+      division   0.8186  590
+#      division   0.9037  770
+#      division   6.2760  974
+#      outer_grid   974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   1.
+#     ion occupancy
+    ion_occ      1  s   2.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Li for         NCC-pVQZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      0.77288318
+ hydro     1     s      1.70486774
+ hydro     1     s      3.76068997
+ hydro     2     p      1.66509540
+ hydro     2     p      2.24388366
+ hydro     2     p      3.02385909
+# polarization set
+ hydro     3     d      3.77927259
+ hydro     3     d      4.07346881
+ hydro     3     d      4.39056664
+ hydro     4     f      4.96498391
+ hydro     4     f      5.50053578
+ hydro     5     g      6.94762321
+# (sp) enhanced minimal set
+ hydro     1     s     33.94525179
+ hydro     1     s    184.41538943
+ hydro     2     p      3.34321790

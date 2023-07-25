@@ -1,0 +1,67 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for F atom (to be pasted into control.in file)
+#
+################################################################################
+  species        F
+#     global species definitions
+    nucleus             9
+    mass                18.9984032
+#
+    l_hartree           6
+#
+    cut_pot             4.0  2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         37 7.0
+    radial_multiplier   6
+    angular_grids       specified 
+      division   0.4014  110
+      division   0.5291  194
+      division   0.6019  302
+      division   0.6814  434
+      division   0.7989  590
+#      division   0.8965  770
+#      division   1.3427  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      2  s   2.
+    valence      2  p   5.
+#     ion occupancy
+    ion_occ      2  s   1.
+    ion_occ      2  p   4.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# F def2-SVP
+ gaussian 0 5
+      2894.8325990           -0.0053408  
+       435.4193912           -0.0399043  
+        98.8433289           -0.1791277  
+        27.4851980           -0.4675809  
+         8.5405498           -0.4465313  
+ gaussian 0 1 1.0654578038
+ gaussian 0 1 0.33247346748
+ gaussian 1 3
+        22.6966339           -0.0452129  
+         4.9872339           -0.2375432  
+         1.3491614           -0.5128735  
+ gaussian 1 1 0.34829881977
+ gaussian 2 1 1.4000000

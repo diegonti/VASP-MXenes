@@ -1,0 +1,64 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "NCC-pVTZ" defaults for S atom (to be pasted into control.in file)
+#
+################################################################################
+  species        S
+#     global species definitions
+    nucleus             16
+    mass                32.065
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         44 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4665  110
+      division   0.5810  194
+      division   0.7139  302
+      division   0.8274  434
+      division   0.9105  590
+#      division   1.0975  770
+#      division   1.2028  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   4.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   3.
+################################################################################
+#
+
+ basis_acc              1e-04
+#============================================
+# Optimization in      S for         NCC-pVTZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      2.01971924
+ hydro     1     s      2.82549610
+ hydro     2     p      2.04542088
+ hydro     2     p      5.66996528
+# polarization set
+ hydro     3     d      5.12179673
+ hydro     3     d      5.49894524
+ hydro     4     f      8.96164441
+# (sp) enhanced minimal set
+ hydro     1     s      5.33000963
+ hydro     1     s      9.87240925
+ hydro     1     s     18.28598280
+ hydro     2     p      6.04510360
+ hydro     2     p     17.46428374

@@ -1,0 +1,85 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "def2-TZVP" defaults for S atom (to be pasted into control.in file)
+#
+################################################################################
+  species        S
+#     global species definitions
+    nucleus             16
+    mass                32.065
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         44 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4665  110
+      division   0.5810  194
+      division   0.7139  302
+      division   0.8274  434
+      division   0.9105  590
+#      division   1.0975  770
+#      division   1.2028  974
+#      outer_grid  974
+      outer_grid 770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   4.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   3.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# S def2-TZVP
+ gaussian 0 7
+     60700.9281040            0.0005470  
+      9102.6106854            0.0042297  
+      2071.4166009            0.0217478  
+       586.0247682            0.0851001  
+       190.5539502            0.2479913  
+        67.6303843            0.4670364  
+        25.1273069            0.3643459  
+ gaussian 0 3
+       112.5746301            0.0216700  
+        34.7955542            0.0936023  
+         6.5115556           -0.2606800  
+ gaussian 0 2
+         3.2399032            1.2842089  
+         1.5477161            0.6603642  
+ gaussian 0 1 0.40541030112
+ gaussian 0 1 0.14550651059
+ gaussian 1 5
+       564.3671603            0.0024797  
+       133.4262438            0.0196779  
+        42.4682712            0.0899800  
+        15.6165276            0.2570588  
+         6.1093988            0.4351517  
+ gaussian 1 1 2.4404160198
+ gaussian 1 1 0.83882201296
+ gaussian 1 1 0.31288746900
+ gaussian 1 1 0.10770109004
+ gaussian 2 2
+         3.7560000            0.2000000  
+         0.8120000            1.0000000  
+ gaussian 2 1 0.273000000
+ gaussian 3 1 0.557000000

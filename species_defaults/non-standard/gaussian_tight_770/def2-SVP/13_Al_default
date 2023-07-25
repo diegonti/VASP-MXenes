@@ -1,0 +1,74 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "def2-SVP" defaults for Al atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Al
+#     global species definitions
+    nucleus             13
+    mass                26.9815386
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         41 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.6594  110
+      division   0.8170  194
+      division   0.9059  302
+      division   1.0363  434
+      division   1.1443  590
+#      division   1.2621  770
+#      division   2.8177  974
+#      outer_grid   974
+      outer_grid   770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   1.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      2  p   6.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# Al def2-SVP
+ gaussian 0 5
+      5887.5727030            0.0013483  
+       885.6122600            0.0100716  
+       201.1360490            0.0451325  
+        56.2849747            0.1146127  
+        17.2295512            0.1015961  
+ gaussian 0 3
+        29.3402499            0.0693475  
+         3.0439630           -0.4252812  
+         1.1285540           -0.4144983  
+ gaussian 0 1 0.14234175160
+ gaussian 0 1 0.54400192313E-01
+ gaussian 1 5
+       145.1191881            0.0063963  
+        33.7178948            0.0441894  
+        10.3698631            0.1558158  
+         3.5135616            0.2863529  
+         1.1980050            0.2292142  
+ gaussian 1 1 0.26583005913
+ gaussian 1 1 0.71003361994E-01
+ gaussian 2 1 0.3000000

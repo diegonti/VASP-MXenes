@@ -1,0 +1,80 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Rb atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+#  The onset of the cutoff pot'l is set to 6 A by default, because the neutral
+#  Rb atom is a large atom. However, this is very expensive. The radius should be
+#  much smaller in real-world situations, where Rb will be ionic. Please check 
+#  and reduce the cutoff radius explicitly.
+#
+################################################################################
+  species          Rb
+#     global species definitions
+    nucleus        37
+    mass           85.4678
+#
+    l_hartree      4
+#
+    cut_pot        4.0  1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    57  5.5
+    radial_multiplier  1
+    angular_grids specified
+      division   0.1250  110
+      division   0.9394  194
+      division   1.1230  302
+#      division   1.2051  434
+#      division   1.2929  590
+#      division   1.3869  770
+#      division   7.0005  974
+#      outer_grid  974
+      outer_grid  302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      5  s   1.
+    valence      4  p   6.
+    valence      3  d  10.
+#     ion occupancy
+    ion_occ      5  s   0.
+    ion_occ      4  p   6.
+    ion_occ      3  d  10.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.45, 3.00, 4.00, 5.00 A
+#
+################################################################################
+#  "First tier" - improvements: -104.04 meV to -9.25 meV
+     hydro 3 d 4.5
+     hydro 3 p 2.5
+#     hydro 4 f 6.6
+     hydro 4 s 2.9
+#  "Second tier" - improvements: -4.35 meV to -0.89 meV
+#     ionic 4 d auto
+#     hydro 5 g 9.2
+#     hydro 2 s 2.4
+#     hydro 5 p 8
+#  "Third tier" - improvements: -0.76 meV to -0.13 meV
+#     hydro 4 d 7.6
+#     hydro 4 f 4.2
+#     hydro 4 f 18
+#     hydro 6 h 12.8
+#     hydro 4 p 2.9
+#     hydro 1 s 0.4
+#  "Fourth tier" - improvements: -0.07 meV and lower.
+#     hydro 5 g 6.2
+#     hydro 2 s 1.1
+#     hydro 5 d 9.2

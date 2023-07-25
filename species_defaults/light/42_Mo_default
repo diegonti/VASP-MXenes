@@ -1,0 +1,84 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Mo atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+################################################################################
+  species        Mo
+#     global species definitions
+    nucleus             42
+    mass                95.94
+#
+    l_hartree           4
+#
+    cut_pot             3.5  1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base         59 5.0
+    radial_multiplier   1
+    angular_grids specified
+      division   0.4847   50
+      division   0.9168  110
+      division   1.2280  194
+      division   1.6402  302
+#      division   1.8849  434
+#      division   2.0237  590
+#      division   2.0980  974
+#      division   2.7405 1202
+#      outer_grid  974
+      outer_grid  302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      5  s   1.
+    valence      4  p   6.
+    valence      4  d   5.
+#     ion occupancy
+    ion_occ     5  s   0.
+    ion_occ     4  p   6.
+    ion_occ     4  d   4.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.675 A, 1.9 A, 2.375 A, 3.00 A, 4.00 A
+#
+################################################################################
+#  "First tier"  - max. impr. -711.23  meV, min. impr. -21.07 meV
+     hydro 4 f 8.4
+     hydro 3 d 2.8
+     ionic 5 p auto
+#     hydro 5 g 12
+     ionic 5 s auto
+#  "Second tier" - max. impr. -39.38  meV, min. impr. -2.68 meV
+#     hydro 4 f 12.4
+#     hydro 3 d 3.3
+#     hydro 6 h 17.2
+#     hydro 4 f 7.6    
+#     hydro 3 p 3.0    
+#     hydro 1 s 0.65   
+#  "Third tier"  - max. impr. -5.50 meV, min. impr. -0.47 meV
+#     hydro 4 f 29.2
+#     hydro 5 g 11.2
+#     hydro 3 d 6.8
+#     hydro 6 h 14.8
+#     hydro 2 p 2.3
+#     hydro 4 s 3.8    
+#  "Fourth tier"  - max. impr. -0.58 meV, min. impr. -0.19 meV
+#     hydro 5 f 6.8    
+#     hydro 5 d 14.8
+#     hydro 6 s 7.8
+#     hydro 5 g 20.8
+#     hydro 5 d 10.4
+#     hydro 5 p 9.8
+#  Further functions - -0.17 meV and below
+#     hydro 5 d 3.2  

@@ -1,0 +1,77 @@
+################################################################################
+#
+#  FHI-aims code project
+#  VB, Fritz-Haber Institut, 2009
+#
+#  Suggested "light" defaults for Zr atom (to be pasted into control.in file)
+#  Be sure to double-check any results obtained with these settings for post-processing,
+#  e.g., with the "tight" defaults and larger basis sets.
+#
+################################################################################
+  species          Zr
+#     global species definitions
+    nucleus        40
+    mass           91.224
+#
+    l_hartree      4
+#
+    cut_pot        3.5  1.5  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    58  5.0
+    radial_multiplier  1
+    angular_grids specified
+      division   0.5825   50
+      division   1.1060  110
+      division   1.4586  194
+      division   1.7061  302
+#      division   1.9320  434
+#      division   2.2803  590
+#      division   2.4151  770
+#      division   2.4626  974
+#      division   3.1649 1202
+#      outer_grid  974
+      outer_grid  302
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      5  s   2.
+    valence      4  p   6.
+    valence      4  d   2.
+#     ion occupancy
+    ion_occ      5  s   1.
+    ion_occ      4  p   6.
+    ion_occ      4  d   1.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 1.9, 2.25, 3.00, 4.00 Ang
+#
+################################################################################
+#  "First tier" - improvements: -605.96 meV to -18.06 meV
+     hydro 4 f 7.2
+     ionic 4 d auto
+     ionic 5 p auto
+#     hydro 5 g 10.4
+     ionic 5 s auto
+#  "Second tier" - improvements: -32.47 meV to -1.41 meV
+#     hydro 4 f 10.4
+#     hydro 6 h 14.8
+#     hydro 4 d 6.2
+#     hydro 4 p 4.4
+#     hydro 4 f 20
+#     hydro 5 s 6
+#  "Third tier" - improvements: -1.99 meV and lower.
+#     hydro 4 f 5.8
+#     hydro 5 g 10.8
+#     hydro 2 p 1
+#     hydro 3 d 8
+#     hydro 6 h 14.4
+#     hydro 1 s 0.9  
+#  Further functions (approx -0.40 meV and below possible)

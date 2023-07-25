@@ -1,0 +1,75 @@
+################################################################################
+#
+#  FHI-aims code project
+# Volker Blum, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "tight" defaults for I atom (to be pasted into control.in file)
+#
+################################################################################
+  species          I
+#     global species definitions
+    nucleus        53
+    mass           126.90447
+#
+    l_hartree      6
+#
+    cut_pot        4.0  2.0  1.0
+    basis_dep_cutoff    1e-4
+#
+    radial_base    64  7.0
+    radial_multiplier  2
+    angular_grids specified
+      division   0.1103  110
+      division   0.1515  194
+      division   0.9554  302
+#      division   1.1196  590
+#      division   1.1922  770
+#      division   6.1948  974
+#      outer_grid  974
+      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      5  s   2.
+    valence      5  p   5.
+    valence      4  d  10.
+#     ion occupancy
+    ion_occ      5  s   1.
+    ion_occ      5  p   4.
+    ion_occ      4  d  10.
+################################################################################
+#
+#  Suggested additional basis functions. For production calculations, 
+#  uncomment them one after another (the most important basis functions are
+#  listed first).
+#
+#  Constructed for dimers: 2.22, 2.65, 3.25, 4.25 Ang
+#
+################################################################################
+#  "First tier" - improvements: -270.74 meV to -21.24 meV
+     hydro 3 d 4
+     hydro 4 f 6.4
+     hydro 2 p 1.6
+     ionic 5 s auto
+#  "Second tier" - improvements: -16.39 meV to -0.39 meV
+#     hydro 5 g 9.4
+#     hydro 4 f 18.4
+#     hydro 6 h 12.4
+#     hydro 4 p 4.5
+#     hydro 3 d 4.2
+#     hydro 3 s 3.0  
+#  "Third tier" - max. impr. -0.76 meV, min. impr. -0.06 meV
+#     hydro 5 f 15.6
+#     hydro 5 g 12
+#     hydro 5 d 16
+#     hydro 4 f 42   
+#     hydro 6 h 15.2
+#     ionic 5 p auto
+#     hydro 1 s 6.2   
+#  Further functions that fell out of the optimization: -0.10 meV and below
+#     hydro 4 f 7    
+#     hydro 6 p 9    
+#     hydro 2 s 6.4  

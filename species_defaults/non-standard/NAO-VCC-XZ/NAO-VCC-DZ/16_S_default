@@ -1,0 +1,60 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "NCC-pVDZ" defaults for S atom (to be pasted into control.in file)
+#
+################################################################################
+  species        S
+#     global species definitions
+    nucleus             16
+    mass                32.065
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         44 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4665  110
+      division   0.5810  194
+      division   0.7139  302
+      division   0.8274  434
+      division   0.9105  590
+#      division   1.0975  770
+#      division   1.2028  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   4.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   3.
+################################################################################
+#
+
+ basis_acc              1e-04
+#============================================
+# Optimization in      S for         NCC-pVDZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.90359488
+ hydro     2     p      2.07898295
+# polarization set
+ hydro     3     d      5.51918257
+# (sp) enhanced minimal set
+ hydro     1     s      2.21324637
+ hydro     1     s      2.77355123
+ hydro     1     s      3.47570271
+ hydro     2     p      3.84936641
+ hydro     2     p      4.16045532

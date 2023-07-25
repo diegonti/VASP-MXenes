@@ -1,0 +1,98 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2009
+#
+#  Suggested "def2-QZVP" defaults for S atom (to be pasted into control.in file)
+#
+################################################################################
+  species        S
+#     global species definitions
+    nucleus             16
+    mass                32.065
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         44 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.4665  110
+      division   0.5810  194
+      division   0.7139  302
+      division   0.8274  434
+      division   0.9105  590
+#      division   1.0975  770
+#      division   1.2028  974
+#      outer_grid  974
+      outer_grid 770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   4.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   3.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# S def2-QZVP
+ gaussian 0 10
+   1273410.9023000            0.0000118  
+    190697.8300700            0.0000915  
+     43397.8853300            0.0004809  
+     12291.8096770            0.0020257  
+      4009.7420824            0.0073190  
+      1447.3531030            0.0233005  
+       564.3010291            0.0653862  
+       233.7450624            0.1561445  
+       101.5640281            0.2931856  
+        45.8059072            0.3628791  
+ gaussian 0 3
+       394.2728150            0.0187533  
+       121.7224959            0.1687073  
+        46.7541260            0.6380683  
+ gaussian 0 1 20.923008254
+ gaussian 0 1 8.2685567800
+ gaussian 0 1 3.8629345671
+ gaussian 0 1 1.7794684781
+ gaussian 0 1 0.61064260103
+ gaussian 0 1 0.27412269445
+ gaussian 0 1 0.11325939107
+ gaussian 1 8
+      2189.8930459            0.0002391  
+       518.9459659            0.0020772  
+       168.1956015            0.0112424  
+        63.7452828            0.0440699  
+        26.5970331            0.1291878  
+        11.7742514            0.2691082  
+         5.3534379            0.3785593  
+         2.4701912            0.2969213  
+ gaussian 1 2
+        82.1202883           -0.0394203  
+         4.9523533            0.6404840  
+ gaussian 1 1 1.0828262029
+ gaussian 1 1 0.49271277356
+ gaussian 1 1 0.20483450942
+ gaussian 1 1 0.80743615716E-01
+ gaussian 2 1 4.15900000
+ gaussian 2 1 1.01900000
+ gaussian 2 1 0.464000000
+ gaussian 2 1 0.194000000
+ gaussian 3 1 0.335000000
+ gaussian 3 1 0.869000000
+ gaussian 4 1 0.683000000

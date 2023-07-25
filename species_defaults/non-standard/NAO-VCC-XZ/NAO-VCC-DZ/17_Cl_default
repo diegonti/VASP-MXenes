@@ -1,0 +1,59 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "NCC-pVDZ" defaults for Cl atom (to be pasted into control.in file)
+#
+################################################################################
+  species        Cl
+#     global species definitions
+    nucleus             17
+    mass                35.453
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-4
+#
+    radial_base         45 7.0
+    radial_multiplier   2
+    angular_grids       specified
+      division   0.4412  110
+      division   0.5489  194
+      division   0.6734  302
+      division   0.7794  434
+      division   0.9402  590
+#      division   1.0779  770
+#      division   1.1792  974
+#      outer_grid  974
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   5.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   4.
+################################################################################
+
+ basis_acc              1e-04
+#============================================
+# Optimization in     Cl for         NCC-pVDZ
+#============================================
+# (sp) correlation set
+ hydro     1     s      1.91585803
+ hydro     2     p      4.88350086
+# polarization set
+ hydro     3     d      6.18494725
+# (sp) enhanced minimal set
+ hydro     1     s      2.40239153
+ hydro     1     s      3.06360385
+ hydro     1     s      3.90680220
+ hydro     2     p      5.16520775
+ hydro     2     p      6.15164973

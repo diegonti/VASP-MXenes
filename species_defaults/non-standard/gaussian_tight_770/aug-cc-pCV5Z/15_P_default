@@ -1,0 +1,126 @@
+################################################################################
+#
+#  FHI-aims code project
+# Igor Ying Zhang and Xinguo Ren, Fritz Haber Institute Berlin, 2012
+#
+#  Suggested "aug-cc-pCV5Z" defaults for P atom (to be pasted into control.in file)
+#
+################################################################################
+  species        P
+#     global species definitions
+    nucleus             15
+    mass                30.973762
+#
+    l_hartree           6
+#
+    cut_pot             4.0          2.0  1.0
+    basis_dep_cutoff    0e-0
+#
+    radial_base         43 7.0
+    radial_multiplier   6
+    angular_grids       specified
+      division   0.2995   50
+      division   0.5998  110
+      division   0.9240  194
+      division   1.0921  302
+      division   1.2863  434
+      division   1.3165  590
+#      division   1.4113  770
+#      division   1.5128  974
+#      division   2.4980 1202
+      outer_grid  770
+#      outer_grid  434
+################################################################################
+#
+#  Definition of "minimal" basis
+#
+################################################################################
+#     valence basis states
+    valence      3  s   2.
+    valence      3  p   3.
+#     ion occupancy
+    ion_occ      3  s   1.
+    ion_occ      3  p   2.
+################################################################################
+#
+#   For exact comparison with all GTO-based codes, one or more of
+#   the following flags are needed:
+#
+    include_min_basis   .false.
+    pure_gauss          .true.
+#
+
+
+# P aug-cc-pCV5Z
+ gaussian 0 11
+   4666000.0000000            0.0000020  
+    698600.0000000            0.0000153  
+    159000.0000000            0.0000805  
+     45040.0000000            0.0003397  
+     14720.0000000            0.0012329  
+      5323.0000000            0.0040135  
+      2076.0000000            0.0119124  
+       861.1000000            0.0322511  
+       375.7000000            0.0786643  
+       170.8000000            0.1664580  
+        80.2900000            0.2830390  
+ gaussian 0 11
+   4666000.0000000           -0.0000005  
+    698600.0000000           -0.0000042  
+    159000.0000000           -0.0000218  
+     45040.0000000           -0.0000923  
+     14720.0000000           -0.0003351  
+      5323.0000000           -0.0010951  
+      2076.0000000           -0.0032680  
+       861.1000000           -0.0089995  
+       375.7000000           -0.0226528  
+       170.8000000           -0.0514650  
+        80.2900000           -0.1001860  
+ gaussian 0 1 38.7700000
+ gaussian 0 1 18.9300000
+ gaussian 0 1 8.7960000
+ gaussian 0 1 4.3580000
+ gaussian 0 1 2.1740000
+ gaussian 0 1 1.0950000
+ gaussian 0 1 0.4400000
+ gaussian 0 1 0.1945000
+ gaussian 0 1 0.0837600
+ gaussian 0 1 0.0335000
+ gaussian 1 3
+      2010.0000000            0.0002159  
+       476.3000000            0.0018754  
+       154.4000000            0.0101742  
+ gaussian 1 1 58.5100000
+ gaussian 1 1 24.4000000
+ gaussian 1 1 10.8000000
+ gaussian 1 1 4.9130000
+ gaussian 1 1 2.2690000
+ gaussian 1 1 1.0430000
+ gaussian 1 1 0.4313000
+ gaussian 1 1 0.1767000
+ gaussian 1 1 0.0700900
+ gaussian 1 1 0.0253000
+ gaussian 2 1 0.1660000
+ gaussian 2 1 0.4180000
+ gaussian 2 1 1.0540000
+ gaussian 2 1 2.6560000
+ gaussian 2 1 48.4830000
+ gaussian 2 1 23.8780000
+ gaussian 2 1 11.7600000
+ gaussian 2 1 5.7920000
+ gaussian 2 1 0.0624000
+ gaussian 3 1 0.2190000
+ gaussian 3 1 0.4500000
+ gaussian 3 1 0.9230000
+ gaussian 3 1 22.9200000
+ gaussian 3 1 9.6830000
+ gaussian 3 1 4.0910000
+ gaussian 3 1 0.0950000
+ gaussian 4 1 0.4120000
+ gaussian 4 1 0.9030000
+ gaussian 4 1 17.3220000
+ gaussian 4 1 6.7170000
+ gaussian 4 1 0.1840000
+ gaussian 5 1 0.7450000
+ gaussian 5 1 12.8110000
+ gaussian 5 1 0.3720000
