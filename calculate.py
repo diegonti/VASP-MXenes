@@ -19,6 +19,7 @@ from argparse import ArgumentParser
 
 from VASPread import OUTCAR
 from DOS import DOSCAR
+from structure import CONTCAR
 
 def calculateMXT(n:int,T:str,calcError=True):
     """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
@@ -39,6 +40,8 @@ def calculateMXT(n:int,T:str,calcError=True):
                 os.chdir(path)
 
                 dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/"]
+                aimsBS_dirs = ["aBS/PBE/","aBS/PBE0/"]
+
                 # extra_dirs = ["BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
 
                 # Do the calculation in each calculation directory (DOS, BS)
@@ -70,6 +73,26 @@ def calculateMXT(n:int,T:str,calcError=True):
                     start = dir.split("/")[0].lower()
                     os.system(f"{queue} {start}{mxt}_{j}{k} script")
                     os.chdir(path)
+
+                for dir in aimsBS_dirs:
+
+                    # In case tha calculation is already done
+                    if os.path.exists(path+dir+"fhi-aims.out"): 
+                        # Check Error
+                        continue
+                    
+                    # Move the CONTCAR and send the job to queue
+                    try: 
+                        contcar = CONTCAR("CONTCAR")
+                        contcar.toAIMS(dir+"geometry.in")
+
+                    except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
+                    
+                    os.chdir(dir)
+                    start = dir.split("/")[0].lower()
+                    os.system(f"{queue} {start}{mxt}_{j}{k} script")
+                    os.chdir(path)
+
 
       
 def calculateMX(n:int,calcError=True):

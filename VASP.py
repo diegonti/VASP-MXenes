@@ -11,6 +11,13 @@ Diego Ontiveros
 import os
 import shutil
 import math as m
+import fileinput
+
+periodic_table = {"H": "01", "He": "02", "Li": "03", "Be": "04", "B": "05", "C": "06", "N": "07", "O": "08", "F": "09", "Ne": 10, 
+                  "Na": 11, "Mg": 12, "Al": 13, "Si": 14, "P": 15, "S": 16, "Cl": 17, "Ar": 18, 
+                  "K": 19, "Ca": 20, "Sc": 21, "Ti": 22, "V": 23, "Cr": 24, "Mn": 25, "Fe": 26, "Co": 27, "Ni": 28, "Cu": 29, "Zn": 30, "Ga": 31, "Ge": 32, "As": 33, "Se": 34, "Br": 35, "Kr": 36, 
+                  "Rb": 37, "Sr": 38, "Y": 39, "Zr": 40, "Nb": 41, "Mo": 42, "Tc": 43, "Ru": 44, "Rh": 45, "Pd": 46, "Ag": 47, "Cd": 48, "In": 49, "Sn": 50, "Sb": 51, "Te": 52, "I": 53, "Xe": 54, 
+                  "Cs": 55, "Ba": 56, "La": 57, "Hf": 72, "Ta": 73, "W": 74, "Re": 75, "Os": 76, "Ir": 77, "Pt": 78, "Au": 79, "Hg": 80, "Tl": 81, "Pb": 82, "Bi": 83, "Th": 90, "Pa": 91, "U": 92}
 
 
 def mkdir(*dirs):
@@ -101,6 +108,10 @@ class MX():
             # dirs_terminated = ["DOS","DOS/PBE0"]
             self.dirs = [self.pdir + i +"/" for i in dirs_terminated]
             self.extra_dirs = ["bader"]
+            aBS_dirs = ["aBS", "aBS/PBE", "aBS/PBE0"]
+            self.aimsBS_dirs = [self.pdir +  i + "/" for i in aBS_dirs]
+
+
         else:
             dirs_pristine = ["opt","DOS", "DOS/PBE0", "BS"]
             self.dirs = [self.pdir + i +"/" for i in dirs_pristine]
@@ -354,6 +365,42 @@ class MX():
         destination = None
         shutil.copy(source,destination)
 
+    def aimsBS(self):
+        """Creates inputs for AIMS BS calculations"""
+
+        def replaceXC(file_path):
+            with open(file_path,"r") as inFile: content = inFile.read()
+            content = content.replace("pbe0","pbe")
+            content = content.replace("hybrid_xc_coeff","#hybrid_xc_coeff")
+            with open(file_path,"w") as outFile: outFile.write(content)
+
+        
+        source_in = "./car/control.in"
+        source_script = "./car/scriptBSC_aims"
+
+        # replace pbe--pbe0
+
+        # write pbe in PBE/
+
+        
+        for dir in self.aimsBS_dirs: 
+            destination_in = dir+"control.in"
+            destination_script = dir+"script"
+
+            shutil.copy(source_in, destination_in)
+            if "/PBE/" in dir: replaceXC(destination_in)
+
+            # add species to control.in
+            for atom in self.atoms:
+                species_default = f"species_defaults/light/{periodic_table[atom]}_{atom}_default"
+                with open(species_default,"r") as source:
+                    content = source.read()
+                with open(destination_in,"a") as destination:
+                    destination.write(content)
+                
+            # copy script
+            shutil.copy(source_script, destination_script)
+
 
 def createDirs(mx:MX):
         try: os.mkdir(f"MXenes/{mx.pristine}/")
@@ -365,12 +412,13 @@ def createDirs(mx:MX):
             f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/",
             f"MXenes/{mx.pristine}/{mx.name}/{mx.stacking}/{mx.hollows}/")
         mkdir(*mx.dirs)
+        mkdir(*mx.aimsBS_dirs)
 ### ----------------------------------------- INICIO PROGRAMA ---------------------------------------------------- ###
 ###--------------------------------------------------------------------------------------------------------------- ###
 
 # INPUTS
 n = 3                               # MXene n number (thickness)
-T = "O2H2"                          # Termination ((OH)2==O2H2)
+T = "Br2"                          # Termination ((OH)2==O2H2)
 
 # stacking, hollow = "ABC", "HM"     # Structure
 
@@ -410,4 +458,5 @@ if __name__ == "__main__":
                 mx.POTCAR()         # Writes POTCAR (concatenated PP)    
                 mx.KPOINTS()        # Writes KPOINTS (k-mesh or k-path)
                 mx.INCAR()          # Writes INCAR (for each calculations)
-                mx.script()         # Writes script (to send calculation)
+                mx.script("BSC")         # Writes script (to send calculation)
+                mx.aimsBS()

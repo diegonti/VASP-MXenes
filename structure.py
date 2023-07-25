@@ -75,11 +75,11 @@ class CONTCAR():
         self.data,self.atoms,self.index,self.name = data, atoms,index,name
         self.nAtoms = sum(self.index)
 
-    def toAIMS(self):
+    def toAIMS(self, path=None):
         """Transforms a CONTCAR from VASP to a geometry.in readable for FHI-AIMS."""
 
         data = self.data
-        path = out_path + f"geometry.in.{self.filename}"
+        if path is None: path = f"./CONTCARout/{self.filename}"
         nAtoms = self.nAtoms
         lattice = data[2:5]
         positions = data[9:9+nAtoms+1]
