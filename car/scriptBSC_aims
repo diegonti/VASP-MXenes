@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name=aims
+#SBATCH --output=fhi-aims.out
+#SBATCH --error=fhi-aims.err
+#SBATCH --ntasks=48
+#SBATCH --time=70:55:00
+
+# Loading the modules needed
+module purge
+
+module load impi intel mkl
+module load fhi-aims/210226
+
+# Creating the current dir (in projects) and temporal dir (in scratch) variables
+export DIR=$(pwd -P)
+export TEMP=${DIR/"projects"/"scratch"}
+
+# Copying inpot files and changing to the temporal directory
+mkdir -p $TEMP
+cp * $TEMP
+cd $TEMP
+
+ulimit -s unlimited
+
+# Running the program
+mpirun aims.210226.scalapack.mpi.x
+
+# Copying output files to project directory
+cp * $DIR
+## cp CONTCAR OUTCAR DOSCAR CHGCAR OSZICAR
+
+# Removing temporal directory
+## cd $DIR; rm -r $TEMP  

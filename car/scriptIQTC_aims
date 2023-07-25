@@ -1,0 +1,31 @@
+#!/bin/bash
+# Basic parameters: job name, parallel environment and cores, queue, used shell,
+# current working directory,output files (.err, .out), email.
+#$ -N name
+#$ -pe smp 12
+#$ -q iqtc04.q
+#$ -S /bin/bash
+#$ -cwd
+#$ -o fhi-aims.out
+#$ -e fhi-aims.err
+# Remove the first '#' of the following 2 lines if you want to receive an email when the job ends.
+##$ -m e
+#$ -M diegontidoc2000@gmail.com
+
+# Load the modules needed
+. /etc/profile
+#module load  fhi-aims/171221_1_ompi
+module load  fhi-aims/150518_ompi
+export DIR=$PWD
+
+# Copy inputs and files needed to the directory where the jobs will run
+cd $TMPDIR
+cp -r $DIR/*.in .
+
+# Run the job
+
+export OMP_NUM_THREADS=1
+ulimit -l unlimited
+#mpirun -np $NSLOTS aims.171221_1.scalapack.mpi.x
+mpirun -np $NSLOTS aims.150518.scalapack.mpi.x
+cp * $DIR
