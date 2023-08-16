@@ -236,7 +236,7 @@ class CONTCAR():
         self.data = data
         return data
 
-    def addT(self,T:str,stack:str=None,hollows:str=None):
+    def addT(self,T:str,T_dist:float=1,stack:str=None,hollows:str=None):
         """Adds single-atom termination (T) to the pristine MXene in the indicated hole position (hollows=HM/H,HMX,HX).\n
         Stacking can be indicated as stack=ABC/ABA, if not the program will guess it."""
 
@@ -244,7 +244,7 @@ class CONTCAR():
         f = ".16f"
         n = self.mx.n
         data = self.addVacuum(v=30)   # shifts to zero and reescales to get vacuum == 30
-        data = self.shift(shift=1)    # shifts the layer by 1 Ang
+        data = self.shift(shift=T_dist)    # shifts the layer by 1 Ang
 
         data[5].append(T[:-1])          #! This can produce errors if termination is OH
         data[6].append(T[-1])
@@ -292,7 +292,7 @@ class CONTCAR():
         for i in range(2):
             aT = a[i] #format(round(a[i],16),f)
             bT = b[i] #format(round(b[i],16),f)
-            cT = setFormat(i*(do+2)/co,16)
+            cT = setFormat(i*(do+2*T_dist)/co,16)
             posTi = [aT,bT,cT,"T","T","T"]
             posT.append(posTi)
         t1,t2 = posT
@@ -332,8 +332,8 @@ if __name__ == "__main__":
 
         ## Adds Termination to optimized CONTCAR.
         # contcar.addT("O2",hollows="HMX")
-        # contcar.addT("H2",hollows="HMX")
-        # contcar.write()
+        contcar.addT("H2",hollows="HX",T_dist=3)
+        contcar.write()
 
         ## Shifts the slab a certain amount
         # contcar.shift(3)
