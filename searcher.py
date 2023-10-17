@@ -212,7 +212,7 @@ class SEARCH():
                     else: print(f"{destination_path} : Path not found.")
 
 
-    def moveHome(self,path_folders:str=None,name:str=None):
+    def moveHome(self,path_folders:str=None,name:str=None,is_folder:bool=False):
         """Moves all the targeted files to their correspondent (stach_hollow/) folder in the hom/searcher_n dir created."""
         n = self.n
         T, pristine = parseTermination(self.T)
@@ -240,7 +240,8 @@ class SEARCH():
             else: out_folder = data[1]+"_"+data[2]+"/"
 
             # copy from search path to destination
-            shutil.copy(path,f"{out_folder}/{name}_{data[0]}")
+            if not is_folder: shutil.copy(path,f"{out_folder}/{name}_{data[0]}")
+            else: os.system(f"cp -r {path} {out_folder}/{data[0]}")
 
     def remove(self, target:str):
         """Removes the specified files for the searched paths and subfolders."""
