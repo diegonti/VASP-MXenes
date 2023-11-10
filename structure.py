@@ -246,8 +246,14 @@ class CONTCAR():
         data = self.addVacuum(v=30)   # shifts to zero and reescales to get vacuum == 30
         data = self.shift(shift=T_dist)    # shifts the layer by 1 Ang
 
-        data[5].append(T[:-1])          #! This can produce errors if termination is OH
-        data[6].append(T[-1])
+        T_atom = T[:-1]
+        T_index = T[-1]
+        if T_atom in data[5]:
+            repeated_i = data[5].index(T_atom)
+            data[6][repeated_i] = str(int(data[6][repeated_i]) + int(T_index))
+        else:
+            data[5].append(T[:-1])          #! This can produce errors if termination is OH
+            data[6].append(T[-1])
 
         M = data[9:9+n+1]
         X = data[9+n+1:9+2*n+1]
@@ -327,13 +333,13 @@ if __name__ == "__main__":
         mx = contcar.mx ##!
 
         ## Adds Vaccum to optimized M2X or M2XT2 CONTCAR.
-        # contcar.addVacuum(v=10)
+        # contcar.addVacuum(v=20)
         # contcar.write()
 
         ## Adds Termination to optimized CONTCAR.
-        # contcar.addT("O2",hollows="HMX")
-        contcar.addT("H2",hollows="HX",T_dist=3)
-        contcar.write()
+        # contcar.addT("O2",hollows="HX")
+        # contcar.addT("H2",hollows="HX")
+        # contcar.write()
 
         ## Shifts the slab a certain amount
         # contcar.shift(3)
@@ -344,7 +350,7 @@ if __name__ == "__main__":
         # contcar.write()
 
         ##Transforms POSCAR to geometry.in for 
-        # contcar.toAIMS()
+        contcar.toAIMS()
 
         ##Prints cell parameters for input CONTCARs
         print(cont)
