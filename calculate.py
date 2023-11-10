@@ -20,6 +20,7 @@ from argparse import ArgumentParser
 from VASPread import OUTCAR
 from DOS import DOSCAR
 from structure import CONTCAR
+from searcher import getStructure
 
 def calculateMXT(n:int,T:str,calcError=True):
     """Performs optimization for all cases of terminated MXenes (Mn+1XnTx).
@@ -140,7 +141,7 @@ def calculateMX(n:int,calcError=True):
                     os.chdir(path)
 
 
-def calculateGeneral(paths):
+def calculateGeneral(paths,calcError:bool=True):
     """
     Performs optimizations for a given list of paths.
     """
@@ -150,18 +151,61 @@ def calculateGeneral(paths):
         print(path)
 
         if any(h in path for h in ["/H/", "/HM/","/HMX/","/HX/"]): 
-            dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
-        else: dirs = ["DOS/","DOS/PBE0/","BS/"]
+            dirs = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/"]
+            aimsBS_dirs = ["aBS/PBE/","aBS/PBE0/"]
+        else: 
+            dirs = ["DOS/","DOS/PBE0/","BS/"]
+            aimsBS_dirs = []
 
+        stack,hollow,pristine, queue_name = getStructure(path)
+        mxt = queue_name.split('/')[0]
+        # Do the calculation in each calculation directory (DOS, BS)
         for dir in dirs: 
-            if os.path.exists(path+dir+"vasp.out"): continue # --force
+
+            # In case tha calculation is already done
+            if os.path.exists(path+dir+"vasp.out"): 
+
+                # And in case there has been an Error
+                if os.path.exists(path+dir+"OUTCAR") and calcError:
+
+                    outcar = OUTCAR(path+dir+"OUTCAR")
+                    info = outcar.getOpt()
+                    if info[-1] == "error":
+                        os.chdir(dir)
+                        start = dir.split("/")[0].lower()
+
+                        os.system(rf"sed -i '/-pe smp/c\#$ -pe smp 6' script")
+                        os.system(rf"sed -i '/--ntasks/c\#SBATCH --ntasks=24' script")
+                        os.system(f"{queue} {start}{queue_name} script")
+                        os.chdir(path)
+                continue
+            
+            # Move the CONTCAR and send the job to queue
             try: shutil.copy("CONTCAR",dir+"POSCAR")
-            except FileNotFoundError: print(f"Passing {i}"); break
-            # see also if OUTCAR in file
+            except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
             
             os.chdir(dir)
             start = dir.split("/")[0].lower()
-            os.system(f"{queue} {start}_{i} script")
+            os.system(f"{queue} {start}{queue_name} script")
+            os.chdir(path)
+
+        for dir in aimsBS_dirs:
+
+            # In case tha calculation is already done
+            if os.path.exists(path+dir+"fhi-aims.out"): 
+                # Check Error
+                continue
+            
+            # Move the CONTCAR and send the job to queue
+            try: 
+                contcar = CONTCAR("CONTCAR")
+                contcar.toAIMS(dir+"geometry.in")
+
+            except FileNotFoundError: print(f"Passing {mxt}_{stack}_{hollow}"); break
+            
+            os.chdir(dir)
+            start = dir.split("/")[0].lower()
+            os.system(f"{queue} {start}{queue_name} script")
             os.chdir(path)
 
 
@@ -224,6 +268,14 @@ def calculateWF(n:int,T:str,limit=1.23,calcError=True):
                 os.system(f"{queue} {start}{mxt}_{j}{k} script")
                 os.chdir(path)
 
+
+def parse_file(file:str):
+    data = []
+    with open(file,"r") as inFile:
+        for line in inFile:
+            data.append(line.strip())
+    return data
+
 ############################ MAIN PROGRAM #####################
 
 # Cluster PATHS
@@ -242,6 +294,7 @@ parser = ArgumentParser(description="Runs over all paths to do electronic calcul
     python3 calculate.py [-h] -n N_INDEX [-T TERMINATION] [-WF] [-l LIMITWF]")
 
 parser.add_argument("-p","--path",type=str,default=None,help="Individual MXene structure folder where the calculation will be done. Optional. Has preference over -n.")
+parser.add_argument("-f","--file",type=str,default=None,help="File with path names that will be calculated. Optional. Has preference over -n.")
 parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.")
 parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
                     For pristine MXenes, don't use this or use None. Defaults to None.")
@@ -249,15 +302,18 @@ parser.add_argument("-WF","--workfunction",action="store_true",help="To send LOC
 parser.add_argument("-l","--limitWF",type=float,default=1.23,help="The structures with bandgap > limit will be calculated. Defaults to 0.")
 
 args = parser.parse_args()
-paths, n, T = args.path, args.n_index, args.termination
+paths, file, n, T = args.path, args.file, args.n_index, args.termination
 calc_wf, limitWF = args.workfunction, args.limitWF
 
 
 if calc_wf and n is None: parser.error("-WF requires -n flag and optinally -T.")
-elif paths is None and n is None: parser.error(f"Some arguments are needed. For help, run python3 calculate.py -h.")
+elif paths is None and n is None and file is None: parser.error(f"Some arguments are needed. For help, run python3 calculate.py -h.")
 
 
 if not paths is None: calculateGeneral(paths)
+if not file is None: 
+    paths = parse_file(file)
+    calculateGeneral(paths)
 else:
 
     # n = 2                               # MXene n number (thickness)
