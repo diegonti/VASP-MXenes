@@ -9,6 +9,7 @@ import os
 import shutil
 
 from structure import CONTCAR
+from VASP import MX
 
 
 dirsMXT = ["DOS/","DOS/PBE0/","BS/PBE/","BS/PBE0/","BS/PBE/BS2/","BS/PBE0/BS2/","WF/"]
@@ -38,20 +39,37 @@ def parseTarget(target:str):
 
 def getStructure(path):
     """Gets structure (stacking and hollows) from the folder path."""
+
+    data = path.strip().split("/")
+
+    # n
+    if "M2X1" in data: idx = data.index("M2X1")
+    elif "M3X2" in data: idx = data.index("M3X2")
+    elif "M4X3" in data: idx = data.index("M4X3")
+    else: raise ValueError("Could not resolve path")
+    mx = MX(data[idx+2])
+
     # Stacking
-    if "/ABA/" in path: stack = "ABA"
-    elif "/ABC/" in path: stack = "ABC"
+    if "/ABA/" in path: stack = "ABA"; stack_i = 1
+    elif "/ABC/" in path: stack = "ABC"; stack_i = 0
 
     # Hollows
     hollows = ""
     h = ["/HM/","/HMX/","/HX/","/H/"]
-    for hollow in h: 
-        if hollow in path: hollows = hollow.split("/")[1]
+    h_i = [1,2,3,1]
+    for hollow,hollow_i in zip(h,h_i): 
+        if hollow in path: 
+            hollows = hollow.split("/")[1]
+            hollows_i = hollow_i
 
-    if hollow == "": pristine = True
+    if hollow == "": 
+        pristine = True
+        hollows_i = ""
     else: pristine = False
 
-    return stack, hollows, pristine
+    queue_name = f"{mx.name}_{stack_i}{hollows_i}"
+
+    return stack, hollows, pristine, queue_name
 
 def pathMX(n,mx,mxt,stack,hollow):
     return f"{home}/M{n+1}X{n}/{mx}/{mxt}/{stack}/{hollow}/"
