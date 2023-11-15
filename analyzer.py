@@ -21,7 +21,7 @@ def analyzeDOS(paths):
 
     for path in paths:
         dos = DOSCAR(path)
-        stack,hollows,pristine = getStructure(path)
+        stack,hollows,pristine,queue_name = getStructure(path)
         # if stack=="ABA":continue
         # Select out folder
         if pristine: out_folder = stack+"/"
@@ -51,7 +51,7 @@ def analyzeWF(paths,limit=None,extra=''):
     Makes a plot in the respective home folder and returns LOCPOT information: vaccuum potential for each surface."""
 
     for i,path in enumerate(paths):
-        stack,hollows,pristine = getStructure(path)
+        stack,hollows,pristine,queue_name = getStructure(path)
         # if stack=="ABA":continue
 
         # Select out folder
