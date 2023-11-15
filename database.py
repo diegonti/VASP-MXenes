@@ -10,6 +10,7 @@ os.environ['OPENBLAS_NUM_THREADS'] = '1'
 import gc
 from pymatgen.core import periodic_table
 import numpy as np
+from argparse import ArgumentParser
 
 from searcher import SEARCH
 from structure import CONTCAR
@@ -37,10 +38,16 @@ def make_histogram(E,DOS:np.ndarray,n_bins=100,E_min=-5,E_max=5):
     return dos_hist,E_hist
 
 
-with open("database.txt","a") as outFile:
-    for n in [1,2,3]:
-        for T in ["F2","H2","S2","Cl2","O2H2"]: #O2 for IQTC
+def make_database(n,T,out_name):
+    """Main function to make the database for a given MXene n and T.
 
+    Parameters
+    ----------
+    `n` : MXene index n.
+    `T` : MXene termination.
+    `out_name` : Output file name.
+    """
+    with open(out_name,"a") as outFile:
             searcher = SEARCH()
             paths, datas = searcher.path_tree(n,T)
 
@@ -91,11 +98,11 @@ with open("database.txt","a") as outFile:
 
                 # Writing data to file
                 outFile.write(f"  {mxt}    {n}    {M}    {X}    {T_name}    {stack}    {hollow}    {a}    {d}    {hMT1}    {hMT2}    \
-                              {dMT1}    {dMT2}    {dXT1}    {dXT2}    {dMX1}    {dMX2}    {a_p}    {d_p}    {dMX1_p}    {dMX2_p}\
-                              {M_el.Z}    {M_el.group}    {M_el.row}    {M_el.X}    {M_el.electron_affinity}    {M_el.van_der_waals_radius}    {M_el.atomic_radius.real}\
-                              {X_el.Z}    {X_el.group}    {X_el.row}    {X_el.X}    {X_el.electron_affinity}    {X_el.van_der_waals_radius}    {X_el.atomic_radius.real}\
-                              {T_el.Z}    {T_el.group}    {T_el.row}    {T_el.X}    {T_el.electron_affinity}    {T_el.van_der_waals_radius}    {T_el.atomic_radius.real}\
-                              {VBM}   {CBM}    {Eg}    {VBM0}   {CBM0}    {Eg0} ")
+                            {dMT1}    {dMT2}    {dXT1}    {dXT2}    {dMX1}    {dMX2}    {a_p}    {d_p}    {dMX1_p}    {dMX2_p}\
+                            {M_el.Z}    {M_el.group}    {M_el.row}    {M_el.X}    {M_el.electron_affinity}    {M_el.van_der_waals_radius}    {M_el.atomic_radius.real}\
+                            {X_el.Z}    {X_el.group}    {X_el.row}    {X_el.X}    {X_el.electron_affinity}    {X_el.van_der_waals_radius}    {X_el.atomic_radius.real}\
+                            {T_el.Z}    {T_el.group}    {T_el.row}    {T_el.X}    {T_el.electron_affinity}    {T_el.van_der_waals_radius}    {T_el.atomic_radius.real}\
+                            {VBM}   {CBM}    {Eg}    {VBM0}   {CBM0}    {Eg0} ")
                 for bin in DOS_hist: outFile.write(str(bin)+" ")
                 outFile.write("\n")
                 outFile.flush()
@@ -103,6 +110,20 @@ with open("database.txt","a") as outFile:
                 del doscar; del doscar0
                 gc.collect()
 
+
+# Parsing user arguments
+parser = ArgumentParser(description="Runs over all specified paths (with n and T) to gather data and construct database.")
+parser.add_argument("-n","--n_index",type=int,help="MXene n index (int) from the formula Mn+1XnT2.",required=True)
+parser.add_argument("-T","--termination",type=str,default="",help="MXene termination (str) from the formula Mn+1XnT2. Specifyit with the index, i.e 'O2'. \
+                    For pristine MXenes, don't use this or use None. Defaults to None.")
+parser.add_argument("-o","--out_name",type=str,help="Putput file name. Defaults to database_[n]_[T].log",default=None)
+
+args = parser.parse_args()
+n,T,out_name = args.n_index, args.termination, args.out_name
+if T == "None": T = ""
+if out_name is None: out_name = f"database_{n}_{T}.log"
+
+# make_database(n,T,out_name)
 
 # Since this script opens many files and most of them generate large lists, variables, etc.
 # it sometimes gets killed by the kernel, I don't exactly know why (probably OOM killer).
